@@ -40,19 +40,24 @@ public class TextUtil {
         StringBuilder result = new StringBuilder();
         boolean skipMode = false;
 
-        for (char c : input.toCharArray()) {
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+
             if (skipMode) {
                 skipMode = false;
                 result.append(c);
             } else if (c == '&') {
-                skipMode = true;
-                result.append(c);
+                if (i + 7 <= input.length() && input.charAt(i + 1) == '#') {
+                    String hexColor = input.substring(i + 1, i + 7);
+                    result.append('#').append(hexColor);
+                    i += 7;
+                } else {
+                    result.append(c);
+                }
             } else {
                 result.append(charMap.getOrDefault(c, c));
             }
         }
-
         return result.toString();
     }
-
 }
