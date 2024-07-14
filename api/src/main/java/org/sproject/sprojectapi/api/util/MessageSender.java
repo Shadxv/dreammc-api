@@ -12,15 +12,15 @@ public class MessageSender {
     }
 
     public static void sendErrorMessage(Object player, String message) {
-        sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.redBase)));
+        sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.redPrimary)));
     }
 
     public static void sendInfoMessage(Object player, String message) {
-        sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.grayBase)));
+        sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.grayPrimary)));
     }
 
     public static void sendSuccessMessage(Object player, String message) {
-        sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.greenBase)));
+        sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.greenPrimary)));
     }
 
 }

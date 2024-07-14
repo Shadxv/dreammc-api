@@ -4,9 +4,10 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.proxy.Player;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.sproject.sprojectapi.shared.Registry;
+import org.sproject.sprojectapi.velocity.logger.VelocityLoggerImpl;
 import org.sproject.sprojectapi.velocity.player.VelocityMessageSenderImpl;
 
 
@@ -17,14 +18,17 @@ import org.sproject.sprojectapi.velocity.player.VelocityMessageSenderImpl;
 )
 public class VelocitySProjectAPI {
 
-    @Inject private Logger logger;
+    @Getter private static VelocitySProjectAPI instance;
+    @Getter @Inject private Logger logger;
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        instance = this;
         this.setupAPI();
     }
 
     private void setupAPI() {
         Registry.messageSender = new VelocityMessageSenderImpl();
+        Registry.logger = new VelocityLoggerImpl();
     }
 }
