@@ -1,0 +1,4 @@
+name: 'SProjectAPI'
+version: '${version}'
+main: 'org.sproject.sprojectapi.paper.PaperSProjectAPI'
+api-version: '1.20'
