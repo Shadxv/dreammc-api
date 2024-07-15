@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.sproject.sprojectapi.api.logger.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,10 @@ public class MongoService {
     private static final Map<String, MongoCollection<?>> cachedMappedCollections = new HashMap<>();
 
     public static boolean init() {
-        if(!System.getenv().containsKey("MONGODB_URI")) return false;
+        if(!System.getenv().containsKey("MONGODB_URI")) {
+            Logger.sendError("Cannot find MONGODB_URI inside environment variables!");
+            return false;
+        }
         mongoConnectionManager.setupConnection(System.getenv("MONGODB_URI"));
         return true;
     }
