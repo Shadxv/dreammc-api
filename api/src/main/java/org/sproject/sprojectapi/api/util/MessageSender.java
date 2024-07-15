@@ -11,7 +11,7 @@ public class MessageSender {
         Registry.messageSender.sendMessage(player, message);
     }
 
-    private static void sendMessage(Object player, String serializedMessage) {
+    public static void sendMessage(Object player, String serializedMessage) {
         sendMessage(player, TextUtil.deserializeText(serializedMessage));
     }
 
