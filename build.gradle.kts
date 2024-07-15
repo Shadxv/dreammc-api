@@ -30,6 +30,7 @@ subprojects {
         implementation("org.jetbrains:annotations:24.0.0")
 
         compileOnly("net.kyori:adventure-api:4.17.0")
+        compileOnly("net.kyori:adventure-text-serializer-legacy:4.17.0")
     }
 }
 

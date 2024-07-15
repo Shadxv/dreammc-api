@@ -11,6 +11,10 @@ public class MessageSender {
         Registry.messageSender.sendMessage(player, message);
     }
 
+    private static void sendMessage(Object player, String serializedMessage) {
+        sendMessage(player, TextUtil.deserializeText(serializedMessage));
+    }
+
     public static void sendErrorMessage(Object player, String message) {
         sendMessage(player, Component.text(message).color(TextColor.fromHexString(BaseColor.redPrimary)));
     }

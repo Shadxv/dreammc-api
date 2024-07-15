@@ -1,11 +1,15 @@
 package org.sproject.sprojectapi.api.util;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class TextUtil {
 
     private static final Map<Character, Character> charMap = new HashMap<>();
+    private static final LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacy('&');
 
     static {
         charMap.put('a', 'ᴀ');
@@ -59,5 +63,13 @@ public class TextUtil {
             }
         }
         return result.toString();
+    }
+
+    public static Component deserializeText(String text) {
+        return legacyComponentSerializer.deserialize(text);
+    }
+
+    public static String serializeComponent(Component textComponent) {
+        return legacyComponentSerializer.serialize(textComponent);
     }
 }
