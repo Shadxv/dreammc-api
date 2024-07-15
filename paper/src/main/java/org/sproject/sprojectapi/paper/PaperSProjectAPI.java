@@ -28,6 +28,7 @@ public class PaperSProjectAPI extends JavaPlugin {
     }
 
     private void setupAPI() {
+        //test
         Registry.messageSender = new PaperMessageSenderImpl();
         Registry.logger = new PaperLoggerImpl();
     }
