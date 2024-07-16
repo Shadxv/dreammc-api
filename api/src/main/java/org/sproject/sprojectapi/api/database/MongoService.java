@@ -4,13 +4,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.sproject.sprojectapi.api.logger.Logger;
 
-import javax.print.Doc;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

@@ -25,7 +25,7 @@ public class VelocityLoggerImpl implements ILogger {
 
     @Override
     public void sendError(String message) {
-        logger.warn(message);
+        logger.error(message);
     }
 
 }

@@ -40,8 +40,9 @@ public class TextUtil {
         charMap.put('z', 'ᴢ');
     }
 
-    public static String stylizeText(String input) {
+    public static String stylizeText(String text) {
         StringBuilder result = new StringBuilder();
+        String input = text.toLowerCase();
         boolean skipMode = false;
 
         for (int i = 0; i < input.length(); i++) {
@@ -52,11 +53,12 @@ public class TextUtil {
                 result.append(c);
             } else if (c == '&') {
                 if (i + 7 <= input.length() && input.charAt(i + 1) == '#') {
-                    String hexColor = input.substring(i + 1, i + 7);
-                    result.append('#').append(hexColor);
+                    String hexColor = input.substring(i + 1, i + 8);
+                    result.append('&').append(hexColor);
                     i += 7;
                 } else {
                     result.append(c);
+                    skipMode = true;
                 }
             } else {
                 result.append(charMap.getOrDefault(c, c));
