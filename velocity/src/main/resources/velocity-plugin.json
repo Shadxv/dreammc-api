@@ -1,6 +1,6 @@
 {
   "id": "sproject-api",
   "name": "SProjectAPI",
-  "version": "0.0.1",
+  "version": "${version}",
   "main": "org.sproject.sprojectapi.velocity.VelocitySProjectAPI"
 }
