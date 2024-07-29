@@ -2,7 +2,11 @@ plugins {
     id("java")
 }
 
+val versionNumber = project.properties.get("VERSION") as? String ?: ""
+val type = project.properties.get("TYPE") as? String ?: ""
+
 allprojects {
+    version = versionNumber + type
     repositories {
         mavenCentral()
         maven {
@@ -18,7 +22,6 @@ subprojects {
     apply(plugin = "java")
 
     group = "org.sproject.sprojectapi"
-    version = "0.0.1"
 
     dependencies {
         compileOnly("org.projectlombok:lombok:1.18.34")

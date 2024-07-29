@@ -1,0 +1,113 @@
+name: CI/CD Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Deployment Snapshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check commit author
+        id: check-author
+        run: |
+          AUTHOR=$(git log -1 --pretty=format:'%an')
+          echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
+          
+          if [[ "$AUTHOR" == "[Bot] Version Bumper" ]]; then
+            exit 0
+          fi
+
+      - name: Set up JDK 17
+        if: success()
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Increment version
+        if: success()
+        id: bump-version
+        run: |
+          VERSION=$(grep "^VERSION=" properties.gradle | sed 's/VERSION=//' | sed 's/"//g')
+          TYPE=$(grep "^TYPE=" properties.gradle | sed 's/TYPE=//' | sed 's/"//g')
+          IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+          PATCH=${VERSION_PARTS[2]}
+          PATCH=$((PATCH + 1))
+          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${PATCH}"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          NEW_TYPE="-SNAPSHOT"
+          
+          # Combine NEW_VERSION and NEW_TYPE into FULL_VERSION
+          if [ -z "$NEW_TYPE" ]; then
+           FULL_VERSION=$NEW_VERSION
+          else
+           FULL_VERSION="${NEW_VERSION}${NEW_TYPE}"
+          fi
+          echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+
+          # Update the properties.gradle file
+          sed -i "s/VERSION=\"$VERSION\"/VERSION=\"$NEW_VERSION\"/" properties.gradle
+          sed -i "s/TYPE=\"$TYPE\"/TYPE=\"$NEW_TYPE\"/" properties.gradle
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "TYPE=$NEW_TYPE" >> $GITHUB_ENV
+
+      - name: Build Project
+        if: success()
+        run: |
+          ./gradlew build
+      - name: Nexus Repo Publish - Paper
+        if: success()
+        run: |
+          ./gradlew :paper:publish -PnexusPassword=${{ secrets.NEXUS_PASSWORD }} -Prepo="snapshots"
+
+      - name: Nexus Repo Publish - Velocity
+        if: success()
+        run: |
+          ./gradlew :velocity:publish -PnexusPassword=${{ secrets.NEXUS_PASSWORD }} -Prepo="snapshots"
+      - name: Create Release
+        if: success()
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.FULL_VERSION }}
+          release_name: SProjectAPI ${{ env.FULL_VERSION }}
+          draft: false
+          prerelease: true
+      - name: Upload release asset
+        if: success()
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/libs/sproject-api.jar
+          asset_name: sproject-api.jar
+          asset_content_type: application/java-archive
+      - name: Commit and push new version
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name '[Bot] Version Bumper'
+          git config --global user.email 'github-actions@github.com'
+          git add properties.gradle
+          git commit -m "Bump version to $FULL_VERSION"
+          git push origin main
+      - name: Send version to Discord
+        if: success()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: "API ${{env.FULL_VERSION}} version bump"
+          content: |
+            ## 📈 New version bumped!
+            Current version: **${{ env.FULL_VERSION }}**
+            [GitHub Release](https://github.com/Secret-Project-Server/sproject-simulation/releases/tag/${{env.FULL_VERSION}})
