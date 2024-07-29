@@ -36,6 +36,8 @@ jobs:
         run: |
           VERSION=$(grep "^VERSION=" gradle.properties | sed 's/VERSION=//' | sed 's/"//g')
           TYPE=$(grep "^TYPE=" gradle.properties | sed 's/TYPE=//' | sed 's/"//g')
+          echo "Original TYPE: '$TYPE'"
+          
           IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
           PATCH=${VERSION_PARTS[2]}
           PATCH=$((PATCH + 1))
@@ -52,8 +54,8 @@ jobs:
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
 
           # Update the gradle.properties file
-          sed -i "s/VERSION=\"$VERSION\"/VERSION=\"$NEW_VERSION\"/" gradle.properties
-          sed -i "s/TYPE=\"$TYPE\"/TYPE=\"$NEW_TYPE\"/" gradle.properties
+          sed -i "s/^VERSION=.*/VERSION=$NEW_VERSION/" gradle.properties
+          sed -i "s/^TYPE=.*/TYPE=$NEW_TYPE/" gradle.properties
           echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "TYPE=$NEW_TYPE" >> $GITHUB_ENV
 
@@ -61,6 +63,7 @@ jobs:
         if: success()
         run: |
           ./gradlew build
+
       - name: Nexus Repo Publish - Paper
         if: success()
         run: |
@@ -70,6 +73,7 @@ jobs:
         if: success()
         run: |
           ./gradlew :velocity:publish -PnexusPassword=${{ secrets.NEXUS_PASSWORD }} -Prepo="snapshots"
+
       - name: Create Release
         if: success()
         id: create_release
@@ -81,6 +85,7 @@ jobs:
           release_name: SProjectAPI ${{ env.FULL_VERSION }}
           draft: false
           prerelease: true
+
       - name: Upload release asset
         if: success()
         uses: actions/upload-release-asset@v1
@@ -91,6 +96,7 @@ jobs:
           asset_path: build/libs/sproject-api.jar
           asset_name: sproject-api.jar
           asset_content_type: application/java-archive
+
       - name: Commit and push new version
         if: success()
         env:
@@ -101,6 +107,7 @@ jobs:
           git add gradle.properties
           git commit -m "Bump version to $FULL_VERSION"
           git push origin main
+
       - name: Send version to Discord
         if: success()
         uses: tsickert/discord-webhook@v5.3.0
