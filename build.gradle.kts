@@ -2,8 +2,8 @@ plugins {
     id("java")
 }
 
-val versionNumber = project.properties.get("VERSION") as? String ?: ""
-val type = project.properties.get("TYPE") as? String ?: ""
+val versionNumber = project.properties["VERSION"] as? String ?: ""
+val type = project.properties["TYPE"] as? String ?: ""
 
 allprojects {
     version = versionNumber + type
