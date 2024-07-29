@@ -34,8 +34,8 @@ jobs:
         if: success()
         id: bump-version
         run: |
-          VERSION=$(grep "^VERSION=" properties.gradle | sed 's/VERSION=//' | sed 's/"//g')
-          TYPE=$(grep "^TYPE=" properties.gradle | sed 's/TYPE=//' | sed 's/"//g')
+          VERSION=$(grep "^VERSION=" gradle.properties | sed 's/VERSION=//' | sed 's/"//g')
+          TYPE=$(grep "^TYPE=" gradle.properties | sed 's/TYPE=//' | sed 's/"//g')
           IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
           MINOR=${VERSION_PARTS[1]}
           MINOR=$((MINOR + 1))
@@ -51,9 +51,9 @@ jobs:
           fi
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
 
-          # Update the properties.gradle file
-          sed -i "s/VERSION=\"$VERSION\"/VERSION=\"$NEW_VERSION\"/" properties.gradle
-          sed -i "s/TYPE=\"$TYPE\"/TYPE=\"$NEW_TYPE\"/" properties.gradle
+          # Update the gradle.properties file
+          sed -i "s/VERSION=\"$VERSION\"/VERSION=\"$NEW_VERSION\"/" gradle.properties
+          sed -i "s/TYPE=\"$TYPE\"/TYPE=\"$NEW_TYPE\"/" gradle.properties
           echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "TYPE=$NEW_TYPE" >> $GITHUB_ENV
 
@@ -102,7 +102,7 @@ jobs:
         run: |
           git config --global user.name '[Bot] Version Bumper'
           git config --global user.email 'github-actions@github.com'
-          git add properties.gradle
+          git add gradle.properties
           git commit -m "Bump version to $FULL_VERSION"
           git push origin release
 
