@@ -126,7 +126,7 @@ jobs:
           content: |
             ## 📈 New version bumped!
             Current version: **${{ env.FULL_VERSION }}**
-            [GitHub Release](https://github.com/Secret-Project-Server/sproject-simulation/releases/tag/${{env.FULL_VERSION}})
+            [GitHub Release](https://github.com/Secret-Project-Server/sproject-api/releases/tag/${{env.FULL_VERSION}})
 
       - name: Sync release to main
         if: success()
