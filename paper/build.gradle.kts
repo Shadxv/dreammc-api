@@ -1,6 +1,5 @@
 plugins {
     `maven-publish`
-    kotlin("jvm")
 }
 
 dependencies {
@@ -42,10 +41,4 @@ publishing {
             }
         }
     }
-}
-repositories {
-    mavenCentral()
-}
-kotlin {
-    jvmToolchain(17)
 }
