@@ -1,11 +1,13 @@
 plugins {
     `maven-publish`
+    kotlin("jvm")
 }
 
 dependencies {
     compileOnly(project(":shared"))
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.jar {
@@ -40,4 +42,10 @@ publishing {
             }
         }
     }
+}
+repositories {
+    mavenCentral()
+}
+kotlin {
+    jvmToolchain(17)
 }
