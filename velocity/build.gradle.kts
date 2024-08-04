@@ -3,8 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":shared"))
-    compileOnly(project(":api"))
+    implementation(project(":api"))
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
