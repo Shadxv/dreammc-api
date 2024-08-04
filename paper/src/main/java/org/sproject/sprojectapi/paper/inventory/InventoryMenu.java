@@ -25,7 +25,7 @@ public abstract class InventoryMenu implements InventoryHolder {
     private int rows;
     private Map<Integer, Item> items;
 
-    public InventoryMenu(Player player, Component title, int rows) {
+    protected InventoryMenu(Player player, Component title, int rows) {
         this.player = player;
         this.title = title;
         this.rows = rows;
@@ -46,7 +46,7 @@ public abstract class InventoryMenu implements InventoryHolder {
         InventoryManager.getInstance().updateInventory(this.player.getUniqueId(), this);
     }
 
-    abstract boolean onClose0(InventoryCloseEvent event);
+    protected abstract boolean onClose0(InventoryCloseEvent event);
 
     public void onClose(InventoryCloseEvent event) {
         if(!onClose0(event)) {
