@@ -41,9 +41,9 @@ public abstract class InventoryMenu implements InventoryHolder {
                 Bukkit.getPluginManager().callEvent(new InventoryCloseEvent(this.player.getOpenInventory(), InventoryCloseEvent.Reason.OPEN_NEW));
             }
         }
+        InventoryManager.getInstance().updateInventory(this.player.getUniqueId(), this);
         this.inventory = Bukkit.createInventory(this, this.rows*9, this.title);
         this.player.openInventory(this.inventory);
-        InventoryManager.getInstance().updateInventory(this.player.getUniqueId(), this);
     }
 
     protected abstract boolean onClose0(InventoryCloseEvent event);
@@ -95,8 +95,8 @@ public abstract class InventoryMenu implements InventoryHolder {
             throw new RuntimeException("Invalid column index");
         }
 
-        for(int i = columnIndex; i < (i * 9 + columnIndex); i+=9) {
-            this.addItem(i, item);
+        for(int i = 0; i < this.rows; i++) {
+            this.addItem((i * 9 + columnIndex), item);
         }
     }
 

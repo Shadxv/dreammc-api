@@ -7,12 +7,6 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
-dependencies {
-    compileOnly(project(":shared"))
-    compileOnly(project(":api"))
-    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
-}
-
 tasks.jar {
     archiveFileName.set("api-velocity.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
