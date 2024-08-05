@@ -128,6 +128,7 @@ public class Item {
     @Nullable
     public ItemStack build() {
         if(this.material == null || this.material == Material.AIR) return null;
+        this.itemStack = new ItemStack(this.material);
         this.itemStack.setAmount(Math.max(Math.min(this.amount, this.material.getMaxStackSize()), 1));
         this.itemMeta = this.itemStack.getItemMeta();
 

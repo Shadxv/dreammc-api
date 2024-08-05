@@ -24,7 +24,7 @@ public class PaperListenerManager {
     }
 
     public void registerListeners() {
-        Set<Class<?>> listenerClasses = findAllListenersInPackage("org.sproject.sprojectapi.paper.listeners", Listener.class);
+        Set<Class<?>> listenerClasses = findAllListenersInPackage("org.sproject.sprojectapi.paper.listener", Listener.class);
 
         for (Class<?> listenerClass : listenerClasses) {
             try {
