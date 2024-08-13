@@ -1,11 +1,8 @@
 package org.sproject.sprojectapi.paper;
 
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.C;
 import org.sproject.sprojectapi.api.database.MongoService;
-import org.sproject.sprojectapi.paper.item.InventoryItem;
 import org.sproject.sprojectapi.paper.logger.PaperLoggerImpl;
 import org.sproject.sprojectapi.paper.manager.InventoryManager;
 import org.sproject.sprojectapi.paper.manager.PaperListenerManager;

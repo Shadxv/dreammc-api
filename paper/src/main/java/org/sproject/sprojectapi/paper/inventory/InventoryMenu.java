@@ -11,6 +11,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.sproject.sprojectapi.paper.item.BaseItem;
 import org.sproject.sprojectapi.paper.item.Item;
 import org.sproject.sprojectapi.paper.manager.InventoryManager;
 
@@ -23,7 +24,7 @@ public abstract class InventoryMenu implements InventoryHolder {
     private Player player;
     private Component title;
     private int rows;
-    private Map<Integer, Item> items;
+    private Map<Integer, BaseItem> items;
 
     protected InventoryMenu(Player player, Component title, int rows) {
         this.player = player;
@@ -62,7 +63,7 @@ public abstract class InventoryMenu implements InventoryHolder {
     }
 
     @Nullable
-    public Item getItem(int index) {
+    public BaseItem getItem(int index) {
         return this.items.get(index);
     }
 
