@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("unchecked")
-public class BaseItem<T extends BaseItem> {
+public class BaseItem<T extends BaseItem<?>> {
 
     private ItemStack itemStack;
     private ItemMeta itemMeta;
