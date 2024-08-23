@@ -9,6 +9,8 @@ import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Optional;
+
 public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
 
     @Getter private Component text;
@@ -83,6 +85,20 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
 
         textDisplay.text(this.text);
         textDisplay.setBillboard(this.billboard);
+        Optional.ofNullable(this.textAlignment).ifPresent(textDisplay::setAlignment);
+        textDisplay.setBackgroundColor(this.backgroundColor);
+        textDisplay.setDefaultBackground(this.defaultBackground);
+        textDisplay.setShadowed(this.shadowed);
+        textDisplay.setTextOpacity(this.textOpacity);
+        textDisplay.setTransformation(
+                new Transformation(
+                        textDisplay.getTransformation().getTranslation(),
+                        textDisplay.getTransformation().getLeftRotation(),
+                        new Vector3f(this.scale),
+                        textDisplay.getTransformation().getRightRotation()
+                )
+        );
+
 
         float heightChange = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y() - this.height;
         this.height = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y();
