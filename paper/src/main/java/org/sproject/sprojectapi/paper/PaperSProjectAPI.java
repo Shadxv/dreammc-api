@@ -1,15 +1,8 @@
 package org.sproject.sprojectapi.paper;
 
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.sproject.sprojectapi.api.database.MongoService;
-import org.sproject.sprojectapi.paper.hologram.Hologram;
-import org.sproject.sprojectapi.paper.hologram.SpawnMode;
-import org.sproject.sprojectapi.paper.hologram.line.TextHologramLine;
 import org.sproject.sprojectapi.paper.logger.PaperLoggerImpl;
 import org.sproject.sprojectapi.paper.manager.HologramManager;
 import org.sproject.sprojectapi.paper.manager.InventoryManager;
@@ -40,18 +33,18 @@ public class PaperSProjectAPI extends JavaPlugin {
         this.inventoryManager = new InventoryManager();
         this.hologramManager = new HologramManager();
 
-        new Hologram(
-                "test-hologram",
-                new Location(Bukkit.getWorld("world"), 0.5, 64, -73.5),
-                SpawnMode.FROM_BOTTOM
-        ).addLine(new TextHologramLine()
-                .setText(Component.text("Test line 1").color(TextColor.fromHexString("#f90055")))
-                .setSpacing(0.1f)
-        ).addLine(new TextHologramLine()
-                .setText(Component.text("Test line 2").color(TextColor.fromHexString("#f58911")))
-        ).addLine(new TextHologramLine()
-                .setText(Component.text("Test line 3").color(TextColor.fromHexString("#1189f5")))
-        ).spawn();
+//        new Hologram(
+//                "test-hologram",
+//                new Location(Bukkit.getWorld("world"), 0.5, 64, -73.5),
+//                SpawnMode.FROM_BOTTOM
+//        ).addLine(new TextHologramLine()
+//                .setText(Component.text("Test line 1").color(TextColor.fromHexString("#f90055")))
+//                .setSpacing(0.1f)
+//        ).addLine(new TextHologramLine()
+//                .setText(Component.text("Test line 2").color(TextColor.fromHexString("#f58911")))
+//        ).addLine(new TextHologramLine()
+//                .setText(Component.text("Test line 3").color(TextColor.fromHexString("#1189f5")))
+//        ).spawn();
     }
 
     @Override

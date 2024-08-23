@@ -14,12 +14,10 @@ public abstract class BaseHologramLine<T extends BaseHologramLine<?>> {
     @Getter protected UUID uuid;
     @Getter protected float height;
     @Getter protected float spacing;
-    @Getter protected Display.Billboard billboard;
+    @Getter protected Display.Billboard billboard = Display.Billboard.CENTER;
     @Getter protected float yTranslation;
 
-    protected BaseHologramLine() {
-        this.billboard = Display.Billboard.CENTER;
-    }
+    protected BaseHologramLine() {}
 
     public abstract T setBillboard(Display.Billboard billboard);
 
