@@ -31,8 +31,8 @@ public class HologramManager {
             if(hologram == null) return;
 
             hologram.despawn();
-            this.unregisterHologram(id);
         }
+        this.serverSideHolograms.clear();
     }
 
     @Nullable

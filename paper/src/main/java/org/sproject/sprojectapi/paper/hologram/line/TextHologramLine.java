@@ -26,20 +26,20 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
 
     public TextHologramLine setText(Component text) {
         this.text = text;
-        if(this.parrent.isSpawned()) ((TextDisplay) this.entity).text(text);
+        if(this.isSpawned) ((TextDisplay) this.entity).text(text);
         return this;
     }
 
     public TextHologramLine setTextAlignment(TextDisplay.TextAlignment alignment) {
         this.textAlignment = alignment;
-        if(this.parrent.isSpawned()) ((TextDisplay) this.entity).setAlignment(alignment);
+        if(this.isSpawned) ((TextDisplay) this.entity).setAlignment(alignment);
         return this;
     }
 
     public TextHologramLine setBackgroundColor(@Nullable Color backgroundColor) {
         this.defaultBackground = backgroundColor == null;
         this.backgroundColor = backgroundColor;
-        if(this.parrent.isSpawned()) {
+        if(this.isSpawned) {
             TextDisplay textDisplay = (TextDisplay) this.entity;
             textDisplay.setBackgroundColor(backgroundColor);
             textDisplay.setDefaultBackground(this.defaultBackground);
@@ -49,19 +49,19 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
 
     public TextHologramLine setShadowed(boolean shadowed) {
         this.shadowed = shadowed;
-        if(this.parrent.isSpawned()) ((TextDisplay) this.entity).setShadowed(shadowed);
+        if(this.isSpawned) ((TextDisplay) this.entity).setShadowed(shadowed);
         return this;
     }
 
     public TextHologramLine setTextOpacity(byte opacity) {
         this.textOpacity = opacity;
-        if(this.parrent.isSpawned()) ((TextDisplay) this.entity).setTextOpacity(opacity);
+        if(this.isSpawned) ((TextDisplay) this.entity).setTextOpacity(opacity);
         return this;
     }
 
     public TextHologramLine setScale(float scale) {
         this.scale = scale;
-        if(this.parrent.isSpawned()) {
+        if(this.isSpawned) {
             TextDisplay textDisplay = (TextDisplay) this.entity;
             (textDisplay).setTransformation(
                     new Transformation(
@@ -72,6 +72,13 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
                     )
             );
         }
+        return this;
+    }
+
+    public TextHologramLine setCanSeeThrough(boolean canSeeThrough) {
+        if(this.isSpawned)
+            ((TextDisplay) this.entity).setSeeThrough(canSeeThrough);
+
         return this;
     }
 
@@ -90,6 +97,7 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
         textDisplay.setDefaultBackground(this.defaultBackground);
         textDisplay.setShadowed(this.shadowed);
         textDisplay.setTextOpacity(this.textOpacity);
+        textDisplay.setSeeThrough(this.parrent.isCanSeeThrough());
         textDisplay.setTransformation(
                 new Transformation(
                         textDisplay.getTransformation().getTranslation(),
@@ -99,11 +107,11 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
                 )
         );
 
-
         float heightChange = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y() - this.height;
         this.height = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y();
         this.parrent.getHeight().set(this.parrent.getHeight().get() + heightChange + this.spacing);
 
+        this.isSpawned = true;
         this.entity = textDisplay;
         return this.entity;
     }
