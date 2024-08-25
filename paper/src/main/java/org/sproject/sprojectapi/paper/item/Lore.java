@@ -7,33 +7,33 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lore {
+public class Lore<T extends BaseItem> {
 
     @Getter private final List<Component> loreLines;
-    @Getter private final Item parent;
+    @Getter private final T parent;
 
-    public Lore(Item parent) {
+    public Lore(T parent) {
         this.loreLines = new ArrayList<>();
         this.parent = parent;
     }
 
-    public Lore(Item parent, List<Component> loreLines) {
+    public Lore(T parent, List<Component> loreLines) {
         this.parent = parent;
         this.loreLines = loreLines;
     }
 
-    public Lore addLine(Component component) {
+    public Lore<T> addLine(Component component) {
         this.loreLines.add(component.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         return this;
     }
 
-    public Lore removeLine(int index) {
+    public Lore<T> removeLine(int index) {
         if(index >= 0 && index < this.loreLines.size())
             this.loreLines.remove(index);
         return this;
     }
 
-    public Lore insertLine(int index, Component component) {
+    public Lore<T> insertLine(int index, Component component) {
         if(index < 0) return this;
 
         if(index > this.loreLines.size())
@@ -44,14 +44,14 @@ public class Lore {
         return this;
     }
 
-    public Lore addLines(Component... components) {
+    public Lore<T> addLines(Component... components) {
         for(Component component : components) {
             this.addLine(component);
         }
         return this;
     }
 
-    public Lore insertLines(int index, Component... components) {
+    public Lore<T> insertLines(int index, Component... components) {
         if(index < 0) return this;
 
         for(Component component : components) {
@@ -61,25 +61,25 @@ public class Lore {
         return this;
     }
 
-    public Lore removeLines(int... indexes) {
+    public Lore<T> removeLines(int... indexes) {
         for(int i : indexes) {
             this.removeLine(i);
         }
         return this;
     }
 
-    public Lore modifyLine(int index, Component component) {
+    public Lore<T> modifyLine(int index, Component component) {
         if(index >= 0 && index < this.loreLines.size())
             this.loreLines.set(index, component);
         return this;
     }
 
-    public Lore clear() {
+    public Lore<T> clear() {
         this.loreLines.clear();
         return this;
     }
 
-    public Item endLore() {
-        return this.parent;
+    public T endLore() {
+        return (T) this.parent;
     }
 }

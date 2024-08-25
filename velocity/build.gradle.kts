@@ -7,6 +7,15 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
+tasks.processResources {
+    val props = mapOf("version" to project.version)
+    inputs.properties(props)
+    filteringCharset = "UTF-8"
+    filesMatching("velocity-plugin.json") {
+        expand(props)
+    }
+}
+
 tasks.jar {
     archiveFileName.set("api-velocity.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

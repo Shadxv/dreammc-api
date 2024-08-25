@@ -11,7 +11,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.sproject.sprojectapi.paper.item.Item;
+import org.sproject.sprojectapi.paper.item.BaseItem;
 import org.sproject.sprojectapi.paper.manager.InventoryManager;
 
 import java.util.HashMap;
@@ -20,10 +20,10 @@ import java.util.Map;
 public abstract class InventoryMenu implements InventoryHolder {
 
     private Inventory inventory;
-    private Player player;
-    private Component title;
-    private int rows;
-    private Map<Integer, Item> items;
+    private final Player player;
+    private final Component title;
+    private final int rows;
+    private final Map<Integer, BaseItem<?>> items;
 
     protected InventoryMenu(Player player, Component title, int rows) {
         this.player = player;
@@ -62,11 +62,11 @@ public abstract class InventoryMenu implements InventoryHolder {
     }
 
     @Nullable
-    public Item getItem(int index) {
+    public BaseItem<?> getItem(int index) {
         return this.items.get(index);
     }
 
-    public void addItem(int index, @Nullable Item item) {
+    public void addItem(int index, @Nullable BaseItem<?> item) {
         if(index < 0 || index >= this.getSize()) {
             throw new RuntimeException("Invalid slot index");
         }
@@ -80,7 +80,7 @@ public abstract class InventoryMenu implements InventoryHolder {
         }
     }
 
-    public void fillRow(int rowIndex, @Nullable Item item) {
+    public void fillRow(int rowIndex, @Nullable BaseItem<?> item) {
         if(rowIndex < 0 || rowIndex >= this.rows) {
             throw new RuntimeException("Invalid row index");
         }
@@ -90,7 +90,7 @@ public abstract class InventoryMenu implements InventoryHolder {
         }
     }
 
-    public void fillColumn(int columnIndex, @Nullable Item item) {
+    public void fillColumn(int columnIndex, @Nullable BaseItem<?> item) {
         if(columnIndex < 0 || columnIndex >= 9) {
             throw new RuntimeException("Invalid column index");
         }

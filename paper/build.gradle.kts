@@ -7,6 +7,15 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 }
 
+tasks.processResources {
+    val props = mapOf("version" to rootProject.version)
+    inputs.properties(props)
+    filteringCharset = "UTF-8"
+    filesMatching("plugin.yml") {
+        expand(props)
+    }
+}
+
 tasks.jar {
     archiveFileName.set("api-paper.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
