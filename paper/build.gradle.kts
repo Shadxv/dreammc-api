@@ -2,9 +2,16 @@ plugins {
     `maven-publish`
 }
 
+repositories {
+    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
+
+}
+
 dependencies {
     implementation(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+
+    compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
 }
 
 tasks.processResources {

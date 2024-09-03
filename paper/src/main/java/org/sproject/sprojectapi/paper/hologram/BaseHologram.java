@@ -40,9 +40,9 @@ public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseH
     }
 
     public T addLine(V line) {
-        int index = this.lines.size();
+        int index = 0;
         line.setParrent(this);
-        this.lines.add(line);
+        this.lines.add(index, line);
         if(isSpawned) this.spawnLine(line, index);
         return (T) this;
     }

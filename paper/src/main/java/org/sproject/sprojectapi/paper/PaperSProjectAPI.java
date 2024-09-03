@@ -1,5 +1,7 @@
 package org.sproject.sprojectapi.paper;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.sproject.sprojectapi.api.database.MongoService;
@@ -18,9 +20,17 @@ public class PaperSProjectAPI extends JavaPlugin {
     @Getter private HologramManager hologramManager;
 
     @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
         this.setupAPI();
+
+        PacketEvents.getAPI().init();
 
         if(!MongoService.init()) {
             this.getServer().shutdown();
@@ -32,24 +42,12 @@ public class PaperSProjectAPI extends JavaPlugin {
 
         this.inventoryManager = new InventoryManager();
         this.hologramManager = new HologramManager();
-
-//        new Hologram(
-//                "test-hologram",
-//                new Location(Bukkit.getWorld("world"), 0.5, 64, -73.5),
-//                SpawnMode.FROM_BOTTOM
-//        ).addLine(new TextHologramLine()
-//                .setText(Component.text("Test line 1").color(TextColor.fromHexString("#f90055")))
-//                .setSpacing(0.1f)
-//        ).addLine(new TextHologramLine()
-//                .setText(Component.text("Test line 2").color(TextColor.fromHexString("#f58911")))
-//        ).addLine(new TextHologramLine()
-//                .setText(Component.text("Test line 3").color(TextColor.fromHexString("#1189f5")))
-//        ).spawn();
     }
 
     @Override
     public void onDisable() {
         this.hologramManager.despawnAll();
+        PacketEvents.getAPI().terminate();
     }
 
     private void setupAPI() {
