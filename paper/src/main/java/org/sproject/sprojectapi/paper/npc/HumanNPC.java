@@ -8,9 +8,7 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.*;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -23,13 +21,13 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
 
-    @Getter protected final int entityId;
     @Getter protected UserProfile gameProfile;
+    @Getter protected boolean isSpawned;
 
-    public HumanNPC(String name, Location location) {
-        super(name, location);
-        this.entityId = Bukkit.getUnsafe().nextEntityId();
-        this.gameProfile = new UserProfile(this.getEntityUUID(), this.getName());
+    public HumanNPC(Location location) {
+        super(generateName(Bukkit.getUnsafe().nextEntityId()), location);
+        this.entityId = extractIdFromName(this.getName());
+        this.gameProfile = new UserProfile(this.getEntityUUID(), this.getName().substring(Math.max(0, name.length() - 17)));
     }
 
     public T setTexture(String texture, String signature) {
@@ -48,7 +46,9 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
         return (T) this;
     }
 
-    protected abstract void registerNPC();
+    protected abstract boolean registerNPC();
+
+    protected abstract void unregisterNPC();
 
     protected void sendSpawnPacket(Player player) {
         var spawnPacket = new WrapperPlayServerSpawnEntity(
@@ -61,7 +61,10 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
                 null
         );
 
+        var headRotationPacket = new WrapperPlayServerEntityHeadLook(this.entityId, this.spawnLocation.getYaw());
+
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, spawnPacket);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, headRotationPacket);
     }
 
     protected void sendInfoPacket(Player player) {
@@ -90,5 +93,21 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
         );
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, metadataPacket);
+    }
+
+    protected void sendDespawnPackets(Player player) {
+        var removeEntityPacket = new WrapperPlayServerDestroyEntities(this.entityId);
+        var removeInfoPacket = new WrapperPlayServerPlayerInfoRemove(this.entityUUID);
+
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeEntityPacket);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeInfoPacket);
+    }
+
+    private static String generateName(int id) {
+        return "NPCID_ " + id;
+    }
+
+    private static int extractIdFromName(String name) {
+        return Integer.parseInt(name.replace("NPCID_ ", "").trim());
     }
 }

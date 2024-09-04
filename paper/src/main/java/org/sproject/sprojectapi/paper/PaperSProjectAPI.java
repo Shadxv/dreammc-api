@@ -8,6 +8,7 @@ import org.sproject.sprojectapi.api.database.MongoService;
 import org.sproject.sprojectapi.paper.logger.PaperLoggerImpl;
 import org.sproject.sprojectapi.paper.manager.HologramManager;
 import org.sproject.sprojectapi.paper.manager.InventoryManager;
+import org.sproject.sprojectapi.paper.manager.NPCManager;
 import org.sproject.sprojectapi.paper.manager.PaperListenerManager;
 import org.sproject.sprojectapi.paper.player.PaperMessageSenderImpl;
 import org.sproject.sprojectapi.shared.Registry;
@@ -18,6 +19,7 @@ public class PaperSProjectAPI extends JavaPlugin {
     @Getter private PaperListenerManager listenerManager;
     @Getter private InventoryManager inventoryManager;
     @Getter private HologramManager hologramManager;
+    @Getter private NPCManager npcManager;
 
     @Override
     public void onLoad() {
@@ -42,6 +44,7 @@ public class PaperSProjectAPI extends JavaPlugin {
 
         this.inventoryManager = new InventoryManager();
         this.hologramManager = new HologramManager();
+        this.npcManager = new NPCManager();
     }
 
     @Override
