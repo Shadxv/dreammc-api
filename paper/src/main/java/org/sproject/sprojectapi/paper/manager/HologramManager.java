@@ -7,7 +7,9 @@ import org.sproject.sprojectapi.paper.hologram.Hologram;
 import org.sproject.sprojectapi.paper.hologram.line.ServerSideHologramLine;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class HologramManager {
 
@@ -26,13 +28,12 @@ public class HologramManager {
     }
 
     public void despawnAll() {
-        for (String id : this.serverSideHolograms.keySet()) {
-            Hologram hologram = this.getHologram(id);
-            if(hologram == null) return;
-
+        Iterator<Hologram> holograms = this.serverSideHolograms.values().iterator();
+        while(holograms.hasNext()){
+            Hologram hologram = holograms.next();
             hologram.despawn();
-            this.unregisterHologram(id);
         }
+        this.serverSideHolograms.clear();
     }
 
     @Nullable

@@ -3,8 +3,10 @@ package org.sproject.sprojectapi.paper.hologram;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
+import org.bukkit.entity.TextDisplay;
 import org.sproject.sprojectapi.api.util.ValueWatcher;
 import org.sproject.sprojectapi.paper.hologram.line.BaseHologramLine;
+import org.sproject.sprojectapi.paper.hologram.line.TextHologramLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseH
     @Getter private SpawnMode spawnMode;
     @Getter private final List<V> lines;
     @Getter private ValueWatcher<Float> height;
+    @Getter private boolean canSeeThrough = false;
     @Getter @Setter private boolean isSpawned = false;
 
     protected BaseHologram(final String id, Location location) {
@@ -37,10 +40,24 @@ public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseH
     }
 
     public T addLine(V line) {
-        int index = this.lines.size();
+        int index = 0;
         line.setParrent(this);
-        this.lines.add(line);
+        this.lines.add(index, line);
         if(isSpawned) this.spawnLine(line, index);
+        return (T) this;
+    }
+
+    public T setCanSeeThrough(boolean canSeeThrough) {
+        this.canSeeThrough = canSeeThrough;
+
+        if(isSpawned) {
+            for(BaseHologramLine<?> line : this.lines) {
+                if(line instanceof TextHologramLine textLine) {
+                    textLine.setCanSeeThrough(canSeeThrough);
+                }
+            }
+        }
+
         return (T) this;
     }
 
