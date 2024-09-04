@@ -25,7 +25,7 @@ public class NPCManager {
         this.registeredNPCs = new HashMap<>();
         this.serverSideNPCs = new ArrayList<>();
         this.clientSideNPCs = new HashMap<>();
-        PacketEvents.getAPI().getEventManager().registerListener(new ClickNPCPacketListener(), PacketListenerPriority.HIGHEST);
+        PacketEvents.getAPI().getEventManager().registerListener(new ClickNPCPacketListener(), PacketListenerPriority.LOWEST);
     }
 
     public boolean registerNPC(NPC<?> npc) {

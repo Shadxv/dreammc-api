@@ -8,10 +8,11 @@ import org.sproject.sprojectapi.paper.npc.event.NPCClickEvent;
 
 public class ClickNPCListener implements Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onClick(NPCClickEvent event) {
         NPC<?> npc = event.getNpc();
         if(!npc.isClickable()) return;
+        if(event.isCancelled()) return;
         npc.getClickAction().accept(event);
     }
 
