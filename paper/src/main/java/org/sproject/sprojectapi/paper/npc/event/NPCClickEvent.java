@@ -41,4 +41,8 @@ public class NPCClickEvent extends Event implements Cancellable {
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

@@ -8,6 +8,7 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientIn
 import org.apache.maven.model.Build;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.sproject.sprojectapi.paper.PaperSProjectAPI;
 import org.sproject.sprojectapi.paper.manager.NPCManager;
 import org.sproject.sprojectapi.paper.npc.NPC;
 import org.sproject.sprojectapi.paper.npc.event.NPCClickEvent;
@@ -33,7 +34,9 @@ public class ClickNPCPacketListener implements PacketListener {
         Player player = (Player) event.getPlayer();
 
         NPCClickEvent npcClickEvent = new NPCClickEvent(player, npc, type, hand);
-        Bukkit.getPluginManager().callEvent(npcClickEvent);
+        Bukkit.getScheduler().runTask(PaperSProjectAPI.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(npcClickEvent);
+        });
     }
 
 }
