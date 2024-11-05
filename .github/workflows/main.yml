@@ -82,7 +82,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.FULL_VERSION }}
-          release_name: SProjectAPI ${{ env.FULL_VERSION }}
+          release_name: DreamMCAPI ${{ env.FULL_VERSION }}
           draft: false
           prerelease: true
 
@@ -93,8 +93,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/sproject-api.jar
-          asset_name: sproject-api.jar
+          asset_path: build/libs/dreammc-api.jar
+          asset_name: dreammc-api.jar
           asset_content_type: application/java-archive
 
       - name: Commit and push new version
