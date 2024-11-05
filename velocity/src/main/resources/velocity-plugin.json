@@ -2,5 +2,5 @@
   "id": "sproject-api",
   "name": "SProjectAPI",
   "version": "${version}",
-  "main": "org.sproject.sprojectapi.velocity.VelocitySProjectAPI"
+  "main": "pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI"
 }

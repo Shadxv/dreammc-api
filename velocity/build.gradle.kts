@@ -28,11 +28,11 @@ publishing {
             from(components["java"])
 
             pom {
-                name.set("SProjectAPI-Velocity")
-                description.set("Velocity version of API for SProject server")
-                url.set("https://nexus.senceye.com/")
+                name.set("DreamMCAPI-Velocity")
+                description.set("Velocity version of API for DreamMC server")
+                url.set("https://nexus.dreammc.pl/")
                 scm {
-                    url.set("https://github.com/Secret-Project-Server/sproject-api")
+                    url.set("https://github.com/DreamMC-Network/dreammc-api")
                 }
             }
         }
@@ -42,7 +42,7 @@ publishing {
         maven {
             name = "Nexus"
             url = uri(
-                "https://nexus.senceye.com/repository/maven-" + (project.findProperty("repo") as String? ?: "") + "/"
+                "https://nexus.dreammc.pl/repository/maven-" + (project.findProperty("repo") as String? ?: "") + "/"
             )
             credentials {
                 username = "admin"
