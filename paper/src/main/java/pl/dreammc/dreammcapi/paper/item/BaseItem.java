@@ -7,9 +7,12 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -124,6 +127,31 @@ public class BaseItem<T extends BaseItem<?>> {
 
     public boolean hasItemFlag(ItemFlag itemFlag) {
         return this.flags.contains(itemFlag);
+    }
+
+    public T addEnchant(Enchantment enchantment, int level, boolean ignoreLevelRestrictions) {
+        this.itemMeta.addEnchant(enchantment, level, ignoreLevelRestrictions);
+        return (T) this;
+    }
+
+    public T removeEnchant(Enchantment enchantment) {
+        this.itemMeta.removeEnchant(enchantment);
+        return (T) this;
+    }
+
+    public boolean hasEnchant(Enchantment enchantment) {
+        return this.itemMeta.hasEnchant(enchantment);
+    }
+
+    public int getEnchantLevel(Enchantment enchantment) {
+        return this.itemMeta.getEnchantLevel(enchantment);
+    }
+
+    public T setPotionType(PotionType type) {
+        if(this.itemMeta instanceof PotionMeta potionMeta) {
+            potionMeta.setBasePotionType(type);
+        }
+        return (T) this;
     }
 
     @Nullable
