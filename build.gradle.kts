@@ -21,7 +21,7 @@ allprojects {
 subprojects {
     apply(plugin = "java")
 
-    group = "org.sproject.sprojectapi"
+    group = "pl.dreammc.dreammcapi"
 
     dependencies {
         compileOnly("org.projectlombok:lombok:1.18.34")
@@ -65,7 +65,7 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.jar {
-    archiveFileName.set("sproject-api.jar")
+    archiveFileName.set("dreammc-api.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 }
