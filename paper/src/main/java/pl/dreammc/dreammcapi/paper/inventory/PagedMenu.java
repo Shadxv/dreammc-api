@@ -39,6 +39,8 @@ public abstract class PagedMenu extends InventoryMenu{
     public void generatePageContent() {
         this.clearPageContent();
 
+        int maxPage = this.items.size() / this.pageSlots.size() + ((this.items.size() % this.pageSlots.size() == 0) ? 0 : 1);
+        if(maxPage < currentPage) this.currentPage = maxPage;
         int itemStartIndex = this.pageSlots.size() * this.currentPage;
         int itemEndIndex = Math.min(itemStartIndex + this.pageSlots.size(), this.items.size());
 
@@ -49,8 +51,8 @@ public abstract class PagedMenu extends InventoryMenu{
             this.addItem(slot, this.items.get(itemIndex));
         }
 
-        this.addItem(this.previousPageItemSlot, this.getPreviousPageItem(this.currentPage));
-        this.addItem(this.nextPageItemSlot, this.getNextPageItem(this.currentPage));
+        this.addItem(this.previousPageItemSlot, this.getPreviousPageItem(this.currentPage, maxPage));
+        this.addItem(this.nextPageItemSlot, this.getNextPageItem(this.currentPage, maxPage));
     }
 
     public void clearPageContent() {
@@ -66,8 +68,8 @@ public abstract class PagedMenu extends InventoryMenu{
         this.generatePageContent();
     }
 
-    public abstract InventoryItem getPreviousPageItem(int currentPage);
-    public abstract InventoryItem getNextPageItem(int currentPage);
+    protected abstract InventoryItem getPreviousPageItem(int currentPage, int maxPage);
+    protected abstract InventoryItem getNextPageItem(int currentPage, int maxPage);
 
     public PagedMenu addItemToCollection(BaseItem<?> item) {
         this.items.add(item);
