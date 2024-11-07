@@ -62,7 +62,7 @@ public class NPCManager {
         if(!this.clientSideNPCs.containsKey(npc.getOwner())) {
             return;
         }
-        this.clientSideNPCs.get(npc.getOwner()).remove(npc.getEntityId());
+        this.clientSideNPCs.get(npc.getOwner()).remove(Integer.valueOf(npc.getEntityId()));
         if(this.clientSideNPCs.get(npc.getOwner()).isEmpty()) {
             this.clientSideNPCs.remove(npc.getOwner());
         }

@@ -1,4 +1,4 @@
-name: 'SProjectAPI'
+name: 'DreamMCAPI'
 version: '${version}'
 main: 'pl.dreammc.dreammcapi.paper.PaperDreamMCAPI'
 api-version: '1.20'
