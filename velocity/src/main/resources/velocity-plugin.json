@@ -1,6 +1,6 @@
 {
-  "id": "sproject-api",
-  "name": "SProjectAPI",
+  "id": "dreammc-api",
+  "name": "DreamMCAPI",
   "version": "${version}",
   "main": "pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI"
 }

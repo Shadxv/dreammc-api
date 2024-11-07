@@ -15,10 +15,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class BaseItem<T extends BaseItem<?>> {
@@ -33,16 +30,20 @@ public class BaseItem<T extends BaseItem<?>> {
     @Getter private boolean unbreakable = false;
     @Getter private final Multimap<Attribute, AttributeModifier> attributes;
     @Getter private final Set<ItemFlag> flags;
+    @Getter private PotionType potionType;
+    @Getter private final Map<Enchantment, EnchantData> enchantments;
 
     protected BaseItem() {
         this.attributes = ArrayListMultimap.create();
         this.flags = new HashSet<>();
+        this.enchantments = new HashMap<>();
     }
 
     protected BaseItem(Material material) {
         this.material = material;
         this.attributes = ArrayListMultimap.create();
         this.flags = new HashSet<>();
+        this.enchantments = new HashMap<>();
     }
 
     protected BaseItem(ItemStack itemStack) {
@@ -55,6 +56,10 @@ public class BaseItem<T extends BaseItem<?>> {
         this.unbreakable = this.itemMeta.isUnbreakable();
         this.attributes = this.itemMeta.getAttributeModifiers();
         this.flags = this.itemMeta.getItemFlags();
+        this.enchantments = new HashMap<>();
+        for(Map.Entry<Enchantment, Integer> entry : this.itemMeta.getEnchants().entrySet()) {
+            this.enchantments.put(entry.getKey(), new EnchantData(entry.getValue(), entry.getKey().getMaxLevel() < entry.getValue()));
+        }
     }
 
     public T setName(Component name) {
@@ -130,27 +135,25 @@ public class BaseItem<T extends BaseItem<?>> {
     }
 
     public T addEnchant(Enchantment enchantment, int level, boolean ignoreLevelRestrictions) {
-        this.itemMeta.addEnchant(enchantment, level, ignoreLevelRestrictions);
+        this.enchantments.put(enchantment, new EnchantData(level, ignoreLevelRestrictions));
         return (T) this;
     }
 
     public T removeEnchant(Enchantment enchantment) {
-        this.itemMeta.removeEnchant(enchantment);
+        this.enchantments.remove(enchantment);
         return (T) this;
     }
 
     public boolean hasEnchant(Enchantment enchantment) {
-        return this.itemMeta.hasEnchant(enchantment);
+        return this.enchantments.containsKey(enchantment);
     }
 
     public int getEnchantLevel(Enchantment enchantment) {
-        return this.itemMeta.getEnchantLevel(enchantment);
+        return this.enchantments.get(enchantment).getLevel();
     }
 
     public T setPotionType(PotionType type) {
-        if(this.itemMeta instanceof PotionMeta potionMeta) {
-            potionMeta.setBasePotionType(type);
-        }
+        this.potionType = type;
         return (T) this;
     }
 
@@ -168,6 +171,14 @@ public class BaseItem<T extends BaseItem<?>> {
         this.flags.forEach(flag -> {
             this.itemMeta.addItemFlags(flag);
         });
+        Optional.ofNullable(this.potionType).ifPresent(type -> {
+            if(this.itemMeta instanceof PotionMeta potionMeta)
+                potionMeta.setBasePotionType(this.potionType);
+        });
+        this.itemMeta.removeEnchantments();
+        for(Map.Entry<Enchantment, EnchantData> enchant : this.enchantments.entrySet()) {
+            this.itemMeta.addEnchant(enchant.getKey(), enchant.getValue().getLevel(), enchant.getValue().isIgnoreLevelRestrictions());
+        }
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
     }
