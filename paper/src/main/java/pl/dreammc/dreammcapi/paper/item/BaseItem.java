@@ -6,6 +6,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -13,8 +14,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
+import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 
 import java.util.*;
 
@@ -33,11 +37,14 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
     @Getter private final Set<ItemFlag> flags;
     @Getter private PotionType potionType;
     @Getter private final Map<Enchantment, EnchantData> enchantments;
+    @Getter @Nullable private Map<String, NBTTag<?>> tags;
+    @Nullable private PersistentDataContainer persistentDataContainer;
 
     protected BaseItem() {
         this.attributes = ArrayListMultimap.create();
         this.flags = new HashSet<>();
         this.enchantments = new HashMap<>();
+        this.tags = new HashMap<>();
     }
 
     protected BaseItem(Material material) {
@@ -45,6 +52,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         this.attributes = ArrayListMultimap.create();
         this.flags = new HashSet<>();
         this.enchantments = new HashMap<>();
+        this.tags = new HashMap<>();
     }
 
     protected BaseItem(ItemStack itemStack) {
@@ -61,6 +69,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         for(Map.Entry<Enchantment, Integer> entry : this.itemMeta.getEnchants().entrySet()) {
             this.enchantments.put(entry.getKey(), new EnchantData(entry.getValue(), entry.getKey().getMaxLevel() < entry.getValue()));
         }
+        this.persistentDataContainer = this.itemMeta.getPersistentDataContainer();
     }
 
     public T setName(Component name) {
@@ -185,6 +194,27 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         return this.itemStack;
     }
 
+    public <V> T addNBTTag(String key, PersistentDataType<?, V> type, V value) {
+        if(this.persistentDataContainer != null) {
+            this.persistentDataContainer.set(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type, value);
+        } else this.tags.put(key, new NBTTag<V>(key, type, value));
+        return (T) this;
+    }
+
+    public <V> boolean hasNBTTag(String key, PersistentDataType<?, V> type) {
+        if(this.persistentDataContainer != null) {
+            return this.persistentDataContainer.has(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type);
+        } else return this.tags.containsKey(key) && this.tags.get(key).getType().equals(type);
+    }
+
+    @Nullable
+    public <V> V getNBTTagValue(String key, PersistentDataType<?, V> type) {
+        if (!this.hasNBTTag(key, type)) return null;
+
+        if(this.persistentDataContainer != null) {
+            return this.persistentDataContainer.get(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type);
+        } else return (V) this.getTags().get(key).getValue();
+    }
 
     @Override
     public BaseItem<T> clone() {
@@ -199,6 +229,12 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
             clone.flags.addAll(this.flags);
             clone.potionType = this.potionType;
             clone.enchantments.putAll(this.enchantments);
+            if(this.persistentDataContainer != null) clone.persistentDataContainer = this.persistentDataContainer;
+            else {
+                for (NBTTag<?> tag : this.tags.values()) {
+                    clone.tags.put(tag.getKey(), tag);
+                }
+            }
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
