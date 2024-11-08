@@ -190,6 +190,15 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         for (Map.Entry<Enchantment, EnchantData> enchant : this.enchantments.entrySet()) {
             this.itemMeta.addEnchant(enchant.getKey(), enchant.getValue().getLevel(), enchant.getValue().isIgnoreLevelRestrictions());
         }
+
+        Optional.ofNullable(this.persistentDataContainer).ifPresent(container -> {
+            container.copyTo(this.itemMeta.getPersistentDataContainer(), false);
+        });
+        Optional.ofNullable(this.tags).ifPresent(tagMap -> {
+            for(NBTTag<?> tag : tagMap.values()) {
+                this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(PaperDreamMCAPI.getInstance(), tag.getKey()), tag.getType(), tag.getValue());
+            }
+        });
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
     }
