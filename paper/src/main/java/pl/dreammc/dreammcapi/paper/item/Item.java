@@ -15,4 +15,9 @@ public class Item extends BaseItem<Item> {
     public Item(ItemStack itemStack) {
         super(itemStack);
     }
+
+    @Override
+    public Item clone() {
+        return (Item) super.clone();
+    }
 }

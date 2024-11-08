@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.joml.Vector2i;
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.paper.item.BaseItem;
 import pl.dreammc.dreammcapi.paper.item.InventoryItem;
 
@@ -38,10 +39,9 @@ public abstract class PagedMenu extends InventoryMenu{
 
     public void generatePageContent() {
         this.clearPageContent();
-
         int maxPage = this.items.size() / this.pageSlots.size() + ((this.items.size() % this.pageSlots.size() == 0) ? 0 : 1);
         if(maxPage < currentPage) this.currentPage = maxPage;
-        int itemStartIndex = this.pageSlots.size() * this.currentPage;
+        int itemStartIndex = this.pageSlots.size() * (this.currentPage - 1);
         int itemEndIndex = Math.min(itemStartIndex + this.pageSlots.size(), this.items.size());
 
         for(int i = 0; i < this.pageSlots.size(); i++) {
