@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class BaseItem<T extends BaseItem<?>> {
+public class BaseItem<T extends BaseItem<?>> implements Cloneable{
 
     private ItemStack itemStack;
     private ItemMeta itemMeta;
@@ -63,7 +64,8 @@ public class BaseItem<T extends BaseItem<?>> {
     }
 
     public T setName(Component name) {
-        this.name = name;
+        if(name == null) this.name = null;
+        else this.name = name.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
         return (T) this;
     }
 
@@ -159,7 +161,7 @@ public class BaseItem<T extends BaseItem<?>> {
 
     @Nullable
     public ItemStack build() {
-        if(this.material == null || this.material == Material.AIR) return null;
+        if (this.material == null || this.material == Material.AIR) return null;
         this.itemStack = new ItemStack(this.material);
         this.itemStack.setAmount(Math.max(Math.min(this.amount, this.material.getMaxStackSize()), 1));
         this.itemMeta = this.itemStack.getItemMeta();
@@ -172,15 +174,34 @@ public class BaseItem<T extends BaseItem<?>> {
             this.itemMeta.addItemFlags(flag);
         });
         Optional.ofNullable(this.potionType).ifPresent(type -> {
-            if(this.itemMeta instanceof PotionMeta potionMeta)
+            if (this.itemMeta instanceof PotionMeta potionMeta)
                 potionMeta.setBasePotionType(this.potionType);
         });
         this.itemMeta.removeEnchantments();
-        for(Map.Entry<Enchantment, EnchantData> enchant : this.enchantments.entrySet()) {
+        for (Map.Entry<Enchantment, EnchantData> enchant : this.enchantments.entrySet()) {
             this.itemMeta.addEnchant(enchant.getKey(), enchant.getValue().getLevel(), enchant.getValue().isIgnoreLevelRestrictions());
         }
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
     }
 
+
+    @Override
+    public BaseItem<T> clone() {
+        try {
+            BaseItem<T> clone = (BaseItem<T>) super.clone();
+            clone.material = this.material;
+            clone.name = this.name;
+            clone.amount = this.amount;
+            clone.lore = new Lore<>((T) clone, this.lore().getLoreLines());
+            clone.unbreakable = this.unbreakable;
+            clone.attributes.putAll(this.attributes);
+            clone.flags.addAll(this.flags);
+            clone.potionType = this.potionType;
+            clone.enchantments.putAll(this.enchantments);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

@@ -28,4 +28,10 @@ public class InventoryItem extends BaseItem<InventoryItem> {
         return this;
     }
 
+    @Override
+    public InventoryItem clone() {
+        InventoryItem clone = (InventoryItem) super.clone();
+        clone.clickAction = this.clickAction;
+        return clone;
+    }
 }

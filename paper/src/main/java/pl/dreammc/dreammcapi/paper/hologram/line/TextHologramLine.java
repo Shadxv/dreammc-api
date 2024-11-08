@@ -8,6 +8,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import pl.dreammc.dreammcapi.api.util.TextUtil;
 
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
     @Getter private boolean shadowed = false;
     @Getter private byte textOpacity = -1;
     @Getter private float scale = 1.0f;
+    @Getter private int lines;
     private static final float DEFAULT_HEIGHT = 0.275f;
 
     public TextHologramLine() {}
@@ -27,6 +29,7 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
     public TextHologramLine setText(Component text) {
         this.text = text;
         if(this.isSpawned) ((TextDisplay) this.entity).text(text);
+        this.lines = TextUtil.countLines(text, 200);
         return this;
     }
 
@@ -107,8 +110,8 @@ public class TextHologramLine extends ServerSideHologramLine<TextHologramLine> {
                 )
         );
 
-        float heightChange = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y() - this.height;
-        this.height = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y();
+        float heightChange = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y() * this.lines - this.height;
+        this.height = DEFAULT_HEIGHT * textDisplay.getTransformation().getScale().y() * this.lines;
         this.parrent.getHeight().set(this.parrent.getHeight().get() + heightChange + this.spacing);
 
         this.isSpawned = true;

@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lore<T extends BaseItem> {
+public class Lore<T extends BaseItem<?>>{
 
     @Getter private final List<Component> loreLines;
     @Getter private final T parent;
@@ -82,4 +82,5 @@ public class Lore<T extends BaseItem> {
     public T endLore() {
         return (T) this.parent;
     }
+
 }
