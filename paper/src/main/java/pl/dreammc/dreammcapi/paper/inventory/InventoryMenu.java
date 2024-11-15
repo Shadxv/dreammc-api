@@ -1,5 +1,6 @@
 package pl.dreammc.dreammcapi.paper.inventory;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +21,7 @@ import java.util.Map;
 public abstract class InventoryMenu implements InventoryHolder {
 
     private Inventory inventory;
-    private final Player player;
+    @Getter private final Player player;
     private final Component title;
     private final int rows;
     private final Map<Integer, BaseItem<?>> items;
