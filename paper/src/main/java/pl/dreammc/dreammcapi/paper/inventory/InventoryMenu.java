@@ -50,7 +50,7 @@ public abstract class InventoryMenu implements InventoryHolder {
     protected abstract boolean onClose0(InventoryCloseEvent event);
 
     public void onClose(InventoryCloseEvent event) {
-        if(!onClose0(event)) {
+        if(!onClose0(event) && event.getReason() != InventoryCloseEvent.Reason.PLUGIN) {
             this.open();
             return;
         }
