@@ -51,14 +51,18 @@ public abstract class PagedMenu extends InventoryMenu{
             this.addItem(slot, this.items.get(itemIndex));
         }
 
-        this.addItem(this.previousPageItemSlot, this.getPreviousPageItem(this.currentPage, maxPage));
-        this.addItem(this.nextPageItemSlot, this.getNextPageItem(this.currentPage, maxPage));
+        if(this.currentPage > 1)
+            this.addItem(this.previousPageItemSlot, this.getPreviousPageItem(this.currentPage, maxPage));
+        if(this.currentPage < maxPage)
+            this.addItem(this.nextPageItemSlot, this.getNextPageItem(this.currentPage, maxPage));
     }
 
     public void clearPageContent() {
         for(int slot : this.pageSlots) {
             this.addItem(slot, null);
         }
+        this.addItem(this.previousPageItemSlot, null);
+        this.addItem(this.nextPageItemSlot, null);
     }
 
     public void handlePageChange(int delta) {
