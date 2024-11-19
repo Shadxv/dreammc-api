@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
 import org.bson.Document;
+import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.database.codec.UUIDCodec;
@@ -21,7 +22,11 @@ public class MongoConnectionManager {
         this.mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyConnectionString(new ConnectionString(uri))
-                        .codecRegistry(CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), CodecRegistries.fromCodecs(new UUIDCodec())))
+                        .uuidRepresentation(UuidRepresentation.STANDARD)
+                        .codecRegistry(CodecRegistries.fromRegistries(
+                                MongoClientSettings.getDefaultCodecRegistry(),
+                                CodecRegistries.fromCodecs(new UUIDCodec())
+                        ))
                         .build());
     }
 

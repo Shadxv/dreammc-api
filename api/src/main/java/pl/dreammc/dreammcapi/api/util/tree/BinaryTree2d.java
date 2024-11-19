@@ -1,6 +1,7 @@
 package pl.dreammc.dreammcapi.api.util.tree;
 
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BinaryTree2d<T> {
 
@@ -28,8 +29,11 @@ public abstract class BinaryTree2d<T> {
         return current;
     }
 
+    @Nullable
     public T nearest(int x, int z) {
-        return nearestRec(root, x, z, 0, null, Double.MAX_VALUE).getValue();
+        Node<T> result = nearestRec(root, x, z, 0, null, Double.MAX_VALUE);
+        if(result == null) return null;
+        return result.getValue();
     }
 
     private Node<T> nearestRec(Node<T> current, int targetX, int targetZ, int depth, Node<T> best, double bestDist) {
