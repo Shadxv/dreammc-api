@@ -6,10 +6,7 @@ import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
-import pl.dreammc.dreammcapi.paper.manager.HologramManager;
-import pl.dreammc.dreammcapi.paper.manager.InventoryManager;
-import pl.dreammc.dreammcapi.paper.manager.NPCManager;
-import pl.dreammc.dreammcapi.paper.manager.PaperListenerManager;
+import pl.dreammc.dreammcapi.paper.manager.*;
 import pl.dreammc.dreammcapi.paper.player.PaperMessageSenderImpl;
 import pl.dreammc.dreammcapi.shared.Registry;
 
@@ -20,6 +17,8 @@ public class PaperDreamMCAPI extends JavaPlugin {
     @Getter private InventoryManager inventoryManager;
     @Getter private HologramManager hologramManager;
     @Getter private NPCManager npcManager;
+    @Getter private CommandManager commandManager;
+    @Getter private InputManager inputManager;
 
     @Override
     public void onLoad() {
@@ -45,6 +44,8 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.inventoryManager = new InventoryManager();
         this.hologramManager = new HologramManager();
         this.npcManager = new NPCManager();
+        this.commandManager = new CommandManager();
+        this.inputManager = new InputManager();
     }
 
     @Override
