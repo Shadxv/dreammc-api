@@ -11,7 +11,7 @@ public class SubcommandHandler {
     public static ICommandResponse handleSubcommand(CommandSender sender, String label, String[] args, Map<String, PaperSubcommand> subcommands) {
         if(args.length == 0) return CommandResponse.INVALID_ARGUMENTS;
         String nextArg = args[0].toLowerCase();
-        if(!subcommands.containsKey(nextArg)) return CommandResponse.INVALID_ARGUMENTS;
+        if(!subcommands.containsKey(nextArg)) return CommandResponse.SUBCOMMAND_NOT_FOUND;
         return subcommands.get(nextArg).execute(sender, label, args);
     }
 

@@ -13,6 +13,7 @@ public enum CommandResponse implements ICommandResponse{
     NOT_EXISTS("Taka komenda nie istnieje"),
     ONLY_PLAYER("Console does not support this command"),
     INVALID_ARGUMENTS("Podane argumenty nie są prawidłowe"),
+    SUBCOMMAND_NOT_FOUND(null),
     CUSTOM(null);
 
     final String message;

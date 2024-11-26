@@ -9,7 +9,7 @@ import java.util.List;
 public interface ICommandBase {
 
     @NotNull ICommandResponse execute0(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args);
-    default List<String> aditionalCompletions() {
+    default List<String> additionalCompletions() {
         return List.of();
     }
 
