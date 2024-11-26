@@ -3,6 +3,7 @@ package pl.dreammc.dreammcapi.paper.item;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import pl.dreammc.dreammcapi.api.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,11 @@ public class Lore<T extends BaseItem<?>>{
 
     public Lore<T> addLine(Component component) {
         this.loreLines.add(component.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        return this;
+    }
+
+    public Lore<T> addLine(String component) {
+        this.loreLines.add(TextUtil.deserializeText(component).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         return this;
     }
 

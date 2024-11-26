@@ -16,11 +16,12 @@ public abstract class BinaryTree2d<T> {
             return newNode;
         }
 
-        int dim = depth % 2;
+        int dim = depth % 2; // 0 -> X, 1 -> Z
         int point = dim == 0 ? this.getNodeX(newNode) : this.getNodeZ(newNode);
         int currentPoint = dim == 0 ? this.getNodeX(current) : this.getNodeZ(current);
 
-        if (point < currentPoint) {
+        if (point < currentPoint || (point == currentPoint && dim == 0 && this.getNodeZ(newNode) < this.getNodeZ(current))
+                || (point == currentPoint && dim == 1 && this.getNodeX(newNode) < this.getNodeX(current))) {
             current.setLeftNode(insertRec(current.getLeftNode(), newNode, depth + 1));
         } else {
             current.setRightNode(insertRec(current.getRightNode(), newNode, depth + 1));
@@ -32,7 +33,7 @@ public abstract class BinaryTree2d<T> {
     @Nullable
     public T nearest(int x, int z) {
         Node<T> result = nearestRec(root, x, z, 0, null, Double.MAX_VALUE);
-        if(result == null) return null;
+        if (result == null) return null;
         return result.getValue();
     }
 
@@ -48,7 +49,7 @@ public abstract class BinaryTree2d<T> {
             bestDist = distance;
         }
 
-        int dim = depth % 2;
+        int dim = depth % 2; // 0 -> X, 1 -> Z
         int targetPos = dim == 0 ? targetX : targetZ;
         int currentPos = dim == 0 ? this.getNodeX(current) : this.getNodeZ(current);
 
@@ -57,7 +58,7 @@ public abstract class BinaryTree2d<T> {
 
         best = nearestRec(next, targetX, targetZ, depth + 1, best, bestDist);
 
-        if (Math.abs(currentPos - targetPos) < bestDist) {
+        if (Math.abs(currentPos - targetPos) <= bestDist) {
             best = nearestRec(other, targetX, targetZ, depth + 1, best, bestDist);
         }
 
