@@ -17,9 +17,9 @@ import java.util.Optional;
 public abstract class PaperCommand extends BukkitCommand implements ICommandBase{
 
     @Nullable protected final String permission;
-    protected final boolean playerOnly;
-    protected final boolean isHidden;
-    protected final Map<String, PaperSubcommand> subcommands;
+    @Getter protected final boolean playerOnly;
+    @Getter protected final boolean isHidden;
+    @Getter protected final Map<String, PaperSubcommand> subcommands;
 
     protected PaperCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage, @NotNull List<String> aliases, @Nullable String permission, boolean playerOnly, boolean isHidden, PaperSubcommand... subcommands) {
         super(name, description, usageMessage, aliases);
@@ -29,6 +29,9 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
         this.subcommands = new HashMap<>();
         for (PaperSubcommand subcommand : subcommands) {
             this.subcommands.put(subcommand.name, subcommand);
+            for(String alias : subcommand.aliases) {
+                this.subcommands.put(alias, subcommand);
+            }
         }
         if(this.permission != null) this.setPermission(this.permission);
     }
@@ -48,7 +51,10 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         Optional.ofNullable(this.canExecute(sender).getMessage()).ifPresentOrElse(sender::sendMessage, () ->  {
-            ICommandResponse response = this.execute0(sender, commandLabel, args);
+            ICommandResponse response;
+            if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
+                response = this.execute0(sender, commandLabel, args);
+
             switch (response.getResponse()) {
                 default -> {
                     Optional.ofNullable(response.getMessage()).ifPresent(sender::sendMessage);

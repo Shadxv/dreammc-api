@@ -72,10 +72,12 @@ public class NPCManager {
         if(!this.clientSideNPCs.containsKey(player)) {
             return;
         }
-        for(Integer id : this.clientSideNPCs.get(player)) {
+        List<Integer> idsToRemove = List.copyOf(this.clientSideNPCs.get(player));
+        for(Integer id : idsToRemove) {
             ClientSideHumanNPC npc = (ClientSideHumanNPC) this.registeredNPCs.get(id);
             npc.unregisterNPC();
         }
+        this.clientSideNPCs.remove(player);
     }
 
     public void spawnAllForPlayer(Player player) {

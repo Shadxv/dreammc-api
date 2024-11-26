@@ -1,5 +1,6 @@
 package pl.dreammc.dreammcapi.paper.command;
 
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public abstract class PaperSubcommand implements ICommandBase {
 
     protected final String name;
@@ -23,7 +25,7 @@ public abstract class PaperSubcommand implements ICommandBase {
     protected final Map<String, PaperSubcommand> subcommands;
 
 
-    public PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
+    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
         this.name = name;
         this.description = description;
         this.usage = usage;
@@ -34,6 +36,9 @@ public abstract class PaperSubcommand implements ICommandBase {
         this.subcommands = new HashMap<>();
         for (PaperSubcommand subcommand : subcommands) {
             this.subcommands.put(subcommand.name, subcommand);
+            for(String alias : subcommand.aliases) {
+                this.subcommands.put(alias, subcommand);
+            }
         }
     }
 
@@ -59,6 +64,9 @@ public abstract class PaperSubcommand implements ICommandBase {
         } else {
             nextArgs = new String[0];
         }
-        return this.execute0(sender, commandLabel, nextArgs);
+        ICommandResponse response;
+        if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
+            response = this.execute0(sender, commandLabel, nextArgs);
+        return response;
     }
 }
