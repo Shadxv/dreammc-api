@@ -1,12 +1,16 @@
 package pl.dreammc.dreammcapi.paper.item;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Server;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -14,6 +18,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionType;
@@ -39,6 +44,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
     @Getter private final Map<Enchantment, EnchantData> enchantments;
     @Getter @Nullable private Map<String, NBTTag<?>> tags;
     @Nullable private PersistentDataContainer persistentDataContainer;
+    @Getter @Nullable private PlayerProfile skullProfile;
 
     protected BaseItem() {
         this.attributes = ArrayListMultimap.create();
@@ -65,11 +71,17 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         this.unbreakable = this.itemMeta.isUnbreakable();
         this.attributes = this.itemMeta.getAttributeModifiers();
         this.flags = this.itemMeta.getItemFlags();
+        if (this.itemMeta instanceof PotionMeta potionMeta) {
+            this.potionType = potionMeta.getBasePotionType();
+        }
         this.enchantments = new HashMap<>();
         for(Map.Entry<Enchantment, Integer> entry : this.itemMeta.getEnchants().entrySet()) {
             this.enchantments.put(entry.getKey(), new EnchantData(entry.getValue(), entry.getKey().getMaxLevel() < entry.getValue()));
         }
         this.persistentDataContainer = this.itemMeta.getPersistentDataContainer();
+        if(this.itemMeta instanceof SkullMeta skullMeta) {
+            this.skullProfile = skullMeta.getPlayerProfile();
+        }
     }
 
     public T setName(Component name) {
@@ -168,6 +180,40 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         return (T) this;
     }
 
+    public <V> T addNBTTag(String key, PersistentDataType<?, V> type, V value) {
+        if(this.persistentDataContainer != null) {
+            this.persistentDataContainer.set(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type, value);
+        } else this.tags.put(key, new NBTTag<V>(key, type, value));
+        return (T) this;
+    }
+
+    public <V> boolean hasNBTTag(String key, PersistentDataType<?, V> type) {
+        if(this.persistentDataContainer != null) {
+            return this.persistentDataContainer.has(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type);
+        } else return this.tags.containsKey(key) && this.tags.get(key).getType().equals(type);
+    }
+
+    @Nullable
+    public <V> V getNBTTagValue(String key, PersistentDataType<?, V> type) {
+        if (!this.hasNBTTag(key, type)) return null;
+
+        if(this.persistentDataContainer != null) {
+            return this.persistentDataContainer.get(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type);
+        } else return (V) this.getTags().get(key).getValue();
+    }
+
+    public T setSkullProfile(PlayerProfile profile) {
+        this.skullProfile = profile;
+        return (T) this;
+    }
+
+    public T setSkullProfile(String texture, String signature) {
+        this.skullProfile = Bukkit.createProfile(UUID.randomUUID());
+        this.skullProfile.getProperties()
+                .add(new ProfileProperty("textures", texture, signature));
+        return (T) this;
+    }
+
     @Nullable
     public ItemStack build() {
         if (this.material == null || this.material == Material.AIR) return null;
@@ -199,30 +245,13 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
                 this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(PaperDreamMCAPI.getInstance(), tag.getKey()), tag.getType(), tag.getValue());
             }
         });
+        Optional.ofNullable(this.skullProfile).ifPresent(profile -> {
+            if (this.itemMeta instanceof SkullMeta skullMeta) {
+                skullMeta.setPlayerProfile(profile);
+            }
+        });
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
-    }
-
-    public <V> T addNBTTag(String key, PersistentDataType<?, V> type, V value) {
-        if(this.persistentDataContainer != null) {
-            this.persistentDataContainer.set(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type, value);
-        } else this.tags.put(key, new NBTTag<V>(key, type, value));
-        return (T) this;
-    }
-
-    public <V> boolean hasNBTTag(String key, PersistentDataType<?, V> type) {
-        if(this.persistentDataContainer != null) {
-            return this.persistentDataContainer.has(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type);
-        } else return this.tags.containsKey(key) && this.tags.get(key).getType().equals(type);
-    }
-
-    @Nullable
-    public <V> V getNBTTagValue(String key, PersistentDataType<?, V> type) {
-        if (!this.hasNBTTag(key, type)) return null;
-
-        if(this.persistentDataContainer != null) {
-            return this.persistentDataContainer.get(new NamespacedKey(PaperDreamMCAPI.getInstance(), key), type);
-        } else return (V) this.getTags().get(key).getValue();
     }
 
     @Override
@@ -244,6 +273,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
                     clone.tags.put(tag.getKey(), tag);
                 }
             }
+            clone.skullProfile = this.skullProfile;
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

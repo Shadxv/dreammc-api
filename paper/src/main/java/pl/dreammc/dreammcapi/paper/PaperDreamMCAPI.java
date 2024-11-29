@@ -5,6 +5,8 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.dreammc.dreammcapi.api.database.MongoService;
+import pl.dreammc.dreammcapi.paper.database.InventoryContentCodec;
+import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
 import pl.dreammc.dreammcapi.paper.player.PaperMessageSenderImpl;
@@ -24,6 +26,9 @@ public class PaperDreamMCAPI extends JavaPlugin {
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
+
+        MongoService.registerCodec(new ItemStackCodec());
+        MongoService.registerCodec(new InventoryContentCodec());
     }
 
     @Override

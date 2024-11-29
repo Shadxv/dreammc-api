@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.codecs.Codec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.logger.Logger;
@@ -20,6 +21,15 @@ public class MongoService {
     private static final Map<String, MongoDatabase> cachedDatabases = new HashMap<>();
     private static final Map<String, MongoCollection<Document>> cachedDocumentCollections = new HashMap<>();
     private static final Map<String, MongoCollection<?>> cachedMappedCollections = new HashMap<>();
+
+    public static void registerCodec(Codec<?> codec) {
+        mongoConnectionManager.addCodec(codec);
+    }
+
+    @Nullable
+    public static <T> Codec<T> getCodec(Class<T> clazz) {
+        return mongoConnectionManager.getCodec(clazz);
+    }
 
     public static boolean init() {
         if(!System.getenv().containsKey("MONGODB_URI")) {
