@@ -6,14 +6,13 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
+import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MongoService {
 
@@ -29,6 +28,15 @@ public class MongoService {
     @Nullable
     public static <T> Codec<T> getCodec(Class<T> clazz) {
         return mongoConnectionManager.getCodec(clazz);
+    }
+
+    @Nullable
+    public static <T> T decode(Document document, String key, Class<T> clazz) {
+        Codec<T> codec = getCodec(clazz);
+        if (codec == null) return null;
+        return Optional.ofNullable(document.get(key, Document.class))
+                .map(encodedDoc -> codec.decode(document.get(key, Document.class).toBsonDocument().asBsonReader(), DecoderContext.builder().build()))
+                .orElse(null);
     }
 
     public static boolean init() {
