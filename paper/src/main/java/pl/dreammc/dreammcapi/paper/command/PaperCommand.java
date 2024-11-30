@@ -1,11 +1,14 @@
 package pl.dreammc.dreammcapi.paper.command;
 
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pl.dreammc.dreammcapi.api.util.BaseColor;
 import pl.dreammc.dreammcapi.paper.command.response.CommandResponse;
 import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
 
@@ -52,7 +55,7 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         Optional.ofNullable(this.canExecute(sender).getMessage()).ifPresentOrElse(sender::sendMessage, () ->  {
             ICommandResponse response;
-            if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
+            if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.usageMessage, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
                 response = this.execute0(sender, commandLabel, args);
 
             switch (response.getResponse()) {

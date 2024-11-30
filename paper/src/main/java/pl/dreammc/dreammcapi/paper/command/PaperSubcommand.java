@@ -65,7 +65,7 @@ public abstract class PaperSubcommand implements ICommandBase {
             nextArgs = new String[0];
         }
         ICommandResponse response;
-        if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
+        if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.usage, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
             response = this.execute0(sender, commandLabel, nextArgs);
         return response;
     }
