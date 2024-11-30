@@ -3,6 +3,7 @@ package pl.dreammc.dreammcapi.paper.inventory;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.paper.item.BaseItem;
@@ -51,10 +52,16 @@ public abstract class PagedMenu extends InventoryMenu{
             this.addItem(slot, this.items.get(itemIndex));
         }
 
-        if(this.currentPage > 1)
+        if(this.currentPage > 1) {
             this.addItem(this.previousPageItemSlot, this.getPreviousPageItem(this.currentPage, maxPage));
-        if(this.currentPage < maxPage)
+            if (this.currentPage >= maxPage)
+                Optional.ofNullable(this.getArrowFillerIfNotExists()).ifPresent(item -> this.addItem(this.nextPageItemSlot, item));
+        }
+        if(this.currentPage < maxPage) {
             this.addItem(this.nextPageItemSlot, this.getNextPageItem(this.currentPage, maxPage));
+            if (this.currentPage <= 1)
+                Optional.ofNullable(this.getArrowFillerIfNotExists()).ifPresent(item -> this.addItem(this.previousPageItemSlot, item));
+        }
     }
 
     public void clearPageContent() {
@@ -74,6 +81,7 @@ public abstract class PagedMenu extends InventoryMenu{
 
     protected abstract InventoryItem getPreviousPageItem(int currentPage, int maxPage);
     protected abstract InventoryItem getNextPageItem(int currentPage, int maxPage);
+    protected abstract @Nullable InventoryItem getArrowFillerIfNotExists();
 
     public PagedMenu addItemToCollection(BaseItem<?> item) {
         this.items.add(item);

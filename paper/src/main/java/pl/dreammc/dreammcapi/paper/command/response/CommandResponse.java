@@ -12,7 +12,7 @@ public enum CommandResponse implements ICommandResponse{
     NO_PERMISSION("Nie posiadasz uprawnień do użycia tej komendy"),
     NOT_EXISTS("Taka komenda nie istnieje"),
     ONLY_PLAYER("Console does not support this command"),
-    INVALID_ARGUMENTS("Podane argumenty nie są prawidłowe"),
+    INVALID_ARGUMENTS("Prawidlowe uzycie: "),
     SUBCOMMAND_NOT_FOUND(null),
     CUSTOM(null);
 

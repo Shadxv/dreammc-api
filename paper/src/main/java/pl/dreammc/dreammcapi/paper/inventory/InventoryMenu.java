@@ -20,7 +20,7 @@ import java.util.Map;
 
 public abstract class InventoryMenu implements InventoryHolder {
 
-    private Inventory inventory;
+    protected Inventory inventory;
     @Getter private final Player player;
     private final Component title;
     private final int rows;
