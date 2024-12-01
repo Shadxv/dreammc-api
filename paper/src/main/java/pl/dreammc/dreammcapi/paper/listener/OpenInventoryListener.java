@@ -1,5 +1,6 @@
 package pl.dreammc.dreammcapi.paper.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,9 +17,12 @@ public class OpenInventoryListener implements Listener {
     public void onCustomMenuOpen(InventoryOpenEvent event) {
         Player player = (Player) event.getPlayer();
         if(!InventoryManager.getInstance().hasOpenedInventory(player.getUniqueId())) return;
-
         InventoryMenu menu = InventoryManager.getInstance().getOpenendInventory(player.getUniqueId());
         if(!Objects.requireNonNull(menu).getInventory().equals(event.getInventory())) return;
+        if(menu.isReopening()) {
+            menu.setReopening(false);
+            return;
+        }
         menu.onOpen(event);
     }
 

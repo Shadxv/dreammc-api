@@ -1,6 +1,7 @@
 package pl.dreammc.dreammcapi.paper.inventory;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,19 +13,22 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 import pl.dreammc.dreammcapi.paper.item.BaseItem;
 import pl.dreammc.dreammcapi.paper.manager.InventoryManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public abstract class InventoryMenu implements InventoryHolder {
 
-    protected Inventory inventory;
+    @Setter protected Inventory inventory;
     @Getter private final Player player;
     private final Component title;
     private final int rows;
     private final Map<Integer, BaseItem<?>> items;
+    @Getter @Setter private boolean reopening = false;
 
     protected InventoryMenu(Player player, Component title, int rows) {
         this.player = player;
@@ -51,7 +55,12 @@ public abstract class InventoryMenu implements InventoryHolder {
 
     public void onClose(InventoryCloseEvent event) {
         if(!onClose0(event) && event.getReason() != InventoryCloseEvent.Reason.PLUGIN) {
-            this.open();
+            this.reopening = true;
+            Bukkit.getAsyncScheduler().runDelayed(PaperDreamMCAPI.getInstance(), scheduledTask -> {
+                Bukkit.getScheduler().runTask(PaperDreamMCAPI.getInstance(), bukkitTask -> {
+                    event.getPlayer().openInventory(this.inventory);
+                });
+            }, 50, TimeUnit.MILLISECONDS);
             return;
         }
 

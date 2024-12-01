@@ -1,5 +1,6 @@
 package pl.dreammc.dreammcapi.paper.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,7 +20,9 @@ public class CloseInventoryListener implements Listener {
 
         InventoryMenu menu = InventoryManager.getInstance().getOpenendInventory(player.getUniqueId());
         if(!Objects.requireNonNull(menu).getInventory().equals(event.getInventory())) return;
-
+        if(menu.isReopening()) {
+            return;
+        }
         menu.onClose(event);
     }
 
