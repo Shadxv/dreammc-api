@@ -34,6 +34,10 @@ public class InteractInventoryListener implements Listener {
                     unlockedMenu.addItemToContnet(event.getSlot(), event.getCurrentItem());
                     unlockedMenu.handleChange(new ChangeAction(event.getSlot(), event.getCurrentItem(), ChangeType.ADDED_ITEM));
                 }
+            } else {
+                if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+                    event.setCancelled(true);
+                }
             }
             return;
         }
