@@ -45,8 +45,8 @@ public class InteractInventoryListener implements Listener {
         if(menu instanceof UnlockedMenu unlockedMenu && unlockedMenu.getUnlockedSlots().contains(event.getSlot())) {
             switch (event.getAction()) {
                 case PLACE_ALL, PLACE_SOME, PLACE_ONE -> {
-                    unlockedMenu.addItemToContnet(event.getSlot(), event.getCurrentItem());
-                    unlockedMenu.handleChange(new ChangeAction(event.getSlot(), event.getCurrentItem(), ChangeType.ADDED_ITEM));
+                    unlockedMenu.addItemToContnet(event.getSlot(), event.getCursor());
+                    unlockedMenu.handleChange(new ChangeAction(event.getSlot(), event.getCursor(), ChangeType.ADDED_ITEM));
                 }
                 case PICKUP_ALL, PICKUP_HALF, PICKUP_SOME, PICKUP_ONE, MOVE_TO_OTHER_INVENTORY -> {
                     unlockedMenu.removeItemFromContent(event.getSlot());
