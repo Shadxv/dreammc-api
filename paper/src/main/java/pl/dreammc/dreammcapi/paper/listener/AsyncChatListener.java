@@ -22,7 +22,7 @@ public class AsyncChatListener implements Listener {
             InputModel inputModel = InputManager.getInstance().getInputRequest(player);
             if(inputModel.getType() == InputModel.InputType.CHAT) {
                 inputModel.setInputValue(((TextComponent) message).content());
-                if(!inputModel.validate()) inputModel.reuseChat(Component.text("Invalid value. Please try agian!"));
+                if(!inputModel.validate()) inputModel.reuseChat();
                 else InputManager.getInstance().removeInputRequest(player);
                 return;
             }

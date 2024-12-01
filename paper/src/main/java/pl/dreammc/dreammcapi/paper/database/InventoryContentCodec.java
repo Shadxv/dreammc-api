@@ -1,21 +1,21 @@
 package pl.dreammc.dreammcapi.paper.database;
 
-import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import org.bukkit.inventory.ItemStack;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class InventoryContentCodec implements Codec<Map<Integer, ItemStack>> {
+public class InventoryContentCodec implements Codec<InventoryContentContainer> {
 
     @Override
-    public Map<Integer, ItemStack> decode(BsonReader bsonReader, DecoderContext decoderContext) {
+    public InventoryContentContainer decode(BsonReader bsonReader, DecoderContext decoderContext) {
         Map<Integer, ItemStack> map = new HashMap<>();
 
         Codec<ItemStack> itemStackCodec = MongoService.getCodec(ItemStack.class);
@@ -33,16 +33,16 @@ public class InventoryContentCodec implements Codec<Map<Integer, ItemStack>> {
 
         bsonReader.readEndDocument();
 
-        return map;
+        return new InventoryContentContainer(map);
     }
 
     @Override
-    public void encode(BsonWriter bsonWriter, Map<Integer, ItemStack> integerItemStackMap, EncoderContext encoderContext) {
+    public void encode(BsonWriter bsonWriter, InventoryContentContainer inventoryContentContainer, EncoderContext encoderContext) {
         Codec<ItemStack> itemStackCodec = MongoService.getCodec(ItemStack.class);
 
         bsonWriter.writeStartDocument();
 
-        for (Map.Entry<Integer, ItemStack> entry : integerItemStackMap.entrySet()) {
+        for (Map.Entry<Integer, ItemStack> entry : inventoryContentContainer.getContent().entrySet()) {
             bsonWriter.writeName(entry.getKey().toString());
             itemStackCodec.encode(bsonWriter, entry.getValue(), encoderContext);
         }
@@ -51,7 +51,7 @@ public class InventoryContentCodec implements Codec<Map<Integer, ItemStack>> {
     }
 
     @Override
-    public Class<Map<Integer, ItemStack>> getEncoderClass() {
-        return (Class<Map<Integer, ItemStack>>) (Class<?>) Map.class;
+    public Class<InventoryContentContainer> getEncoderClass() {
+        return InventoryContentContainer.class;
     }
 }

@@ -60,11 +60,12 @@ public abstract class InputModel {
     }
 
     private void useChat(Component message) {
+        if(message == null) return;
         this.owner.sendMessage(message);
     }
 
-    public void reuseChat(Component errorMessage) {
-        this.useChat(errorMessage.color(TextColor.fromHexString("#ff5555")));
+    public void reuseChat() {
+        this.useChat(null);
     }
 
     public void reopenSing(Component secondLine) {
