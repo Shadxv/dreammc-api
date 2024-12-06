@@ -39,7 +39,7 @@ public abstract class UnlockedMenu extends InventoryMenu{
         }
     }
 
-    protected void renderContent() {
+    public void renderContent() {
         if(this.inventory == null) return;
         this.clearContent();
         for(Map.Entry<Integer, ItemStack> entry : this.handledItems.entrySet()) {
