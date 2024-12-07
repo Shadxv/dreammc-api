@@ -31,6 +31,10 @@ public class InteractInventoryListener implements Listener {
         InventoryMenu menu = InventoryManager.getInstance().getOpenendInventory(player.getUniqueId());
         if(!Objects.requireNonNull(menu).getInventory().equals(event.getInventory())) return;
         if(event.getClickedInventory() == null) return;
+        if(event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+            event.setCancelled(true);
+            return;
+        }
         if(event.getClickedInventory().getType() == InventoryType.PLAYER) {
             if(menu instanceof UnlockedMenu unlockedMenu && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                 event.setCancelled(true);
