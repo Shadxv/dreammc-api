@@ -178,6 +178,22 @@ public class MongoService {
         return collection.updateOne(search, new Document("$push", update)).wasAcknowledged();
     }
 
+    public static boolean pushManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$push", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean pushManyValues(@NotNull MongoCollection<Document> collection, Document search, String updateKey, Object updateValue) {
+        return collection.updateMany(search, new Document("$push", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean pushManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, Document update) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$push", update)).wasAcknowledged();
+    }
+
+    public static boolean pushManyValues(@NotNull MongoCollection<Document> collection, Document search, Document update) {
+        return collection.updateMany(search, new Document("$push", update)).wasAcknowledged();
+    }
+
     public static boolean pullOneValue(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
         return collection.updateOne(Filters.eq(searchKey, searchValue), new Document("$pull", new Document(updateKey, updateValue))).wasAcknowledged();
     }
@@ -192,6 +208,54 @@ public class MongoService {
 
     public static boolean pullOneValue(@NotNull MongoCollection<Document> collection, Document search, Document update) {
         return collection.updateOne(search, new Document("$pull", update)).wasAcknowledged();
+    }
+
+    public static boolean pullManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$pull", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean pullManyValues(@NotNull MongoCollection<Document> collection, Document search, String updateKey, Object updateValue) {
+        return collection.updateMany(search, new Document("$pull", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean pullManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, Document update) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$pull", update)).wasAcknowledged();
+    }
+
+    public static boolean pullManyValues(@NotNull MongoCollection<Document> collection, Document search, Document update) {
+        return collection.updateMany(search, new Document("$pull", update)).wasAcknowledged();
+    }
+
+    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
+        return collection.updateOne(Filters.eq(searchKey, searchValue), new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, Document search, String updateKey, Object updateValue) {
+        return collection.updateOne(search, new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, Document update) {
+        return collection.updateOne(Filters.eq(searchKey, searchValue), new Document("$unset", update)).wasAcknowledged();
+    }
+
+    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, Document search, Document update) {
+        return collection.updateOne(search, new Document("$unset", update)).wasAcknowledged();
+    }
+
+    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, Document search, String updateKey, Object updateValue) {
+        return collection.updateMany(search, new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    }
+
+    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, Document update) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$unset", update)).wasAcknowledged();
+    }
+
+    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, Document search, Document update) {
+        return collection.updateMany(search, new Document("$unset", update)).wasAcknowledged();
     }
 
 }
