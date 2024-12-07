@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.util.BaseColor;
 import pl.dreammc.dreammcapi.paper.command.response.CommandResponse;
 import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
+import pl.dreammc.dreammcapi.paper.command.response.InvalidArgumentResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,8 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
             ICommandResponse response;
             if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.usageMessage, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
                 response = this.execute0(sender, commandLabel, args);
-
+            if(response == CommandResponse.INVALID_ARGUMENTS)
+                response = new InvalidArgumentResponse(this.usageMessage);
             switch (response.getResponse()) {
                 default -> {
                     Optional.ofNullable(response.getMessage()).ifPresent(sender::sendMessage);
