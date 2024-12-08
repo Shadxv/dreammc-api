@@ -18,6 +18,7 @@ public abstract class PagedMenu extends InventoryMenu{
     private final int previousPageItemSlot;
     private final int nextPageItemSlot;
     private final List<BaseItem<?>> items;
+    @Getter private final List<BaseItem<?>> currentlyShown;
     private final List<Integer> pageSlots;
     @Getter private int currentPage;
 
@@ -29,6 +30,7 @@ public abstract class PagedMenu extends InventoryMenu{
         this.previousPageItemSlot = previousPageItemSlot;
         this.nextPageItemSlot = nextPageItemSlot;
         this.items = new LinkedList<>();
+        this.currentlyShown = new LinkedList<>();
         this.currentPage = 1;
         this.pageSlots = new ArrayList<>();
         for(int y = this.pageSlotStart.y(); y <= this.pageSlotEnd.y(); y++) {
@@ -39,6 +41,7 @@ public abstract class PagedMenu extends InventoryMenu{
     }
 
     public void generatePageContent() {
+        this.currentlyShown.clear();
         this.clearPageContent();
         int maxPage = this.items.size() / this.pageSlots.size() + ((this.items.size() % this.pageSlots.size() == 0) ? 0 : 1);
         if(maxPage < currentPage) this.currentPage = maxPage;
@@ -49,7 +52,9 @@ public abstract class PagedMenu extends InventoryMenu{
             int itemIndex = itemStartIndex + i;
             if(itemIndex >= itemEndIndex) break;
             int slot = this.pageSlots.get(i);
-            this.addItem(slot, this.items.get(itemIndex));
+            BaseItem<?> item = this.items.get(itemIndex);
+            this.addItem(slot, item);
+            this.currentlyShown.add(item);
         }
 
         if(maxPage == 1) {
