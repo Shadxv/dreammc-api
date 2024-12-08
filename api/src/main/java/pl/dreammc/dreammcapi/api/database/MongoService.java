@@ -226,12 +226,12 @@ public class MongoService {
         return collection.updateMany(search, new Document("$pull", update)).wasAcknowledged();
     }
 
-    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
-        return collection.updateOne(Filters.eq(searchKey, searchValue), new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey) {
+        return collection.updateOne(Filters.eq(searchKey, searchValue), new Document("$unset", new Document(updateKey, ""))).wasAcknowledged();
     }
 
-    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, Document search, String updateKey, Object updateValue) {
-        return collection.updateOne(search, new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, Document search, String updateKey) {
+        return collection.updateOne(search, new Document("$unset", new Document(updateKey, ""))).wasAcknowledged();
     }
 
     public static boolean removeOneValue(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, Document update) {
@@ -242,12 +242,12 @@ public class MongoService {
         return collection.updateOne(search, new Document("$unset", update)).wasAcknowledged();
     }
 
-    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey, Object updateValue) {
-        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, String updateKey) {
+        return collection.updateMany(Filters.eq(searchKey, searchValue), new Document("$unset", new Document(updateKey, ""))).wasAcknowledged();
     }
 
-    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, Document search, String updateKey, Object updateValue) {
-        return collection.updateMany(search, new Document("$unset", new Document(updateKey, updateValue))).wasAcknowledged();
+    public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, Document search, String updateKey) {
+        return collection.updateMany(search, new Document("$unset", new Document(updateKey, ""))).wasAcknowledged();
     }
 
     public static boolean removeManyValues(@NotNull MongoCollection<Document> collection, String searchKey, Object searchValue, Document update) {
