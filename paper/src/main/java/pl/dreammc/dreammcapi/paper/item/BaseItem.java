@@ -260,6 +260,15 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         return (T) this;
     }
 
+    public T clearEnchants() {
+        if(this.isConverted) {
+            this.itemMeta.removeEnchantments();
+            return (T) this;
+        }
+        this.enchantments.clear();
+        return (T) this;
+    }
+
     public boolean hasEnchant(Enchantment enchantment) {
         if(this.isConverted) {
             return this.itemMeta.hasEnchant(enchantment);
