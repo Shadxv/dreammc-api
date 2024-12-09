@@ -5,13 +5,12 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
-import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.paper.item.BaseItem;
 import pl.dreammc.dreammcapi.paper.item.InventoryItem;
 
 import java.util.*;
 
-public abstract class PagedMenu extends InventoryMenu{
+public abstract class PagedMenu extends InventoryMenu {
 
     private final Vector2i pageSlotStart;
     private final Vector2i pageSlotEnd;
@@ -44,7 +43,10 @@ public abstract class PagedMenu extends InventoryMenu{
         this.currentlyShown.clear();
         this.clearPageContent();
         int maxPage = this.items.size() / this.pageSlots.size() + ((this.items.size() % this.pageSlots.size() == 0) ? 0 : 1);
-        if(maxPage < currentPage) this.currentPage = maxPage;
+        if(maxPage < currentPage) {
+            if(maxPage == 0) maxPage = 1;
+            this.currentPage = maxPage;
+        }
         int itemStartIndex = this.pageSlots.size() * (this.currentPage - 1);
         int itemEndIndex = Math.min(itemStartIndex + this.pageSlots.size(), this.items.size());
 

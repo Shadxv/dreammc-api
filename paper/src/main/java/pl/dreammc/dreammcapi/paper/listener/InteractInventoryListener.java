@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import pl.dreammc.dreammcapi.paper.event.CustomInventoryClickEvent;
 import pl.dreammc.dreammcapi.paper.inventory.InventoryMenu;
 import pl.dreammc.dreammcapi.paper.inventory.UnlockedMenu;
 import pl.dreammc.dreammcapi.paper.inventory.action.ChangeAction;
@@ -152,8 +153,9 @@ public class InteractInventoryListener implements Listener {
 
         BaseItem<?> item = menu.getItem(event.getSlot());
         if(!(item instanceof InventoryItem inventoryItem)) return;
-
-        if(inventoryItem.getClickAction() != null) inventoryItem.getClickAction().accept(event);
+        CustomInventoryClickEvent custonEvent = new CustomInventoryClickEvent(event);
+        if(inventoryItem.getClickAction() != null) inventoryItem.getClickAction().accept(custonEvent);
+        Optional.ofNullable(custonEvent.getClickSound()).ifPresent(player::playSound);
     }
 
     @Nullable

@@ -20,7 +20,7 @@ public class Lore<T extends BaseItem<?>>{
 
     public Lore(T parent, List<Component> loreLines) {
         this.parent = parent;
-        this.loreLines = loreLines;
+        this.loreLines = loreLines == null ? new ArrayList<>() : loreLines;
     }
 
     public Lore<T> addLine(Component component) {
