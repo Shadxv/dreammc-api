@@ -23,12 +23,12 @@ jobs:
             exit 0
           fi
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         if: success()
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '17'
+          java-version: '21'
 
       - name: Increment version
         if: success()
