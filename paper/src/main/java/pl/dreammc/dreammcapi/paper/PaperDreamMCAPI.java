@@ -23,6 +23,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     @Getter private NPCManager npcManager;
     @Getter private CommandManager commandManager;
     @Getter private InputManager inputManager;
+    @Getter private ScoreboardManager scoreboardManager;
 
     @Getter private Scoreboard serverMainScoreboard;
 
@@ -56,6 +57,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.npcManager = new NPCManager();
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();
+        this.scoreboardManager = new ScoreboardManager();
     }
 
     @Override

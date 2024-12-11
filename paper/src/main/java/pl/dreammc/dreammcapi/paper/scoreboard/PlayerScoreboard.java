@@ -89,6 +89,12 @@ public class PlayerScoreboard {
         this.scoreboardObjective = null;
 
         connection.send(removeObjectivePacket);
+        for(UUID lineUUID : this.playerScoreboardLines.keySet()) {
+            if(!this.parrent.getUpdatableScoreboardLines().containsKey(lineUUID)) continue;
+            UpdatableScoreboardLine line = this.parrent.getUpdatableScoreboardLines().get(lineUUID);
+            line.getPlayerWithLine().remove(this.player.getUniqueId());
+            if(line.getPlayerWithLine().isEmpty()) line.stopTask();
+        }
     }
 
 
@@ -103,7 +109,7 @@ public class PlayerScoreboard {
     }
 
     public void addLine(int index, PlayerScoreboardLine line) {
-        for(int i = index + 1; i < this.lineUUIDs.size(); i++) {
+        for(int i = index; i < this.lineUUIDs.size(); i++) {
             UUID currentLineUUID = this.lineUUIDs.get(i);
             if(!this.playerScoreboardLines.containsKey(currentLineUUID)) continue;
             this.playerScoreboardLines.get(currentLineUUID)
