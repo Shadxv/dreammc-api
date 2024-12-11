@@ -232,4 +232,9 @@ public class ScoreboardModel {
     public PlayerScoreboard getPlayersScoreboard(Player player) {
         return this.playersScoreboard.get(player.getUniqueId());
     }
+
+    @Nullable
+    public PlayerScoreboard getPlayersScoreboard(UUID uuid) {
+        return this.playersScoreboard.get(uuid);
+    }
 }
