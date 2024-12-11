@@ -39,6 +39,11 @@ public class ScoreboardManager {
         return this.playersScoreboard.get(player.getUniqueId());
     }
 
+    @Nullable
+    public ScoreboardModel getPlayersScoreboard(UUID uuid) {
+        return this.playersScoreboard.get(uuid);
+    }
+
     public static ScoreboardManager getInstance() {
         return PaperDreamMCAPI.getInstance().getScoreboardManager();
     }
