@@ -132,7 +132,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
 
     public Lore<T> lore() {
         if(this.lore == null) {
-            if(this.isConverted) this.lore = new Lore<>((T) this, this.itemMeta.lore());
+            if(this.isConverted) this.lore = new Lore<T>((T) this, this.itemMeta.lore());
             else this.lore = new Lore<T>((T) this);
         }
         return this.lore;
@@ -353,8 +353,8 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
     @Nullable
     public ItemStack build() {
         if(this.isConverted) {
-            this.itemStack.setItemMeta(this.itemMeta);
             Optional.ofNullable(this.lore).ifPresent(lore -> this.itemMeta.lore(lore.getLoreLines()));
+            this.itemStack.setItemMeta(this.itemMeta);
             return this.itemStack;
         }
         if (this.material == null || this.material == Material.AIR) return null;

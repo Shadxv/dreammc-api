@@ -4,12 +4,13 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import pl.dreammc.dreammcapi.paper.event.CustomInventoryClickEvent;
 
 import java.util.function.Consumer;
 
 public class InventoryItem extends BaseItem<InventoryItem> {
 
-    @Getter Consumer<InventoryClickEvent> clickAction;
+    @Getter Consumer<CustomInventoryClickEvent> clickAction;
 
     public InventoryItem() {
         super();
@@ -23,7 +24,7 @@ public class InventoryItem extends BaseItem<InventoryItem> {
         super(itemStack);
     }
 
-    public InventoryItem click(Consumer<InventoryClickEvent> action) {
+    public InventoryItem click(Consumer<CustomInventoryClickEvent> action) {
         this.clickAction = action;
         return this;
     }

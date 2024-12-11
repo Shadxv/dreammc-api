@@ -5,6 +5,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import pl.dreammc.dreammcapi.paper.manager.NPCManager;
+import pl.dreammc.dreammcapi.paper.manager.ScoreboardManager;
+import pl.dreammc.dreammcapi.paper.scoreboard.ScoreboardModel;
 
 public class PlayerJoinListener implements Listener {
 
@@ -13,6 +15,8 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         NPCManager.getInstance().spawnAllForPlayer(player);
+        ScoreboardModel defaultScoreboard = ScoreboardManager.getInstance().getDefaultScoreboard();
+        if(defaultScoreboard != null) defaultScoreboard.addViewer(player);
     }
 
 }

@@ -2,6 +2,7 @@ package pl.dreammc.dreammcapi.paper.inventory;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,15 +20,18 @@ import pl.dreammc.dreammcapi.paper.manager.InventoryManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public abstract class InventoryMenu implements InventoryHolder {
 
-    @Setter protected Inventory inventory;
+    protected Inventory inventory;
     @Getter private final Player player;
     private final Component title;
     private final int rows;
     private final Map<Integer, BaseItem<?>> items;
+    @Nullable @Getter @Setter Sound openSound;
+    @Nullable @Getter @Setter Sound closeSound;
     @Getter @Setter private boolean reopening = false;
 
     protected InventoryMenu(Player player, Component title, int rows) {
@@ -49,6 +53,7 @@ public abstract class InventoryMenu implements InventoryHolder {
         InventoryManager.getInstance().updateInventory(this.player.getUniqueId(), this);
         this.inventory = Bukkit.createInventory(this, this.rows*9, this.title);
         this.player.openInventory(this.inventory);
+        Optional.ofNullable(this.openSound).ifPresent(player::playSound);
     }
 
     protected abstract boolean onClose0(InventoryCloseEvent event);
@@ -65,6 +70,7 @@ public abstract class InventoryMenu implements InventoryHolder {
         }
 
         InventoryManager.getInstance().closeInventory(this.player.getUniqueId());
+        Optional.ofNullable(this.closeSound).ifPresent(player::playSound);
     }
 
     public int getSize() {

@@ -1,5 +1,6 @@
 plugins {
     `maven-publish`
+    id("io.papermc.paperweight.userdev") version "1.7.7"
 }
 
 repositories {
@@ -10,6 +11,7 @@ repositories {
 dependencies {
     implementation(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
 
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
 }
@@ -27,6 +29,10 @@ tasks.jar {
     archiveFileName.set("api-paper.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
+
+tasks.assemble {
+    dependsOn(tasks.reobfJar)
 }
 
 publishing {
