@@ -9,15 +9,17 @@ import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import pl.dreammc.dreammcapi.paper.ulit.NMSUtil;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
 public class PlayerScoreboardLine {
 
-    private final PlayerScoreboard parrent;
+    @Getter private final PlayerScoreboard parrent;
     @Getter private final UUID lineUUID;
     @Getter private int lineNumber;
-    private Component lineComponent;
+    @Getter private Component lineComponent;
 
     public PlayerScoreboardLine updateLine() {
         ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.parrent.getPlayer());
@@ -26,8 +28,8 @@ public class PlayerScoreboardLine {
                 this.lineUUID.toString(),
                 "sidebar",
                 15 - lineNumber,
-                NMSUtil.toNMSComponent(this.lineComponent),
-                BlankFormat.INSTANCE
+                Optional.of(NMSUtil.toNMSComponent(this.lineComponent)),
+                Optional.of(BlankFormat.INSTANCE)
         );
 
         connection.send(modifyScoreLine);

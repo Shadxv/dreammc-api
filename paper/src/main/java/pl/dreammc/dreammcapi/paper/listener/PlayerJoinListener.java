@@ -16,7 +16,7 @@ public class PlayerJoinListener implements Listener {
 
         NPCManager.getInstance().spawnAllForPlayer(player);
         ScoreboardModel defaultScoreboard = ScoreboardManager.getInstance().getDefaultScoreboard();
-        if(defaultScoreboard != null) defaultScoreboard.addViewer(player);
+        if(defaultScoreboard != null) ScoreboardManager.getInstance().setPlayersScoreboard(player, defaultScoreboard);
     }
 
 }

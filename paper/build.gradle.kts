@@ -10,8 +10,8 @@ repositories {
 
 dependencies {
     implementation(project(":api"))
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
 
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
 }
