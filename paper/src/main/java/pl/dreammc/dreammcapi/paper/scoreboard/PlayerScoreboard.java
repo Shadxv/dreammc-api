@@ -13,7 +13,8 @@ import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboard;
+
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
@@ -27,7 +28,7 @@ public class PlayerScoreboard {
 
     @Getter private final Player player;
     @Getter private final ScoreboardModel parrent;
-    public Component header;
+    @Getter private Component header;
     private final Map<UUID, PlayerScoreboardLine> playerScoreboardLines;
     private final List<UUID> lineUUIDs;
     private boolean isSpawned;
@@ -79,12 +80,8 @@ public class PlayerScoreboard {
         if(!Bukkit.getOnlinePlayers().contains(this.player)) return;
 
         ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.player);
-
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
-        var removeObjectivePacket = new ClientboundSetObjectivePacket(new FriendlyByteBuf(byteBuf)
-                .writeUtf("sidebar")
-                .writeByte(1)
-        );
+        if(this.scoreboardObjective == null) return;
+        var removeObjectivePacket = new ClientboundSetObjectivePacket(this.scoreboardObjective, 1);
 
         this.scoreboardObjective = null;
 

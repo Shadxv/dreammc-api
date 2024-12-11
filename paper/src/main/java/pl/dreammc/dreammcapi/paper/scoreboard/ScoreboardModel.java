@@ -60,8 +60,11 @@ public class ScoreboardModel {
                 new HashMap<>(),
                 new LinkedList<>()
         );
-        for(ScoreboardLine line : this.lines.values()) {
+        for(UUID lineUUID : this.lineUUIDs) {
+            if(!this.lines.containsKey(lineUUID)) continue;
+            ScoreboardLine line = this.lines.get(lineUUID);
             PlayerScoreboardLine playerLine = new PlayerScoreboardLine(scoreboard, line.getLineUUID(), line.getLineNumber(), line.getText());
+            scoreboard.addLine(playerLine.getLineNumber(), playerLine);
             if(line instanceof StateScoreboardLine stateScoreboardLine) {
                 stateScoreboardLine.getStateUpdater().accept(playerLine);
             } else if(line instanceof UpdatableScoreboardLine updatableScoreboardLine) {

@@ -10,7 +10,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url = uri("https://papermc.io/repo/repository/maven-public/")
+            url = uri("https://repo.papermc.io/repository/maven-public/")
         }
         maven {
             url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
@@ -44,7 +44,7 @@ dependencies {
     implementation(project(":velocity"))
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion = 21
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
