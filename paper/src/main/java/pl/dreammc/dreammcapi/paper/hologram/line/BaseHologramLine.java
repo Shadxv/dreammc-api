@@ -10,9 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unchecked")
-public abstract class BaseHologramLine<T extends BaseHologramLine<?>> {
+public abstract class BaseHologramLine<P extends BaseHologram<?, ?>, T extends BaseHologramLine<?, ?>> {
 
-    @Setter @Getter protected BaseHologram<?, ?> parrent;
+    @Setter @Getter protected P parrent;
     @Getter protected UUID uuid;
     @Getter protected float height;
     @Getter protected float spacing;

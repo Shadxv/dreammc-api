@@ -3,14 +3,20 @@ package pl.dreammc.dreammcapi.paper.npc;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+import pl.dreammc.dreammcapi.paper.hologram.BaseHologram;
+import pl.dreammc.dreammcapi.paper.hologram.Hologram;
+import pl.dreammc.dreammcapi.paper.manager.HologramManager;
 import pl.dreammc.dreammcapi.paper.manager.NPCManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
 
     @Getter private final List<Player> viewers;
+    @Getter @Nullable private Hologram hologram;
 
     public ServerSideHumanNPC(Location location) {
         super(location);
@@ -45,6 +51,21 @@ public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
         this.despawn(player);
     }
 
+    public Hologram addOrGetHologram() {
+        if(this.hologram != null) return this.hologram;
+        this.hologram = new Hologram(this.name, this.currentLocation.clone().add(0, 2.2, 0));
+        return this.hologram;
+    }
+
+    public ServerSideHumanNPC removeHologram() {
+        if(this.hologram == null) return this;
+        HologramManager.getInstance().unregisterHologram(this.hologram.getId());
+        if(this.hologram.isSpawned())
+            this.hologram.despawn();
+        this.hologram = null;
+        return this;
+    }
+
     private void spawn(Player player) {
         this.sendInfoPacket(player);
         this.sendSpawnPacket(player);
@@ -60,8 +81,10 @@ public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
         if(!this.registerNPC()) return this;
 
         for(Player player : this.viewers) {
-            spawn(player);
+            this.spawn(player);
         }
+
+        Optional.ofNullable(this.hologram).ifPresent(BaseHologram::spawn);
 
         this.isSpawned = true;
         return this;
@@ -74,6 +97,8 @@ public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
         for (Player player : viewers) {
             this.removeViewer(player);
         }
+
+        Optional.ofNullable(this.hologram).ifPresent(BaseHologram::despawn);
 
         this.isSpawned = false;
         return this;
