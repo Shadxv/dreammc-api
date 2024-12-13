@@ -3,9 +3,10 @@ package pl.dreammc.dreammcapi.paper.hologram.line;
 import lombok.Getter;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
+import pl.dreammc.dreammcapi.paper.hologram.Hologram;
 
 @SuppressWarnings("unchecked")
-public abstract class ServerSideHologramLine<T extends ServerSideHologramLine<?>> extends BaseHologramLine<T> {
+public abstract class ServerSideHologramLine<T extends ServerSideHologramLine<?>> extends BaseHologramLine<Hologram, T> {
 
     @Getter protected Entity entity;
 

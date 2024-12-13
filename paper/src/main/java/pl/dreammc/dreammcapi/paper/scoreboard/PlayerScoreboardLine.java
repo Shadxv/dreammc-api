@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import pl.dreammc.dreammcapi.paper.ulit.NMSUtil;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 

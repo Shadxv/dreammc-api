@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseHologramLine<?>> {
+public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseHologramLine<T, ?>> {
 
     @Getter private final String id;
     @Getter private Location location;
@@ -39,7 +39,7 @@ public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseH
 
     public T addLine(V line) {
         int index = 0;
-        line.setParrent(this);
+        line.setParrent((T) this);
         this.lines.add(index, line);
         if(isSpawned) this.spawnLine(line, index);
         return (T) this;
@@ -49,7 +49,7 @@ public abstract class BaseHologram<T extends BaseHologram<?, ?>, V extends BaseH
         this.canSeeThrough = canSeeThrough;
 
         if(isSpawned) {
-            for(BaseHologramLine<?> line : this.lines) {
+            for(BaseHologramLine<?, ?> line : this.lines) {
                 if(line instanceof TextHologramLine textLine) {
                     textLine.setCanSeeThrough(canSeeThrough);
                 }
