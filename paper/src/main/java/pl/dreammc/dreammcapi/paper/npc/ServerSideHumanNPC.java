@@ -70,6 +70,7 @@ public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
         this.sendInfoPacket(player);
         this.sendSpawnPacket(player);
         this.sendMetadataPacket(player);
+        this.sendHideNicknamePackets(player);
     }
 
     private void despawn(Player player) {
@@ -84,7 +85,7 @@ public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
             this.spawn(player);
         }
 
-        Optional.ofNullable(this.hologram).ifPresent(BaseHologram::spawn);
+        if(this.hologram != null) this.hologram.spawn();
 
         this.isSpawned = true;
         return this;

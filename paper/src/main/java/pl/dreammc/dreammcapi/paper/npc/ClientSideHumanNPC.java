@@ -56,7 +56,8 @@ public class ClientSideHumanNPC extends HumanNPC<ClientSideHumanNPC>{
         this.sendInfoPacket(this.owner);
         this.sendSpawnPacket(this.owner);
         this.sendMetadataPacket(this.owner);
-        Optional.ofNullable(this.hologram).ifPresent(BaseHologram::spawn);
+        this.sendHideNicknamePackets(this.owner);
+        if(this.hologram != null) this.hologram.spawn();
         return this;
     }
 

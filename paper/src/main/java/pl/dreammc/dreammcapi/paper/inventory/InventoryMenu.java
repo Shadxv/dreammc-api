@@ -70,7 +70,11 @@ public abstract class InventoryMenu implements InventoryHolder {
         }
 
         InventoryManager.getInstance().closeInventory(this.player.getUniqueId());
-        Optional.ofNullable(this.closeSound).ifPresent(player::playSound);
+        if(event.getReason() != InventoryCloseEvent.Reason.DEATH
+                && event.getReason() != InventoryCloseEvent.Reason.DISCONNECT
+                && event.getReason() != InventoryCloseEvent.Reason.OPEN_NEW
+                && event.getReason() != InventoryCloseEvent.Reason.TELEPORT)
+            Optional.ofNullable(this.closeSound).ifPresent(player::playSound);
     }
 
     public int getSize() {

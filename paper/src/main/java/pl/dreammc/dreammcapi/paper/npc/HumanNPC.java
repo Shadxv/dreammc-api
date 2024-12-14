@@ -11,9 +11,16 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
+import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
+import pl.dreammc.dreammcapi.paper.ulit.NMSUtil;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -103,11 +110,21 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeInfoPacket);
     }
 
+    protected void sendHideNicknamePackets(Player player) {
+        ServerGamePacketListenerImpl connection = NMSUtil.getConnection(player);
+        PlayerTeam team = new PlayerTeam(((CraftScoreboard) PaperDreamMCAPI.getInstance().getServerMainScoreboard()).getHandle(), this.getName().substring(Math.max(this.getName().length() - 16, 0)));
+        team.setNameTagVisibility(Team.Visibility.NEVER);
+
+        connection.send(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team, false));
+        connection.send(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team, true));
+        connection.send(ClientboundSetPlayerTeamPacket.createPlayerPacket(team, this.name, ClientboundSetPlayerTeamPacket.Action.ADD));
+    }
+
     private static String generateName(int id) {
-        return "NPCID_ " + id;
+        return "NPCID_" + id;
     }
 
     private static int extractIdFromName(String name) {
-        return Integer.parseInt(name.replace("NPCID_ ", "").trim());
+        return Integer.parseInt(name.replace("NPCID_", "").trim());
     }
 }

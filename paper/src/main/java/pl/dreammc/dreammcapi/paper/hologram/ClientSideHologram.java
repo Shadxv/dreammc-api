@@ -41,7 +41,7 @@ public class ClientSideHologram extends BaseHologram<ClientSideHologram, ClientS
         Entity currentLine = line.spawn();
         if(index != 0) {
             Entity previousLine = this.getLines().get(index - 1).getEntity();
-            previousLine.getPassengers().add(currentLine);
+            previousLine.startRiding(currentLine);
             ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.player);
             var addPasenger = new ClientboundSetPassengersPacket(previousLine);
             currentLine.teleportRelative(0, this.getLines().get(index).getYTranslation(),0);
