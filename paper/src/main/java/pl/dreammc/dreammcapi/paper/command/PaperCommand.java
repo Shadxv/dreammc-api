@@ -13,6 +13,7 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.util.BaseColor;
+import pl.dreammc.dreammcapi.api.util.MessageSender;
 import pl.dreammc.dreammcapi.paper.command.response.CommandResponse;
 import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
 import pl.dreammc.dreammcapi.paper.command.response.InvalidArgumentResponse;
@@ -21,7 +22,7 @@ import java.util.*;
 
 public abstract class PaperCommand extends BukkitCommand implements ICommandBase{
 
-    @Nullable protected final String permission;
+    @Nullable @Getter protected final String permission;
     @Getter protected final boolean playerOnly;
     @Getter protected final boolean isHidden;
     @Getter protected final Map<String, PaperSubcommand> subcommands;
@@ -38,7 +39,6 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
                 this.subcommands.put(alias, subcommand);
             }
         }
-        if(this.permission != null) this.setPermission(this.permission);
     }
 
     private ICommandResponse canExecute(CommandSender commandSender) {
@@ -92,13 +92,13 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
                 if (i == -1 || lastSubcommand == null) {
                     PaperSubcommand possibleLastSubcommand = this.subcommands.get(args[lastIndex].toLowerCase());
                     if (possibleLastSubcommand == null) continue;
-                    if(possibleLastSubcommand.permission != null && player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
+                    if(possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
                     if (possibleLastSubcommand.getIndexOfSubcommandInArgsArray() == i)
                         lastSubcommand = possibleLastSubcommand;
                 } else {
                     PaperSubcommand possibleLastSubcommand = lastSubcommand.getSubcommands().get(args[lastIndex].toLowerCase());
                     if (possibleLastSubcommand == null) continue;
-                    if(possibleLastSubcommand.permission != null && player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
+                    if(possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
                     if (possibleLastSubcommand.getIndexOfSubcommandInArgsArray() == i)
                         lastSubcommand = possibleLastSubcommand;
                 }
@@ -112,14 +112,15 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
         }
 
         for(PaperSubcommand subcommand : subcommands) {
-            if(subcommand.permission != null && player.hasPermission(subcommand.permission) && subcommand.isHidden) continue;
+            if(subcommand.permission != null && !player.hasPermission(subcommand.permission) && subcommand.isHidden) continue;
             if(subcommand.getIndexOfSubcommandInArgsArray() != lastIndex) continue;
             if(StringUtil.startsWithIgnoreCase(subcommand.name, args[lastIndex]))
                 matchedCompletions.add(subcommand.name);
-            for(String subAlias : subcommand.aliases) {
-                if(StringUtil.startsWithIgnoreCase(subAlias, args[lastIndex]))
-                    matchedCompletions.add(subAlias);
-            }
+            // Removed aliases
+            // for(String subAlias : subcommand.aliases) {
+            //     if(StringUtil.startsWithIgnoreCase(subAlias, args[lastIndex]))
+            //         matchedCompletions.add(subAlias);
+            // }
         }
 
 

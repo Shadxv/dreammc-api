@@ -12,10 +12,18 @@ public class ScoreboardLine {
     @Getter protected final UUID lineUUID;
     @Setter @Getter protected int lineNumber;
     @Getter @Setter protected Component text;
+    @Getter protected final boolean isCentered;
 
     public ScoreboardLine(Component text) {
         this.lineUUID = UUID.randomUUID();
         this.text = text;
+        this.isCentered = false;
+    }
+
+    public ScoreboardLine(Component text, final boolean isCentered) {
+        this.lineUUID = UUID.randomUUID();
+        this.text = text;
+        this.isCentered = isCentered;
     }
 
     public void moveLine(int delta) {

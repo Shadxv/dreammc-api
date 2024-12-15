@@ -30,6 +30,15 @@ public class UpdatableScoreboardLine extends ScoreboardLine{
         this.playerWithLine = new ArrayList<>();
     }
 
+    public UpdatableScoreboardLine(Component text, Consumer<PlayerScoreboardLine> task, long delay, long period, TimeUnit timeUnit, final boolean isCentered) {
+        super(text, isCentered);
+        this.task = task;
+        this.delay = delay;
+        this.period = period;
+        this.timeUnit = timeUnit;
+        this.playerWithLine = new ArrayList<>();
+    }
+
     public void runTask() {
         if(this.runningTask != null) return;
         this.runningTask = Bukkit.getAsyncScheduler().runAtFixedRate(PaperDreamMCAPI.getInstance(), scheduledTask -> {

@@ -19,6 +19,7 @@ public class PlayerScoreboardLine {
     @Getter private final UUID lineUUID;
     @Getter private int lineNumber;
     @Getter private Component lineComponent;
+    @Getter private final boolean isCentered;
 
     public PlayerScoreboardLine updateLine() {
         ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.parrent.getPlayer());

@@ -118,9 +118,14 @@ public class PlayerScoreboard {
             line.updateLine();
     }
 
+    public void addLine(int index, Component component, final boolean isCentered) {
+        if(this.lineUUIDs.size() <= index) return;
+        this.addLine(index, new PlayerScoreboardLine(this, UUID.randomUUID(), index, component, isCentered));
+    }
+
     public void addLine(int index, Component component) {
         if(this.lineUUIDs.size() <= index) return;
-        this.addLine(index, new PlayerScoreboardLine(this, UUID.randomUUID(), index, component));
+        this.addLine(index, new PlayerScoreboardLine(this, UUID.randomUUID(), index, component, false));
     }
 
     public void addLine(Component component) {

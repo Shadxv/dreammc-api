@@ -15,4 +15,9 @@ public class StateScoreboardLine extends ScoreboardLine{
         this.stateUpdater = stateUpdater;
     }
 
+    public StateScoreboardLine(Component text, Consumer<PlayerScoreboardLine> stateUpdater, final boolean isCentered) {
+        super(text, isCentered);
+        this.stateUpdater = stateUpdater;
+    }
+
 }
