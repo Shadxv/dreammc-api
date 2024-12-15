@@ -63,7 +63,7 @@ public class ScoreboardModel {
         for(UUID lineUUID : this.lineUUIDs) {
             if(!this.lines.containsKey(lineUUID)) continue;
             ScoreboardLine line = this.lines.get(lineUUID);
-            PlayerScoreboardLine playerLine = new PlayerScoreboardLine(scoreboard, line.getLineUUID(), line.getLineNumber(), line.getText());
+            PlayerScoreboardLine playerLine = new PlayerScoreboardLine(scoreboard, line.getLineUUID(), line.getLineNumber(), line.getText(), line.isCentered);
             scoreboard.addLine(playerLine.getLineNumber(), playerLine);
             if(line instanceof StateScoreboardLine stateScoreboardLine) {
                 stateScoreboardLine.getStateUpdater().accept(playerLine);
@@ -128,7 +128,7 @@ public class ScoreboardModel {
     public ScoreboardModel addAndShowLine(ScoreboardLine line) {
         this.addLine(line);
         for(PlayerScoreboard playerScoreboard : this.playersScoreboard.values()) {
-            playerScoreboard.addLine(line.getLineNumber(), new PlayerScoreboardLine(playerScoreboard, line.getLineUUID(), line.getLineNumber(), line.getText()));
+            playerScoreboard.addLine(line.getLineNumber(), new PlayerScoreboardLine(playerScoreboard, line.getLineUUID(), line.getLineNumber(), line.getText(), line.isCentered));
         }
         if(line instanceof UpdatableScoreboardLine updatableScoreboardLine && !this.playersScoreboard.isEmpty()) {
             updatableScoreboardLine.runTask();
@@ -139,7 +139,7 @@ public class ScoreboardModel {
     public ScoreboardModel addAndShowLine(int index, ScoreboardLine line) {
         this.addLine(index, line);
         for(PlayerScoreboard playerScoreboard : this.playersScoreboard.values()) {
-            playerScoreboard.addLine(index, new PlayerScoreboardLine(playerScoreboard, line.getLineUUID(), line.getLineNumber(), line.getText()));
+            playerScoreboard.addLine(index, new PlayerScoreboardLine(playerScoreboard, line.getLineUUID(), line.getLineNumber(), line.getText(), line.isCentered));
         }
         return this;
     }

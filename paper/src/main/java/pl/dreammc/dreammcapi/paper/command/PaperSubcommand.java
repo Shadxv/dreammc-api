@@ -8,9 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.command.response.CommandResponse;
 import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 public abstract class PaperSubcommand implements ICommandBase {
@@ -23,6 +21,7 @@ public abstract class PaperSubcommand implements ICommandBase {
     protected final boolean isHidden;
     protected final boolean playerOnly;
     protected final Map<String, PaperSubcommand> subcommands;
+    protected int indexOfSubcommandInArgsArray;
 
 
     protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
@@ -39,6 +38,34 @@ public abstract class PaperSubcommand implements ICommandBase {
             for(String alias : subcommand.aliases) {
                 this.subcommands.put(alias, subcommand);
             }
+        }
+        this.indexOfSubcommandInArgsArray = 0;
+    }
+
+    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, int indexOfSubcommandInArgsArray, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
+        this.name = name;
+        this.description = description;
+        this.usage = usage;
+        this.aliases = aliases;
+        this.permission = permission;
+        this.isHidden = isHidden;
+        this.playerOnly = playerOnly;
+        this.subcommands = new HashMap<>();
+        for (PaperSubcommand subcommand : subcommands) {
+            this.subcommands.put(subcommand.name, subcommand);
+            subcommand.incrementIndex(this.indexOfSubcommandInArgsArray + 1);
+            for(String alias : subcommand.aliases) {
+                this.subcommands.put(alias, subcommand);
+            }
+        }
+        this.indexOfSubcommandInArgsArray = indexOfSubcommandInArgsArray;
+    }
+
+    public void incrementIndex(int delta) {
+        this.indexOfSubcommandInArgsArray += delta;
+        Set<PaperSubcommand> subcommandSet = new HashSet<>(this.subcommands.values());
+        for(PaperSubcommand subcommand : subcommandSet) {
+            subcommand.incrementIndex(delta + 1);
         }
     }
 

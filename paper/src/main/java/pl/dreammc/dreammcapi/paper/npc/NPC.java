@@ -23,6 +23,7 @@ public abstract class NPC<T extends NPC<?>> {
         this.entityUUID = UUID.randomUUID();
         this.name = name;
         this.spawnLocation = location;
+        this.currentLocation = this.spawnLocation;
     }
 
     protected void changeCurrentLocation(Location location) {

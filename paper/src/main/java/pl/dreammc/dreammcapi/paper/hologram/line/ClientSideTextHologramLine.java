@@ -92,6 +92,7 @@ public class ClientSideTextHologramLine extends ClientSideHologramLine<ClientSid
 
         connection.send(spawnLinePacket);
         connection.send(updateText);
+        this.sendBillboardPacket();
 
         float heightChange = DEFAULT_HEIGHT  * this.lines - this.height;
         this.height = DEFAULT_HEIGHT * this.lines;

@@ -192,7 +192,32 @@ public class TextUtil {
         charWidthMap.put('»', 6);
         charWidthMap.put('★', 14);
         charWidthMap.put('꩜', 10);
-
+        charWidthMap.put('ᴀ', 6);
+        charWidthMap.put('ʙ', 6);
+        charWidthMap.put('ᴄ', 6);
+        charWidthMap.put('ᴅ', 6);
+        charWidthMap.put('ᴇ', 6);
+        charWidthMap.put('ғ', 5);
+        charWidthMap.put('ɢ', 6);
+        charWidthMap.put('ʜ', 6);
+        charWidthMap.put('ɪ', 2);
+        charWidthMap.put('ᴊ', 6);
+        charWidthMap.put('ᴋ', 5);
+        charWidthMap.put('ʟ', 3);
+        charWidthMap.put('ᴍ', 6);
+        charWidthMap.put('ɴ', 6);
+        charWidthMap.put('ᴏ', 6);
+        charWidthMap.put('ᴘ', 6);
+        charWidthMap.put('ǫ', 6);
+        charWidthMap.put('ʀ', 6);
+        charWidthMap.put('ѕ', 6);
+        charWidthMap.put('ᴛ', 4);
+        charWidthMap.put('ᴜ', 6);
+        charWidthMap.put('ᴠ', 6);
+        charWidthMap.put('ᴡ', 6);
+        charWidthMap.put('х', 6);
+        charWidthMap.put('ʏ', 6);
+        charWidthMap.put('ᴢ', 6);
     }
 
     public static int getCharWidth(char c) {

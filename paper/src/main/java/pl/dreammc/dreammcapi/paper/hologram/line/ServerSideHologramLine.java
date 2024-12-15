@@ -24,6 +24,7 @@ public abstract class ServerSideHologramLine<T extends ServerSideHologramLine<?>
 
     @Override
     public void despawn() {
+        if(this.entity == null) return;
         this.entity.remove();
     }
 }
