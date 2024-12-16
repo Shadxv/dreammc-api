@@ -53,7 +53,10 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.listenerManager.registerListeners();
 
         this.inventoryManager = new InventoryManager();
+
         this.hologramManager = new HologramManager();
+        this.hologramManager.killPreviousHolograms();
+
         this.npcManager = new NPCManager();
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();

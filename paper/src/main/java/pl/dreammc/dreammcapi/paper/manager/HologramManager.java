@@ -1,6 +1,12 @@
 package pl.dreammc.dreammcapi.paper.manager;
 
+import org.apache.maven.model.Build;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 import pl.dreammc.dreammcapi.paper.hologram.ClientSideHologram;
@@ -71,6 +77,15 @@ public class HologramManager {
     @Nullable
     public Hologram getHologram(String id) {
         return this.serverSideHolograms.get(id);
+    }
+
+    public void killPreviousHolograms() {
+        for(World world : Bukkit.getWorlds()) {
+            for(TextDisplay textDisplay : world.getEntitiesByClass(TextDisplay.class)) {
+                if(textDisplay.getPersistentDataContainer().has(new NamespacedKey(PaperDreamMCAPI.getInstance(), "hologram")))
+                    textDisplay.remove();
+            }
+        }
     }
 
     public static HologramManager getInstance() {

@@ -291,6 +291,24 @@ public class TextUtil {
         return lines;
     }
 
+    public static int getLineWidth(Component textComponent) {
+        int width = 0;
+        Iterator<Component> components = textComponent.iterable(ComponentIteratorType.BREADTH_FIRST).iterator();
+        while (components.hasNext()) {
+            TextComponent component = (TextComponent) components.next();
+            boolean isBold = component.hasDecoration(TextDecoration.BOLD);
+            for(char c : PlainTextComponentSerializer.plainText().serialize(component).toCharArray()) {
+                if(charWidthMap.containsKey(c)) {
+                    if (isBold) width += getBoldCharWidth(c);
+                    else width += getCharWidth(c);
+                } else {
+                    width += 4;
+                }
+            }
+        }
+        return width;
+    }
+
     public static Component deserializeText(String text) {
         return legacyComponentSerializer.deserialize(text);
     }

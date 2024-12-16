@@ -3,6 +3,7 @@ package pl.dreammc.dreammcapi.paper.scoreboard;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.numbers.BlankFormat;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 import pl.dreammc.dreammcapi.paper.ulit.NMSUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +35,9 @@ public class PlayerScoreboard {
     private final List<UUID> lineUUIDs;
     private boolean isSpawned;
     @Nullable private Objective scoreboardObjective;
+    @Getter @Setter private int longestLineWidth = 0;
+    @Getter @Setter @Nullable private UUID longestLine = null;
+    @Getter private final List<UUID> centeredLines;
 
     public PlayerScoreboard(final Player player, final ScoreboardModel parrent, Component header, Map<UUID, PlayerScoreboardLine> playerScoreboardLines, List<UUID> lineUUIDs) {
         this.player = player;
@@ -41,6 +46,7 @@ public class PlayerScoreboard {
         this.playerScoreboardLines = playerScoreboardLines;
         this.lineUUIDs = lineUUIDs;
         this.isSpawned = false;
+        this.centeredLines = new ArrayList<>();
     }
 
     public void showToPlayer() {
@@ -70,6 +76,7 @@ public class PlayerScoreboard {
     private void showLines() {
         for(PlayerScoreboardLine line : this.playerScoreboardLines.values()) {
             line.updateLine();
+            if(line.isCentered()) line.recenterLine();
         }
     }
 
@@ -116,6 +123,12 @@ public class PlayerScoreboard {
         this.playerScoreboardLines.put(line.getLineUUID(), line);
         if(this.isSpawned && Bukkit.getOnlinePlayers().contains(this.player))
             line.updateLine();
+
+        if(this.longestLineWidth < line.getLineWidth()) {
+            this.longestLineWidth = line.getLineWidth();
+            this.longestLine = line.getLineUUID();
+            this.recentreLines();
+        }
     }
 
     public void addLine(int index, Component component, final boolean isCentered) {
@@ -146,6 +159,9 @@ public class PlayerScoreboard {
         }
         this.playerScoreboardLines.remove(uuid);
         this.lineUUIDs.remove(line.getLineNumber());
+        this.centeredLines.remove(uuid);
+        this.findNewLongestLine();
+        this.recentreLines();
     }
 
     public void removeLine(int index) {
@@ -163,5 +179,27 @@ public class PlayerScoreboard {
     public PlayerScoreboardLine getLine(int index) {
         if(this.lineUUIDs.size() <= index) return null;
         return this.getLine(this.lineUUIDs.get(index));
+    }
+
+    private void findNewLongestLine() {
+        int longestWidth = 0;
+        UUID longestLine = null;
+        for (PlayerScoreboardLine line : this.playerScoreboardLines.values()) {
+            if(line.getLineWidth() > longestWidth) {
+                longestWidth = line.getLineWidth();
+                longestLine = line.getLineUUID();
+            }
+        }
+
+        this.longestLineWidth = longestWidth;
+        this.longestLine = longestLine;
+    }
+
+    public void recentreLines() {
+        for(UUID centeredLineUUID : this.centeredLines) {
+            PlayerScoreboardLine line = this.getLine(centeredLineUUID);
+            if(line == null) continue;
+            line.recenterLine();
+        }
     }
 }
