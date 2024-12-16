@@ -3,12 +3,15 @@ package pl.dreammc.dreammcapi.paper.hologram.line;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import pl.dreammc.dreammcapi.api.util.TextUtil;
+import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 
 import java.util.Optional;
 
