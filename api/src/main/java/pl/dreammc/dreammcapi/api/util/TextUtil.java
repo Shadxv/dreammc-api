@@ -293,18 +293,34 @@ public class TextUtil {
 
     public static int getLineWidth(Component textComponent) {
         int width = 0;
-        Iterator<Component> components = textComponent.iterable(ComponentIteratorType.BREADTH_FIRST).iterator();
-        while (components.hasNext()) {
-            TextComponent component = (TextComponent) components.next();
+        int i = 0;
+        boolean hadPreviousBold = false;
+        for (Component value : textComponent.iterable(ComponentIteratorType.BREADTH_FIRST)) {
+            TextComponent component = (TextComponent) value;
             boolean isBold = component.hasDecoration(TextDecoration.BOLD);
-            for(char c : PlainTextComponentSerializer.plainText().serialize(component).toCharArray()) {
-                if(charWidthMap.containsKey(c)) {
-                    if (isBold) width += getBoldCharWidth(c);
-                    else width += getCharWidth(c);
+            String subcomponent = PlainTextComponentSerializer.plainText().serialize(component);
+            if(subcomponent.equals(" ")) {
+                width += 4;
+                continue;
+            }
+            if (i == 0) {
+                for (char c : subcomponent.toCharArray()) {
+                    if (charWidthMap.containsKey(c)) {
+                        if (isBold) width += getBoldCharWidth(c);
+                        else width += getCharWidth(c);
+                    } else width += 4;
+                }
+                hadPreviousBold = isBold;
+            } else {
+                if(isBold && !hadPreviousBold) {
+                    width += subcomponent.length();
+                } else if (!isBold && hadPreviousBold) {
+                    width -= subcomponent.length();
                 } else {
-                    width += 4;
+                    continue;
                 }
             }
+            i++;
         }
         return width;
     }

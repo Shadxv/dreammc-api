@@ -3,10 +3,12 @@ package pl.dreammc.dreammcapi.paper.scoreboard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.network.chat.numbers.BlankFormat;
 import net.minecraft.network.protocol.game.ClientboundResetScorePacket;
 import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import pl.dreammc.dreammcapi.api.util.MessageSender;
 import pl.dreammc.dreammcapi.api.util.TextUtil;
 import pl.dreammc.dreammcapi.paper.ulit.NMSUtil;
 
@@ -37,15 +39,19 @@ public class PlayerScoreboardLine {
     public PlayerScoreboardLine updateLine() {
         ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.parrent.getPlayer());
 
-        var modifyScoreLine = new ClientboundSetScorePacket(
-                this.lineUUID.toString(),
-                "sidebar",
-                15 - lineNumber,
-                Optional.of(NMSUtil.toNMSComponent(this.lineComponent)),
-                Optional.of(BlankFormat.INSTANCE)
-        );
+        if(this.isCentered) {
+            this.recenterLine();
+        } else {
+            var modifyScoreLine = new ClientboundSetScorePacket(
+                    this.lineUUID.toString(),
+                    "sidebar",
+                    15 - lineNumber,
+                    Optional.of(NMSUtil.toNMSComponent(this.lineComponent)),
+                    Optional.of(BlankFormat.INSTANCE)
+            );
 
-        connection.send(modifyScoreLine);
+            connection.send(modifyScoreLine);
+        }
         return this;
     }
 
@@ -60,13 +66,13 @@ public class PlayerScoreboardLine {
 
     public PlayerScoreboardLine updateLine(Component component) {
         this.lineComponent = component;
-        this.updateLine();
         this.lineWidth = TextUtil.getLineWidth(this.lineComponent);
         if(this.parrent.getLongestLineWidth() < this.lineWidth) {
             this.parrent.setLongestLine(this.lineUUID);
             this.parrent.setLongestLineWidth(this.lineWidth);
             this.parrent.recentreLines();
         }
+        this.updateLine();
         return this;
     }
 
