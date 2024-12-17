@@ -71,6 +71,9 @@ public class PlayerScoreboardLine {
             this.parrent.setLongestLine(this.lineUUID);
             this.parrent.setLongestLineWidth(this.lineWidth);
             this.parrent.recentreLines();
+        } else if(this.parrent.getLongestLine() == this.lineUUID) {
+            this.parrent.findNewLongestLine();
+            this.parrent.recentreLines();
         }
         this.updateLine();
         return this;
