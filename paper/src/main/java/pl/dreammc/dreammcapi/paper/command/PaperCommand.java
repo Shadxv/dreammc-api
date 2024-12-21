@@ -97,10 +97,10 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
             }
             if(lastSubcommand == null) return matchedCompletions;
             subcommands = new HashSet<>(lastSubcommand.getSubcommands().values());
-            possibleArgs = lastSubcommand.additionalCompletions().get(lastIndex - lastSubcommand.getIndexOfSubcommandInArgsArray());
+            possibleArgs = lastSubcommand.additionalCompletions(player).get(lastIndex - lastSubcommand.getIndexOfSubcommandInArgsArray());
         } else {
             subcommands = new HashSet<>(this.subcommands.values());
-            possibleArgs = this.additionalCompletions().get(lastIndex);
+            possibleArgs = this.additionalCompletions(player).get(lastIndex);
         }
 
         for(PaperSubcommand subcommand : subcommands) {

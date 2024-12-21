@@ -1,6 +1,7 @@
 package pl.dreammc.dreammcapi.paper.command;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
@@ -14,7 +15,7 @@ public interface ICommandBase {
     @NotNull ICommandResponse execute0(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args);
 
     @NotNull
-    default Map<Integer, List<String>> additionalCompletions() {
+    default Map<Integer, List<String>> additionalCompletions(Player player) {
         return new HashMap<>();
     }
 
