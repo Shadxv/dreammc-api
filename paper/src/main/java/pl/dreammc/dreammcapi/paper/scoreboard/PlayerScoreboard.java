@@ -160,8 +160,10 @@ public class PlayerScoreboard {
         this.playerScoreboardLines.remove(uuid);
         this.lineUUIDs.remove(line.getLineNumber());
         this.centeredLines.remove(uuid);
-        this.findNewLongestLine();
-        this.recentreLines();
+        if(this.longestLine == line.getLineUUID()) {
+            this.findNewLongestLine();
+            this.recentreLines();
+        }
     }
 
     public void removeLine(int index) {
@@ -181,7 +183,7 @@ public class PlayerScoreboard {
         return this.getLine(this.lineUUIDs.get(index));
     }
 
-    private void findNewLongestLine() {
+    public void findNewLongestLine() {
         int longestWidth = 0;
         UUID longestLine = null;
         for (PlayerScoreboardLine line : this.playerScoreboardLines.values()) {

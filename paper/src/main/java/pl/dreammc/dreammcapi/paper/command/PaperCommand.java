@@ -70,14 +70,6 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
         return false;
     }
 
-    protected List<String> generateListOfPlayers() {
-        List<String> result = new ArrayList<>();
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            result.add(player.getName());
-        }
-        return result;
-    }
-
     @Override @NotNull
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         if(!(sender instanceof Player player)) return List.of();
@@ -105,10 +97,10 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
             }
             if(lastSubcommand == null) return matchedCompletions;
             subcommands = new HashSet<>(lastSubcommand.getSubcommands().values());
-            possibleArgs = lastSubcommand.additionalCompletions().get(lastIndex - lastSubcommand.getIndexOfSubcommandInArgsArray());
+            possibleArgs = lastSubcommand.additionalCompletions(player).get(lastIndex - lastSubcommand.getIndexOfSubcommandInArgsArray());
         } else {
             subcommands = new HashSet<>(this.subcommands.values());
-            possibleArgs = this.additionalCompletions().get(lastIndex);
+            possibleArgs = this.additionalCompletions(player).get(lastIndex);
         }
 
         for(PaperSubcommand subcommand : subcommands) {
