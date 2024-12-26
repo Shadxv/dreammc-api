@@ -1,6 +1,4 @@
 name: 'DreamMCAPI'
 version: '${version}'
 main: 'pl.dreammc.dreammcapi.paper.PaperDreamMCAPI'
-api-version: '1.20'
-depend:
-  - packetevents
+api-version: '1.21'

@@ -1,7 +1,6 @@
 package pl.dreammc.dreammcapi.paper.manager;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
@@ -25,7 +24,7 @@ public class NPCManager {
         this.registeredNPCs = new HashMap<>();
         this.serverSideNPCs = new ArrayList<>();
         this.clientSideNPCs = new HashMap<>();
-        PacketEvents.getAPI().getEventManager().registerListener(new ClickNPCPacketListener(), PacketListenerPriority.LOWEST);
+        PacketHandlerManager.getInstance().registerListener(ServerboundInteractPacket.class, new ClickNPCPacketListener());
     }
 
     public boolean registerNPC(NPC<?> npc) {
