@@ -40,7 +40,7 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
     }
 
     public T setGameProfile(GameProfile profile) {
-        profile.getProperties().get("texture").stream().findFirst().ifPresent(property -> {
+        profile.getProperties().get("textures").stream().findFirst().ifPresent(property -> {
             this.gameProfile.getProperties().put("textures", property);
         });
         return (T) this;
@@ -64,10 +64,8 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
                 EntityType.PLAYER,
                 0,
                 Vec3.ZERO,
-                0.0f
+                this.spawnLocation.getYaw()
         );
-
-//        var headRotationPacket = new WrapperPlayServerEntityHeadLook(this.entityId, this.spawnLocation.getYaw());
 
         connection.send(spanwPacket);
     }
