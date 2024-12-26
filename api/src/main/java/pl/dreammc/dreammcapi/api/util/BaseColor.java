@@ -9,6 +9,9 @@ public class BaseColor {
     public static final String purplePrimary = "#c261ff";
     public static final String bluePrimary = "#6189ff";
     public static final String orangePrimary = "#ffbb4d";
+    public static final String moneyColor = "#a0ff780";
+    public static final String gemsColor = "#ce64f5";
+    public static final String walletColor = "#ffaa00";
 
 
 }

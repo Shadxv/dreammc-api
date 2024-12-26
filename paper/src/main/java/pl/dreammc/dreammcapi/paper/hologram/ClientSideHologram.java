@@ -1,5 +1,6 @@
 package pl.dreammc.dreammcapi.paper.hologram;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
@@ -41,14 +42,16 @@ public class ClientSideHologram extends BaseHologram<ClientSideHologram, ClientS
         Entity currentLine = line.spawn();
         if(index != 0) {
             Entity previousLine = this.getLines().get(index - 1).getEntity();
-            previousLine.startRiding(currentLine);
             ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.player);
-            var addPasenger = new ClientboundSetPassengersPacket(previousLine);
+
             currentLine.teleportRelative(0, this.getLines().get(index).getYTranslation(),0);
             var teleport = new ClientboundTeleportEntityPacket(currentLine);
-
-            connection.send(addPasenger);
             connection.send(teleport);
+
+            // TODO: this needs to be fixed - addPassenger teleports every line to
+            currentLine.startRiding(previousLine);
+            var addPassenger = new ClientboundSetPassengersPacket(previousLine);
+            //connection.send(addPassenger);
         }
     }
 

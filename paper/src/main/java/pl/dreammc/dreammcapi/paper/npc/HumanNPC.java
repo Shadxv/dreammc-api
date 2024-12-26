@@ -1,18 +1,15 @@
 package pl.dreammc.dreammcapi.paper.npc;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
-import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
-import com.github.retrooper.packetevents.protocol.player.GameMode;
-import com.github.retrooper.packetevents.protocol.player.TextureProperty;
-import com.github.retrooper.packetevents.protocol.player.UserProfile;
-import com.github.retrooper.packetevents.wrapper.play.server.*;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.Getter;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.bukkit.Bukkit;
@@ -28,27 +25,23 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
 
-    @Getter protected UserProfile gameProfile;
+    @Getter protected GameProfile gameProfile;
     @Getter protected boolean isSpawned;
 
     public HumanNPC(Location location) {
         super(generateName(Bukkit.getUnsafe().nextEntityId()), location);
         this.entityId = extractIdFromName(this.getName());
-        this.gameProfile = new UserProfile(this.getEntityUUID(), this.getName().substring(Math.max(0, name.length() - 17)));
+        this.gameProfile = new GameProfile(this.getEntityUUID(), this.getName().substring(Math.max(0, name.length() - 17)));
     }
 
     public T setTexture(String texture, String signature) {
-        this.gameProfile.setTextureProperties(List.of(
-                new TextureProperty("textures", texture, signature)
-        ));
+        this.gameProfile.getProperties().put("textures", new Property("textures", texture, signature));
         return (T) this;
     }
 
-    public T setGameProfile(PlayerProfile profile) {
-        profile.getProperties().stream().findFirst().ifPresent(property -> {
-            this.gameProfile.setTextureProperties(List.of(
-                    new TextureProperty("textures", property.getValue(), property.getSignature())
-            ));
+    public T setGameProfile(GameProfile profile) {
+        profile.getProperties().get("texture").stream().findFirst().ifPresent(property -> {
+            this.gameProfile.getProperties().put("textures", property);
         });
         return (T) this;
     }
@@ -58,56 +51,68 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
     protected abstract void unregisterNPC();
 
     protected void sendSpawnPacket(Player player) {
-        var spawnPacket = new WrapperPlayServerSpawnEntity(
+        ServerGamePacketListenerImpl connection = NMSUtil.getConnection(player);
+
+        var spanwPacket = new ClientboundAddEntityPacket(
                 this.entityId,
                 this.entityUUID,
-                EntityTypes.PLAYER,
-                SpigotConversionUtil.fromBukkitLocation(this.spawnLocation),
-                0.0f,
+                this.spawnLocation.getX(),
+                this.spawnLocation.getY(),
+                this.spawnLocation.getZ(),
+                this.spawnLocation.getPitch(),
+                this.spawnLocation.getYaw(),
+                EntityType.PLAYER,
                 0,
-                null
+                Vec3.ZERO,
+                0.0f
         );
 
-        var headRotationPacket = new WrapperPlayServerEntityHeadLook(this.entityId, this.spawnLocation.getYaw());
+//        var headRotationPacket = new WrapperPlayServerEntityHeadLook(this.entityId, this.spawnLocation.getYaw());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, spawnPacket);
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, headRotationPacket);
+        connection.send(spanwPacket);
     }
 
     protected void sendInfoPacket(Player player) {
-        var infoPacket = new WrapperPlayServerPlayerInfoUpdate(
+        ServerGamePacketListenerImpl connection = NMSUtil.getConnection(player);
+
+        var infoPacket = new ClientboundPlayerInfoUpdatePacket(
                 EnumSet.of(
-                        WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
-                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED
+                        ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
+                        ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED
                 ),
-                new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(
+                new ClientboundPlayerInfoUpdatePacket.Entry(
+                        this.gameProfile.getId(),
                         this.gameProfile,
                         false,
                         0,
-                        GameMode.CREATIVE,
+                        GameType.CREATIVE,
                         null,
                         null
                 )
         );
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, infoPacket);
+        connection.send(infoPacket);
     }
 
     protected void sendMetadataPacket(Player player) {
-        var metadataPacket = new WrapperPlayServerEntityMetadata(
+        ServerGamePacketListenerImpl connection = NMSUtil.getConnection(player);
+
+        var metadataPacket = new ClientboundSetEntityDataPacket(
                 this.entityId,
-                List.of(new EntityData(17, EntityDataTypes.BYTE, Byte.MAX_VALUE))
+                List.of(new SynchedEntityData.DataValue<>(17, EntityDataSerializers.BYTE, Byte.MAX_VALUE))
         );
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, metadataPacket);
+        connection.send(metadataPacket);
     }
 
     protected void sendDespawnPackets(Player player) {
-        var removeEntityPacket = new WrapperPlayServerDestroyEntities(this.entityId);
-        var removeInfoPacket = new WrapperPlayServerPlayerInfoRemove(this.entityUUID);
+        ServerGamePacketListenerImpl connection = NMSUtil.getConnection(player);
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeEntityPacket);
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeInfoPacket);
+        var removeEntityPacket = new ClientboundRemoveEntitiesPacket(this.entityId);
+        var removeInfoPacket = new ClientboundPlayerInfoRemovePacket(List.of(this.entityUUID));
+
+        connection.send(removeEntityPacket);
+        connection.send(removeInfoPacket);
     }
 
     protected void sendHideNicknamePackets(Player player) {
