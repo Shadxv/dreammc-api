@@ -80,24 +80,24 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
         Set<PaperSubcommand> subcommands;
         List<String> possibleArgs;
         if(lastIndex != 0) {
-            for (int i = -1; i < lastIndex; i++) {
-                if (i == -1 || lastSubcommand == null) {
-                    PaperSubcommand possibleLastSubcommand = this.subcommands.get(args[lastIndex].toLowerCase());
+            for (int i = 0; i < lastIndex; i++) {
+                if (i == 0 || lastSubcommand == null) {
+                    PaperSubcommand possibleLastSubcommand = this.subcommands.get(args[i].toLowerCase());
                     if (possibleLastSubcommand == null) continue;
-                    if(possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
+                    if (possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
                     if (possibleLastSubcommand.getIndexOfSubcommandInArgsArray() == i)
                         lastSubcommand = possibleLastSubcommand;
                 } else {
-                    PaperSubcommand possibleLastSubcommand = lastSubcommand.getSubcommands().get(args[lastIndex].toLowerCase());
+                    PaperSubcommand possibleLastSubcommand = lastSubcommand.getSubcommands().get(args[i].toLowerCase());
                     if (possibleLastSubcommand == null) continue;
-                    if(possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
+                    if (possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
                     if (possibleLastSubcommand.getIndexOfSubcommandInArgsArray() == i)
                         lastSubcommand = possibleLastSubcommand;
                 }
             }
             if(lastSubcommand == null) return matchedCompletions;
             subcommands = new HashSet<>(lastSubcommand.getSubcommands().values());
-            possibleArgs = lastSubcommand.additionalCompletions(player).get(lastIndex - lastSubcommand.getIndexOfSubcommandInArgsArray());
+            possibleArgs = lastSubcommand.additionalCompletions(player).get(lastIndex - 1 - lastSubcommand.getIndexOfSubcommandInArgsArray());
         } else {
             subcommands = new HashSet<>(this.subcommands.values());
             possibleArgs = this.additionalCompletions(player).get(lastIndex);
@@ -105,7 +105,7 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
 
         for(PaperSubcommand subcommand : subcommands) {
             if(subcommand.permission != null && !player.hasPermission(subcommand.permission) && subcommand.isHidden) continue;
-            if(subcommand.getIndexOfSubcommandInArgsArray() != lastIndex) continue;
+            if(subcommand.getIndexOfSubcommandInArgsArray() != (lastIndex - (lastSubcommand != null ? lastSubcommand.getIndexOfSubcommandInArgsArray() + 1 : 0))) continue;
             if(StringUtil.startsWithIgnoreCase(subcommand.name, args[lastIndex]))
                 matchedCompletions.add(subcommand.name);
             // Removed aliases
