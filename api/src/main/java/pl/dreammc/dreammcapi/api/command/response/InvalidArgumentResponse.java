@@ -1,4 +1,4 @@
-package pl.dreammc.dreammcapi.paper.command.response;
+package pl.dreammc.dreammcapi.api.command.response;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;

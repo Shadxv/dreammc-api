@@ -1,22 +1,15 @@
 package pl.dreammc.dreammcapi.paper.command;
 
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.dreammc.dreammcapi.api.util.BaseColor;
-import pl.dreammc.dreammcapi.api.util.MessageSender;
-import pl.dreammc.dreammcapi.paper.command.response.CommandResponse;
-import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
-import pl.dreammc.dreammcapi.paper.command.response.InvalidArgumentResponse;
+import pl.dreammc.dreammcapi.api.command.response.CommandResponse;
+import pl.dreammc.dreammcapi.api.command.response.ICommandResponse;
+import pl.dreammc.dreammcapi.api.command.response.InvalidArgumentResponse;
 
 import java.util.*;
 
@@ -80,24 +73,24 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
         Set<PaperSubcommand> subcommands;
         List<String> possibleArgs;
         if(lastIndex != 0) {
-            for (int i = -1; i < lastIndex; i++) {
-                if (i == -1 || lastSubcommand == null) {
-                    PaperSubcommand possibleLastSubcommand = this.subcommands.get(args[lastIndex].toLowerCase());
+            for (int i = 0; i < lastIndex; i++) {
+                if (i == 0 || lastSubcommand == null) {
+                    PaperSubcommand possibleLastSubcommand = this.subcommands.get(args[i].toLowerCase());
                     if (possibleLastSubcommand == null) continue;
-                    if(possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
+                    if (possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
                     if (possibleLastSubcommand.getIndexOfSubcommandInArgsArray() == i)
                         lastSubcommand = possibleLastSubcommand;
                 } else {
-                    PaperSubcommand possibleLastSubcommand = lastSubcommand.getSubcommands().get(args[lastIndex].toLowerCase());
+                    PaperSubcommand possibleLastSubcommand = lastSubcommand.getSubcommands().get(args[i].toLowerCase());
                     if (possibleLastSubcommand == null) continue;
-                    if(possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
+                    if (possibleLastSubcommand.permission != null && !player.hasPermission(possibleLastSubcommand.permission) && possibleLastSubcommand.isHidden) continue;
                     if (possibleLastSubcommand.getIndexOfSubcommandInArgsArray() == i)
                         lastSubcommand = possibleLastSubcommand;
                 }
             }
             if(lastSubcommand == null) return matchedCompletions;
             subcommands = new HashSet<>(lastSubcommand.getSubcommands().values());
-            possibleArgs = lastSubcommand.additionalCompletions(player).get(lastIndex - lastSubcommand.getIndexOfSubcommandInArgsArray());
+            possibleArgs = lastSubcommand.additionalCompletions(player).get(lastIndex - 1 - lastSubcommand.getIndexOfSubcommandInArgsArray());
         } else {
             subcommands = new HashSet<>(this.subcommands.values());
             possibleArgs = this.additionalCompletions(player).get(lastIndex);
@@ -105,7 +98,7 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
 
         for(PaperSubcommand subcommand : subcommands) {
             if(subcommand.permission != null && !player.hasPermission(subcommand.permission) && subcommand.isHidden) continue;
-            if(subcommand.getIndexOfSubcommandInArgsArray() != lastIndex) continue;
+            if(subcommand.getIndexOfSubcommandInArgsArray() != (lastIndex - (lastSubcommand != null ? lastSubcommand.getIndexOfSubcommandInArgsArray() + 1 : 0))) continue;
             if(StringUtil.startsWithIgnoreCase(subcommand.name, args[lastIndex]))
                 matchedCompletions.add(subcommand.name);
             // Removed aliases

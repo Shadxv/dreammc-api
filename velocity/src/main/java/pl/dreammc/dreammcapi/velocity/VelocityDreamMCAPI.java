@@ -10,12 +10,13 @@ import org.slf4j.Logger;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.logger.VelocityLoggerImpl;
+import pl.dreammc.dreammcapi.velocity.manager.CommandManager;
 import pl.dreammc.dreammcapi.velocity.player.VelocityMessageSenderImpl;
 
 
 @Plugin(
-        id = "sproject-api",
-        name = "SProjectAPI",
+        id = "dreammc-api",
+        name = "DreamMCAPI",
         version = "${version}"
 )
 public class VelocityDreamMCAPI {
@@ -24,15 +25,16 @@ public class VelocityDreamMCAPI {
     @Getter private final ProxyServer server;
     @Getter private final Logger logger;
 
+    @Getter private CommandManager commandManager;
+
     @Inject
     public VelocityDreamMCAPI(ProxyServer server, Logger logger) {
+        instance = this;
         this.server = server;
         this.logger = logger;
-
-        instance = this;
     }
 
-    @Subscribe
+    @Subscribe(priority = Short.MAX_VALUE)
     public void onProxyInitialization(ProxyInitializeEvent event) {
         this.setupAPI();
 
@@ -40,6 +42,8 @@ public class VelocityDreamMCAPI {
             this.server.shutdown();
             return;
         }
+
+        this.commandManager = new CommandManager(this.server.getCommandManager());
     }
 
     private void setupAPI() {

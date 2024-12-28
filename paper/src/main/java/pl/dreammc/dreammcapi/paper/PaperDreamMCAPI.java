@@ -4,11 +4,13 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
+import pl.dreammc.dreammcapi.api.communication.RedisConnector;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
 import pl.dreammc.dreammcapi.paper.player.PaperMessageSenderImpl;
+import pl.dreammc.dreammcapi.paper.service.PaperService;
 import pl.dreammc.dreammcapi.shared.Registry;
 
 public class PaperDreamMCAPI extends JavaPlugin {
@@ -22,6 +24,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     @Getter private InputManager inputManager;
     @Getter private ScoreboardManager scoreboardManager;
     @Getter private PacketHandlerManager packetHandlerManager;
+    @Getter private RedisConnector redisConnector;
 
     @Getter private Scoreboard serverMainScoreboard;
 
@@ -36,6 +39,11 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.setupAPI();
 
         if(!MongoService.init()) {
+            this.getServer().shutdown();
+            return;
+        }
+
+        if((this.redisConnector = new RedisConnector()).init()) {
             this.getServer().shutdown();
             return;
         }
@@ -65,6 +73,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     private void setupAPI() {
         Registry.messageSender = new PaperMessageSenderImpl();
         Registry.logger = new PaperLoggerImpl();
+        new PaperService(this.getConfig());
     }
 
 }
