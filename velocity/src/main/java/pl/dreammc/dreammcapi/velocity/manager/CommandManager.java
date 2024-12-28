@@ -20,7 +20,7 @@ public class CommandManager {
         this.commandManager = commandManager;
     }
 
-    private void registerCommand(VelocityCommand command, Plugin plugin) {
+    private void registerCommand(VelocityCommand command, Object plugin) {
         CommandMeta.Builder builder = this.commandManager.metaBuilder(command.getName());
         for (String alias : command.getAliases()) {
             builder.aliases(alias);
@@ -29,7 +29,7 @@ public class CommandManager {
         this.commandManager.register(builder.build(), command);
     }
 
-    public void registerCommands(Plugin plugin, ClassLoader classLoader, String packageName) {
+    public void registerCommands(Object plugin, ClassLoader classLoader, String packageName) {
         Set<Class<?>> commandClasses = ClassUtil.findAllListenersInPackage(classLoader, packageName, VelocityCommand.class);
 
         for (Class<?> commandClass : commandClasses) {
