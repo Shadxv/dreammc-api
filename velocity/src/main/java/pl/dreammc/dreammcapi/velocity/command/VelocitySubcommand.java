@@ -1,8 +1,8 @@
-package pl.dreammc.dreammcapi.paper.command;
+package pl.dreammc.dreammcapi.velocity.command;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.command.response.CommandResponse;
@@ -11,7 +11,7 @@ import pl.dreammc.dreammcapi.api.command.response.ICommandResponse;
 import java.util.*;
 
 @Getter
-public abstract class PaperSubcommand implements ICommandBase {
+public abstract class VelocitySubcommand implements ICommandBase{
 
     protected final String name;
     protected final String description;
@@ -20,11 +20,11 @@ public abstract class PaperSubcommand implements ICommandBase {
     @Nullable protected final String permission;
     protected final boolean isHidden;
     protected final boolean playerOnly;
-    protected final Map<String, PaperSubcommand> subcommands;
+    protected final Map<String, VelocitySubcommand> subcommands;
     protected int indexOfSubcommandInArgsArray;
 
 
-    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
+    protected VelocitySubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean isHidden, boolean playerOnly, VelocitySubcommand... subcommands) {
         this.name = name;
         this.description = description;
         this.usage = usage;
@@ -33,7 +33,7 @@ public abstract class PaperSubcommand implements ICommandBase {
         this.isHidden = isHidden;
         this.playerOnly = playerOnly;
         this.subcommands = new HashMap<>();
-        for (PaperSubcommand subcommand : subcommands) {
+        for (VelocitySubcommand subcommand : subcommands) {
             this.subcommands.put(subcommand.name, subcommand);
             for(String alias : subcommand.aliases) {
                 this.subcommands.put(alias, subcommand);
@@ -42,7 +42,7 @@ public abstract class PaperSubcommand implements ICommandBase {
         this.indexOfSubcommandInArgsArray = 0;
     }
 
-    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, int indexOfSubcommandInArgsArray, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
+    protected VelocitySubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, int indexOfSubcommandInArgsArray, boolean isHidden, boolean playerOnly, VelocitySubcommand... subcommands) {
         this.name = name;
         this.description = description;
         this.usage = usage;
@@ -51,7 +51,7 @@ public abstract class PaperSubcommand implements ICommandBase {
         this.isHidden = isHidden;
         this.playerOnly = playerOnly;
         this.subcommands = new HashMap<>();
-        for (PaperSubcommand subcommand : subcommands) {
+        for (VelocitySubcommand subcommand : subcommands) {
             this.subcommands.put(subcommand.name, subcommand);
             subcommand.incrementIndex(this.indexOfSubcommandInArgsArray + 1);
             for(String alias : subcommand.aliases) {
@@ -63,15 +63,15 @@ public abstract class PaperSubcommand implements ICommandBase {
 
     public void incrementIndex(int delta) {
         this.indexOfSubcommandInArgsArray += delta;
-        Set<PaperSubcommand> subcommandSet = new HashSet<>(this.subcommands.values());
-        for(PaperSubcommand subcommand : subcommandSet) {
+        Set<VelocitySubcommand> subcommandSet = new HashSet<>(this.subcommands.values());
+        for(VelocitySubcommand subcommand : subcommandSet) {
             subcommand.incrementIndex(delta + 1);
         }
     }
 
-    private ICommandResponse canExecute(CommandSender commandSender) {
-        if(commandSender instanceof Player) {
-            if(this.permission != null && !commandSender.hasPermission(this.permission)) {
+    private ICommandResponse canExecute(CommandSource source) {
+        if(source instanceof Player) {
+            if(this.permission != null && !source.hasPermission(this.permission)) {
                 if(this.isHidden) return CommandResponse.NOT_EXISTS;
                 return CommandResponse.NO_PERMISSION;
             }
@@ -81,8 +81,8 @@ public abstract class PaperSubcommand implements ICommandBase {
         return CommandResponse.ALLRIGHT;
     }
 
-    public ICommandResponse execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
-        ICommandResponse checkResult = this.canExecute(sender);
+    public ICommandResponse execute(@NotNull CommandSource source, @NotNull String commandLabel, @NotNull String[] args) {
+        ICommandResponse checkResult = this.canExecute(source);
         if(checkResult != CommandResponse.ALLRIGHT) return checkResult;
         String[] nextArgs;
         if(args.length > 1) {
@@ -92,8 +92,9 @@ public abstract class PaperSubcommand implements ICommandBase {
             nextArgs = new String[0];
         }
         ICommandResponse response;
-        if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(sender, commandLabel, args, this.usage, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
-            response = this.execute0(sender, commandLabel, nextArgs);
+        if(args.length == 0 || (response = SubcommandHandler.handleSubcommand(source, commandLabel, args, this.usage, this.subcommands)) == CommandResponse.SUBCOMMAND_NOT_FOUND)
+            response = this.execute0(source, commandLabel, nextArgs);
         return response;
     }
+
 }

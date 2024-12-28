@@ -15,7 +15,7 @@ public class CommandManager {
 
     private static final String PLUGIN_COMMAND_PREFIX = "dreammc";
 
-    public void registerCommand(PaperCommand command) {
+    private void registerCommand(PaperCommand command) {
         PaperDreamMCAPI.getInstance().getServer().getCommandMap().register(command.getName(), PLUGIN_COMMAND_PREFIX, command);
     }
 

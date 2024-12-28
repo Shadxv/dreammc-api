@@ -1,7 +1,7 @@
-package pl.dreammc.dreammcapi.paper.command;
+package pl.dreammc.dreammcapi.velocity.command;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.dreammc.dreammcapi.api.command.response.ICommandResponse;
 
@@ -11,7 +11,8 @@ import java.util.Map;
 
 public interface ICommandBase {
 
-    @NotNull ICommandResponse execute0(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args);
+    @NotNull
+    ICommandResponse execute0(@NotNull CommandSource sender, @NotNull String commandLabel, @NotNull String[] args);
 
     @NotNull
     default Map<Integer, List<String>> additionalCompletions(Player player) {

@@ -6,8 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
 import pl.dreammc.dreammcapi.api.database.MongoService;
-import pl.dreammc.dreammcapi.paper.communication.SendMessageCommand;
-import pl.dreammc.dreammcapi.paper.communication.SendMessageListener;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
@@ -46,7 +44,8 @@ public class PaperDreamMCAPI extends JavaPlugin {
         }
 
         if((this.redisConnector = new RedisConnector()).init()) {
-            this.redisConnector.subscribe(new SendMessageListener());
+            this.getServer().shutdown();
+            return;
         }
 
         this.serverMainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -64,8 +63,6 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();
         this.scoreboardManager = new ScoreboardManager();
-
-        this.commandManager.registerCommand(new SendMessageCommand());
     }
 
     @Override

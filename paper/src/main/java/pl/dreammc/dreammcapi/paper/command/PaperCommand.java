@@ -1,22 +1,15 @@
 package pl.dreammc.dreammcapi.paper.command;
 
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.dreammc.dreammcapi.api.util.BaseColor;
-import pl.dreammc.dreammcapi.api.util.MessageSender;
-import pl.dreammc.dreammcapi.paper.command.response.CommandResponse;
-import pl.dreammc.dreammcapi.paper.command.response.ICommandResponse;
-import pl.dreammc.dreammcapi.paper.command.response.InvalidArgumentResponse;
+import pl.dreammc.dreammcapi.api.command.response.CommandResponse;
+import pl.dreammc.dreammcapi.api.command.response.ICommandResponse;
+import pl.dreammc.dreammcapi.api.command.response.InvalidArgumentResponse;
 
 import java.util.*;
 
