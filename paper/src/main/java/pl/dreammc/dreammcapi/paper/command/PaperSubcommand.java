@@ -24,14 +24,14 @@ public abstract class PaperSubcommand implements ICommandBase {
     protected int indexOfSubcommandInArgsArray;
 
 
-    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
+    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, boolean playerOnly, boolean isHidden, PaperSubcommand... subcommands) {
         this.name = name;
         this.description = description;
         this.usage = usage;
         this.aliases = aliases;
         this.permission = permission;
-        this.isHidden = isHidden;
         this.playerOnly = playerOnly;
+        this.isHidden = isHidden;
         this.subcommands = new HashMap<>();
         for (PaperSubcommand subcommand : subcommands) {
             this.subcommands.put(subcommand.name, subcommand);
@@ -42,14 +42,14 @@ public abstract class PaperSubcommand implements ICommandBase {
         this.indexOfSubcommandInArgsArray = 0;
     }
 
-    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, int indexOfSubcommandInArgsArray, boolean isHidden, boolean playerOnly, PaperSubcommand... subcommands) {
+    protected PaperSubcommand(@NotNull String name, @NotNull String description, @NotNull String usage, @NotNull List<String> aliases, @Nullable String permission, int indexOfSubcommandInArgsArray, boolean playerOnly, boolean isHidden, PaperSubcommand... subcommands) {
         this.name = name;
         this.description = description;
         this.usage = usage;
         this.aliases = aliases;
         this.permission = permission;
-        this.isHidden = isHidden;
         this.playerOnly = playerOnly;
+        this.isHidden = isHidden;
         this.subcommands = new HashMap<>();
         for (PaperSubcommand subcommand : subcommands) {
             this.subcommands.put(subcommand.name, subcommand);
