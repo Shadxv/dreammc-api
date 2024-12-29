@@ -29,7 +29,11 @@ public class PacketHandler {
 
                 PacketEvent<?> event = manager.callEvent(player, packet, packet.getClass());
                 if(event != null && event.isCancelled()) return;
-                super.channelRead(ctx, msg);
+                if(event == null) {
+                    super.channelRead(ctx, msg);
+                    return;
+                }
+                super.channelRead(ctx, event.getPacket());
             }
         };
 

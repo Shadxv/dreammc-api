@@ -136,7 +136,12 @@ public class InteractInventoryListener implements Listener {
                 }
                 case HOTBAR_SWAP -> {
                     int hotbarSlot = event.getHotbarButton();
-                    ItemStack hotbarItemStack = player.getOpenInventory().getBottomInventory().getItem(hotbarSlot);
+                    ItemStack hotbarItemStack;
+                    if(hotbarSlot == -1)
+                        hotbarItemStack = player.getInventory().getItemInOffHand();
+                    else
+                        hotbarItemStack = player.getOpenInventory().getBottomInventory().getItem(hotbarSlot);
+
                     if(hotbarItemStack != null && hotbarItemStack.getType() != Material.AIR) {
                         unlockedMenu.handleChange(new ChangeAction(event.getSlot(), hotbarItemStack, ChangeType.SET_ITEM));
                         unlockedMenu.addItemToContnet(event.getSlot(), hotbarItemStack);
