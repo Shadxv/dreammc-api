@@ -1,6 +1,7 @@
 package pl.dreammc.dreammcapi.api.communication;
 
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.api.communication.listener.RedisPacketListener;
@@ -9,12 +10,14 @@ import pl.dreammc.dreammcapi.api.communication.packet.PacketCodec;
 import pl.dreammc.dreammcapi.api.communication.packet.PacketHelper;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.shared.Registry;
+import reactor.core.publisher.Mono;
 
 public class RedisConnector {
 
     private final String connectionUri;
     @Nullable private RedisClient redisClient;
     @Nullable private StatefulRedisPubSubConnection<String, Packet> pubSubConnection;
+    @Nullable private RedisReactiveCommands<String, Packet> reactiveConnection;
     @Nullable private PacketCodec codec;
 
     public RedisConnector() {
@@ -40,6 +43,7 @@ public class RedisConnector {
         this.redisClient = RedisClient.create(this.connectionUri);
         this.codec = new PacketCodec();
         this.pubSubConnection = this.redisClient.connectPubSub(this.codec);
+        this.reactiveConnection = this.redisClient.connect(this.codec).reactive();
         Logger.sendInfo("Successfully connected to Redis");
         return true;
     }
@@ -80,5 +84,35 @@ public class RedisConnector {
             return null;
         }
         return this.redisClient.connectPubSub(this.codec);
+    }
+
+    @Nullable
+    public Mono<Void> sendReactiveCommand(String key, Packet value, long expireTime) {
+        if(this.reactiveConnection == null) {
+            Logger.sendError("Could not send command because RedisReactiveCommands had not been initialized");
+            return null;
+        }
+        if(expireTime > 0) {
+            return this.reactiveConnection.setex(key, expireTime, value).then();
+        } else {
+            return this.reactiveConnection.set(key, value).then();
+        }
+    }
+
+    @Nullable
+    public Mono<Packet> getReactiveCommand(String key) {
+        if(this.reactiveConnection == null) {
+            Logger.sendError("Could not get command because RedisReactiveCommands had not been initialized");
+            return null;
+        }
+        return this.reactiveConnection.get(key);
+    }
+
+    public void deleteReactiveCommand(String key) {
+        if(this.reactiveConnection == null) {
+            Logger.sendError("Could not remove command because RedisReactiveCommands had not been initialized");
+            return;
+        }
+        this.reactiveConnection.del(key);
     }
 }

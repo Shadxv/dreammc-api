@@ -9,10 +9,8 @@ import pl.dreammc.dreammcapi.api.communication.packet.server.RegisterServerReque
 import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
+import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
-import pl.dreammc.dreammcapi.paper.connection.TransferPlayerProfileConfirmationPacketListener;
-import pl.dreammc.dreammcapi.paper.connection.TransferPlayerProfilePacketListener;
-import pl.dreammc.dreammcapi.paper.connection.TransferPlayerProfileRequestFromServerPacketListener;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
@@ -76,6 +74,8 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.scoreboardManager = new ScoreboardManager();
         this.profileManager = new PaperProfileManager();
 
+        this.commandManager.registerCommand(new ProfileTestCommand());
+
         this.sendRegisterServerRequest("dreammc", "proxy", "*");
         this.isRegistered = true;
     }
@@ -96,9 +96,6 @@ public class PaperDreamMCAPI extends JavaPlugin {
 
     private void registerRedisListeners() {
         this.redisConnector.subscribe(new RequestAvailableServersListener());
-        this.redisConnector.subscribe(new TransferPlayerProfilePacketListener());
-        this.redisConnector.subscribe(new TransferPlayerProfileConfirmationPacketListener());
-        this.redisConnector.subscribe(new TransferPlayerProfileRequestFromServerPacketListener());
     }
 
     public void sendRegisterServerRequest(String proxyGroup, String proxyName, String proxyId) {

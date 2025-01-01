@@ -40,19 +40,6 @@ public class ConnectionManager {
         }
 
         transferRequestModel.setServerFound(searchResult.get());
-        try {
-            boolean result = VelocityDreamMCAPI.getInstance().getServer().getEventManager()
-                    .fire(new TransferRequestEvent(player, transferRequestModel))
-                    .thenApply(TransferRequestEvent::isCanceled).get();
-            if(result) {
-                transferRequestModel.setStatus(PlayerTransferStatus.TRANSFER_CANCELED);
-                return transferRequestModel;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            transferRequestModel.setStatus(PlayerTransferStatus.DATA_SENT_TRANSFER_INTERRUPTED);
-            return transferRequestModel;
-        }
-
         return transferRequestModel;
     }
 

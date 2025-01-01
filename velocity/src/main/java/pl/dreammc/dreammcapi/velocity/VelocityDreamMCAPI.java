@@ -91,7 +91,6 @@ public class VelocityDreamMCAPI {
     private void registerRedisListeners() {
         this.redisConnector.subscribe(new RegisterServerRequestListener());
         this.redisConnector.subscribe(new UnregisterServerRequestListener());
-        this.redisConnector.subscribe(new TransferPlayerProfileConfirmationPacketListener());
     }
 
     private void registerListeners() {
@@ -101,5 +100,6 @@ public class VelocityDreamMCAPI {
         this.server.getEventManager().register(this, new PlayerPostLoginListener());
         this.server.getEventManager().register(this, new PlayerTransferListener());
         this.server.getEventManager().register(this, new TransferRequestListener());
+        this.server.getEventManager().register(this, new PlayerKickedListener());
     }
 }

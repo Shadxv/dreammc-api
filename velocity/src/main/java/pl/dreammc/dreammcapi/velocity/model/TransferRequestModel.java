@@ -19,8 +19,6 @@ public class TransferRequestModel {
     @Nullable private final RegisteredServer currentServer;
     @Setter @Nullable private RegisteredServer serverFound;
     @Setter private PlayerTransferStatus status;
-    @Getter @Setter @Nullable private CompletableFuture<TransferPlayerProfileConfirmationPacket> serverResponse;
-
     public TransferRequestModel(Player player, String targetServer, @Nullable RegisteredServer currentServer) {
         this.player = player;
         this.targetServer = targetServer;

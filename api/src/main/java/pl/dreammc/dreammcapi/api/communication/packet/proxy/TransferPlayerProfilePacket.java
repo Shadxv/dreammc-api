@@ -12,14 +12,10 @@ import java.util.UUID;
 @PacketType("PROFILE_TRANSFER_REQUEST")
 public class TransferPlayerProfilePacket extends Packet {
 
-    @Getter @Nullable private final String requesterName;
-    @Getter @Nullable private final String requesterId;
     @Getter private final UUID playerUUID;
     @Getter private final String playerProfileJson;
 
-    public TransferPlayerProfilePacket(@Nullable String requesterName, @Nullable String requesterId, UUID playerUUID, ProfileModel profileModel) {
-        this.requesterName = requesterName;
-        this.requesterId = requesterId;
+    public TransferPlayerProfilePacket(UUID playerUUID, ProfileModel profileModel) {
         this.playerUUID = playerUUID;
         this.playerProfileJson = profileModel.toMongoDocument().toJson();
     }
