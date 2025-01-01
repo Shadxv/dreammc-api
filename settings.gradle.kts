@@ -6,7 +6,7 @@ pluginManagement {
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
-rootProject.name = "sproject-api"
+rootProject.name = "dreammc-api"
 include("api")
 include("shared")
 include("paper")

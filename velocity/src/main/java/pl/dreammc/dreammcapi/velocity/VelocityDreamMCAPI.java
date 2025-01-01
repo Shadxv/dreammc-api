@@ -10,16 +10,15 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
 import pl.dreammc.dreammcapi.api.communication.packet.proxy.RequestAvailableServersPacket;
-import pl.dreammc.dreammcapi.api.communication.packet.server.RegisterServerRequestPacket;
-import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.shared.Registry;
-import pl.dreammc.dreammcapi.velocity.config.VelocityAPIConfig;
 import pl.dreammc.dreammcapi.velocity.connection.RegisterServerRequestListener;
+import pl.dreammc.dreammcapi.velocity.connection.TransferPlayerProfileConfirmationPacketListener;
 import pl.dreammc.dreammcapi.velocity.connection.UnregisterServerRequestListener;
+import pl.dreammc.dreammcapi.velocity.event.TransferRequestEvent;
+import pl.dreammc.dreammcapi.velocity.listener.*;
 import pl.dreammc.dreammcapi.velocity.logger.VelocityLoggerImpl;
-import pl.dreammc.dreammcapi.velocity.manager.CommandManager;
-import pl.dreammc.dreammcapi.velocity.manager.ConfigManager;
+import pl.dreammc.dreammcapi.velocity.manager.*;
 import pl.dreammc.dreammcapi.velocity.player.VelocityMessageSenderImpl;
 import pl.dreammc.dreammcapi.velocity.service.VelocityService;
 
@@ -41,7 +40,10 @@ public class VelocityDreamMCAPI {
     //@Getter private ConfigManager configManager;
     //@Getter private VelocityAPIConfig config;
     @Getter private RedisConnector redisConnector;
+    @Getter private ServerGroupManager serverGroupManager;
     @Getter private CommandManager commandManager;
+    @Getter private VelocityProfileManager profileManager;
+    @Getter private ConnectionManager connectionManager;
 
     @Inject
     public VelocityDreamMCAPI(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -66,7 +68,12 @@ public class VelocityDreamMCAPI {
         }
         this.registerRedisListeners();
 
+        this.serverGroupManager = new ServerGroupManager();
         this.commandManager = new CommandManager(this.server.getCommandManager());
+        this.profileManager = new VelocityProfileManager();
+        this.connectionManager = new ConnectionManager();
+
+        this.registerListeners();
 
         this.redisConnector.publish("dreammc:*:*:REQUEST_AVAILABLE_SERVERS", new RequestAvailableServersPacket());
     }
@@ -82,7 +89,17 @@ public class VelocityDreamMCAPI {
     }
 
     private void registerRedisListeners() {
-        this.redisConnector.subscribe(new RegisterServerRequestListener(RegisterServerRequestPacket.class));
-        this.redisConnector.subscribe(new UnregisterServerRequestListener(UnregisterServerRequestPacket.class));
+        this.redisConnector.subscribe(new RegisterServerRequestListener());
+        this.redisConnector.subscribe(new UnregisterServerRequestListener());
+        this.redisConnector.subscribe(new TransferPlayerProfileConfirmationPacketListener());
+    }
+
+    private void registerListeners() {
+        this.server.getEventManager().register(this, new PlayerDisconnectListener());
+        this.server.getEventManager().register(this, new PlayerInitialServerListener());
+        this.server.getEventManager().register(this, new PlayerLoginListener());
+        this.server.getEventManager().register(this, new PlayerPostLoginListener());
+        this.server.getEventManager().register(this, new PlayerTransferListener());
+        this.server.getEventManager().register(this, new TransferRequestListener());
     }
 }

@@ -10,8 +10,8 @@ import java.net.InetSocketAddress;
 
 public class UnregisterServerRequestListener extends RedisPacketListener<UnregisterServerRequestPacket> {
 
-    public UnregisterServerRequestListener(Class<UnregisterServerRequestPacket> packetClass) {
-        super(packetClass);
+    public UnregisterServerRequestListener() {
+        super(UnregisterServerRequestPacket.class);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class UnregisterServerRequestListener extends RedisPacketListener<Unregis
         String name = packet.getSenderServiceName() + "-" + packet.getSenderServiceId();
 
         VelocityDreamMCAPI.getInstance().getServer().unregisterServer(new ServerInfo(name, address));
-        VelocityDreamMCAPI.getInstance().getServer().getConfiguration().getAttemptConnectionOrder().remove(name);
+        //VelocityDreamMCAPI.getInstance().getServer().getConfiguration().getAttemptConnectionOrder().remove(name);
         String channelBuilder = packet.getSenderServiceGroup() + ":" + packet.getSenderServiceName() + ":" + packet.getSenderServiceId() + ":UNREGISTER_SERVER";
         Logger.sendInfo("Received unregister request: " + channelBuilder + " | " + name + " | " + packet.getAddress() + ":" + packet.getPort());
 

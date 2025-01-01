@@ -10,8 +10,8 @@ import java.net.InetSocketAddress;
 
 public class RegisterServerRequestListener extends RedisPacketListener<RegisterServerRequestPacket> {
 
-    public RegisterServerRequestListener(Class<RegisterServerRequestPacket> packetClass) {
-        super(packetClass);
+    public RegisterServerRequestListener() {
+        super(RegisterServerRequestPacket.class);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class RegisterServerRequestListener extends RedisPacketListener<RegisterS
         String name = packet.getSenderServiceName() + "-" + packet.getSenderServiceId();
 
         VelocityDreamMCAPI.getInstance().getServer().registerServer(new ServerInfo(name, address));
-        VelocityDreamMCAPI.getInstance().getServer().getConfiguration().getAttemptConnectionOrder().add(name);
+        //VelocityDreamMCAPI.getInstance().getServer().getConfiguration().getAttemptConnectionOrder().add(name);
         String channelBuilder = packet.getSenderServiceGroup() + ":" + packet.getSenderServiceName() + ":" + packet.getSenderServiceId() + ":REGISTER_SERVER";
         Logger.sendInfo("Received register request: " + channelBuilder + " | " + name + " | " + packet.getAddress() + ":" + packet.getPort());
     }

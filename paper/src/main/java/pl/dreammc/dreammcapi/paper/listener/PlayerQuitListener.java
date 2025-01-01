@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import pl.dreammc.dreammcapi.paper.manager.HologramManager;
 import pl.dreammc.dreammcapi.paper.manager.NPCManager;
+import pl.dreammc.dreammcapi.paper.manager.PaperProfileManager;
 import pl.dreammc.dreammcapi.paper.manager.ScoreboardManager;
 
 public class PlayerQuitListener implements Listener {
@@ -20,6 +21,8 @@ public class PlayerQuitListener implements Listener {
 
         ScoreboardManager.getInstance().removePlayersScoreboard(player);
         HologramManager.getInstance().unregisterPlayerHolograms(player);
+
+        PaperProfileManager.getInstance().removeProfile(player.getUniqueId());
     }
 
 }

@@ -8,8 +8,8 @@ import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 
 public class RequestAvailableServersListener extends RedisPacketListener<RequestAvailableServersPacket> {
 
-    public RequestAvailableServersListener(Class<RequestAvailableServersPacket> packetClass) {
-        super(packetClass);
+    public RequestAvailableServersListener() {
+        super(RequestAvailableServersPacket.class);
     }
 
     @Override

@@ -11,7 +11,6 @@ import java.util.UUID;
 public class ProfileModel {
 
     @Getter private final UUID uuid;
-    @Getter private final String name;
     @Getter private PlayerRank permanentRank;
     @Getter private final List<TimeRankModel> timeRanks;
     @Getter private PlayerRank currentRank;
@@ -19,9 +18,8 @@ public class ProfileModel {
     @Getter private int gems;
 
 
-    public ProfileModel(UUID uuid, String name) {
+    public ProfileModel(UUID uuid) {
         this.uuid = uuid;
-        this.name = name;
         this.permanentRank = PlayerRank.PLAYER;
         this.timeRanks = new ArrayList<>();
         this.currentRank = this.permanentRank;
@@ -29,9 +27,8 @@ public class ProfileModel {
         this.gems = 0;
     }
 
-    public ProfileModel(UUID uuid, String name, PlayerRank permanentRank, List<TimeRankModel> timeRanks, PlayerRank currentRank, double wallet, int gems) {
+    public ProfileModel(UUID uuid, PlayerRank permanentRank, List<TimeRankModel> timeRanks, PlayerRank currentRank, double wallet, int gems) {
         this.uuid = uuid;
-        this.name = name;
         this.permanentRank = permanentRank;
         this.timeRanks = timeRanks;
         this.currentRank = currentRank;
@@ -43,8 +40,7 @@ public class ProfileModel {
     public Document toMongoDocument() {
         Document result = new Document()
                 .append("uuid", this.uuid)
-                .append("nickname", this.name)
-                .append("permanentRank", this.permanentRank);
+                .append("permanentRank", this.permanentRank.name());
 
         List<Document> timeRanks = new ArrayList<>();
         for(TimeRankModel rank : this.timeRanks) {
@@ -66,7 +62,6 @@ public class ProfileModel {
 
         return new ProfileModel(
                 document.get("uuid", UUID.class),
-                document.getString("nickname"),
                 PlayerRank.valueOf(document.getString("permanentRank")),
                 timeRanks,
                 PlayerRank.PLAYER,

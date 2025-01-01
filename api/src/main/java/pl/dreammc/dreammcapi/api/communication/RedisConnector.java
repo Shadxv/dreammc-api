@@ -15,6 +15,7 @@ public class RedisConnector {
     private final String connectionUri;
     @Nullable private RedisClient redisClient;
     @Nullable private StatefulRedisPubSubConnection<String, Packet> pubSubConnection;
+    @Nullable private PacketCodec codec;
 
     public RedisConnector() {
         if(System.getenv().containsKey("REDIS_URI")) this.connectionUri = System.getenv("REDIS_URI");
@@ -37,13 +38,17 @@ public class RedisConnector {
         }
 
         this.redisClient = RedisClient.create(this.connectionUri);
-        this.pubSubConnection = this.redisClient.connectPubSub(new PacketCodec());
+        this.codec = new PacketCodec();
+        this.pubSubConnection = this.redisClient.connectPubSub(this.codec);
         Logger.sendInfo("Successfully connected to Redis");
         return true;
     }
 
     public void close() {
-        if(this.redisClient != null) this.redisClient.close();
+        if(this.pubSubConnection != null)
+            this.pubSubConnection.close();
+        if(this.redisClient != null)
+            this.redisClient.close();
     }
 
     public void publish(String channel, Packet packet) {
@@ -52,6 +57,7 @@ public class RedisConnector {
             return;
         }
         this.pubSubConnection.async().publish(channel, packet);
+        Logger.sendWarning("Sent packet: " + channel);
     }
 
     public void subscribe(RedisPacketListener<?> listener) {
@@ -65,5 +71,14 @@ public class RedisConnector {
                 Registry.service.getServiceGroup() + ":*:*:" + PacketHelper.getPacketType(listener.getPacketClass())
         );
         this.pubSubConnection.addListener(listener);
+    }
+
+    @Nullable
+    public StatefulRedisPubSubConnection<String, Packet> createPrivateConnection() {
+        if(this.redisClient == null) {
+            Logger.sendError("Private Pub/Sub connection could not have been created because RedisClient had not been initialized");
+            return null;
+        }
+        return this.redisClient.connectPubSub(this.codec);
     }
 }

@@ -1,17 +1,18 @@
 package pl.dreammc.dreammcapi.paper;
 
 import lombok.Getter;
-import net.minecraft.network.protocol.game.ServerboundChatPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
-import pl.dreammc.dreammcapi.api.communication.packet.proxy.RequestAvailableServersPacket;
 import pl.dreammc.dreammcapi.api.communication.packet.server.RegisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
+import pl.dreammc.dreammcapi.paper.connection.TransferPlayerProfileConfirmationPacketListener;
+import pl.dreammc.dreammcapi.paper.connection.TransferPlayerProfilePacketListener;
+import pl.dreammc.dreammcapi.paper.connection.TransferPlayerProfileRequestFromServerPacketListener;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
@@ -31,6 +32,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     @Getter private ScoreboardManager scoreboardManager;
     @Getter private PacketHandlerManager packetHandlerManager;
     @Getter private RedisConnector redisConnector;
+    @Getter private PaperProfileManager profileManager;
 
     @Getter private Scoreboard serverMainScoreboard;
 
@@ -72,6 +74,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();
         this.scoreboardManager = new ScoreboardManager();
+        this.profileManager = new PaperProfileManager();
 
         this.sendRegisterServerRequest("dreammc", "proxy", "*");
         this.isRegistered = true;
@@ -92,7 +95,10 @@ public class PaperDreamMCAPI extends JavaPlugin {
     }
 
     private void registerRedisListeners() {
-        this.redisConnector.subscribe(new RequestAvailableServersListener(RequestAvailableServersPacket.class));
+        this.redisConnector.subscribe(new RequestAvailableServersListener());
+        this.redisConnector.subscribe(new TransferPlayerProfilePacketListener());
+        this.redisConnector.subscribe(new TransferPlayerProfileConfirmationPacketListener());
+        this.redisConnector.subscribe(new TransferPlayerProfileRequestFromServerPacketListener());
     }
 
     public void sendRegisterServerRequest(String proxyGroup, String proxyName, String proxyId) {
