@@ -1,12 +1,9 @@
 package pl.dreammc.dreammcapi.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import pl.dreammc.dreammcapi.api.communication.packet.proxy.TransferPlayerProfilePacket;
+import pl.dreammc.dreammcapi.api.communication.packet.proxy.TransferPlayerRequestPacket;
+import pl.dreammc.dreammcapi.api.communication.packet.shared.TransferPlayerProfilePacket;
 import pl.dreammc.dreammcapi.api.model.ProfileModel;
-import pl.dreammc.dreammcapi.api.util.BaseColor;
-import pl.dreammc.dreammcapi.api.util.MessageSender;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI;
 import pl.dreammc.dreammcapi.velocity.event.TransferRequestEvent;
@@ -14,14 +11,10 @@ import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
 import pl.dreammc.dreammcapi.velocity.manager.VelocityProfileManager;
 import pl.dreammc.dreammcapi.velocity.type.PlayerTransferStatus;
 import pl.dreammc.dreammcapi.velocity.type.ProfileTransferKickMessage;
-import reactor.core.publisher.Mono;
-
-import java.util.concurrent.CompletableFuture;
 
 public class TransferRequestListener {
 
-    @Subscribe(priority = Short.MAX_VALUE)
-    public void handleTransferRequest(TransferRequestEvent event) {
+    public static void handleTransferRequest(TransferRequestEvent event) {
         if (event.isCanceled()) return;
         if (event.getRequest().getServerFound() == null) {
             event.setCanceled(true);
@@ -37,7 +30,7 @@ public class TransferRequestListener {
         event.getRequest().setStatus(PlayerTransferStatus.DATA_SENT);
     }
 
-    private boolean handleTransferFromProxy(TransferRequestEvent event) {
+    private static boolean handleTransferFromProxy(TransferRequestEvent event) {
         ProfileModel profileModel = VelocityProfileManager.getInstance().getAndPopProfile(event.getPlayer().getUniqueId());
         if(Registry.service == null || profileModel == null) {
             event.setCanceled(true);
@@ -51,7 +44,7 @@ public class TransferRequestListener {
         return true;
     }
 
-    private boolean handleTransferFromServer(TransferRequestEvent event) {
+    private static boolean handleTransferFromServer(TransferRequestEvent event) {
         if(Registry.service == null) {
             event.setCanceled(true);
             event.getPlayer().sendMessage(ProfileTransferKickMessage.CONNECTION_ERROR.getMessage());
@@ -64,7 +57,8 @@ public class TransferRequestListener {
         String currentServerId = "*";
         if (splitedCurrentServerName.length > 1)
             currentServerId = splitedCurrentServerName[1];
-        String channel = "dreammc:" + currentServerName + ":" + currentServerId + ":PROFILE_TRANSFER_REQUEST_SERVER";
+        String channel = Registry.service.getServiceGroup() + ":" + currentServerName + ":" + currentServerId + ":TRANSFER_PLAYER_REQUEST";
+        VelocityDreamMCAPI.getInstance().getRedisConnector().publish(channel, new TransferPlayerRequestPacket(event.getPlayer().getUniqueId(), event.getRequest().getTargetServer()));
 
         return true;
     }

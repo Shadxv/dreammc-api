@@ -6,15 +6,15 @@ import pl.dreammc.dreammcapi.api.communication.packet.PacketType;
 
 import java.util.UUID;
 
-@PacketType("PROFILE_TRANSFER_CONFIRMATION")
-public class TransferPlayerProfileConfirmationPacket extends Packet {
+@PacketType("PLAYER_TRANSFER")
+public class TransferPlayerPacket extends Packet {
 
     @Getter private final UUID playerUUID;
-    @Getter private final boolean isAccepted;
+    @Getter private final String targetServer;
 
-    public TransferPlayerProfileConfirmationPacket(UUID playerUUID, boolean isAccepted) {
+    public TransferPlayerPacket(UUID playerUUID, String targetServer) {
         this.playerUUID = playerUUID;
-        this.isAccepted = isAccepted;
+        this.targetServer = targetServer;
     }
 
 }

@@ -6,13 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
-import pl.dreammc.dreammcapi.api.communication.packet.proxy.TransferPlayerProfilePacket;
-import pl.dreammc.dreammcapi.api.logger.Logger;
+import pl.dreammc.dreammcapi.api.communication.packet.shared.TransferPlayerProfilePacket;
 import pl.dreammc.dreammcapi.api.util.BaseColor;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 import pl.dreammc.dreammcapi.paper.manager.PaperProfileManager;
 import pl.dreammc.dreammcapi.shared.Registry;
-import reactor.core.publisher.Mono;
 
 public class PlayerLoginListener implements Listener {
 

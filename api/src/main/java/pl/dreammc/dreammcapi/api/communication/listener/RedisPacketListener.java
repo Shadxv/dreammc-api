@@ -26,7 +26,6 @@ public abstract class RedisPacketListener<T extends Packet> implements RedisPubS
     @Override
     public void message(String channel, Packet message) {
         if(!this.channel.matcher(channel).matches() || !packetClass.isAssignableFrom(message.getClass())) return;
-        Logger.sendError("Received message from: " + channel);
         this.handlePacket((T) message);
     }
 

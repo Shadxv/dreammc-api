@@ -5,11 +5,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
-import pl.dreammc.dreammcapi.api.communication.packet.server.TransferPlayerProfileConfirmationPacket;
-import pl.dreammc.dreammcapi.velocity.event.TransferRequestEvent;
 import pl.dreammc.dreammcapi.velocity.type.PlayerTransferStatus;
-
-import java.util.concurrent.CompletableFuture;
 
 @Getter
 public class TransferRequestModel {

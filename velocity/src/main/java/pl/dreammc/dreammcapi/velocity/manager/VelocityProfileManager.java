@@ -16,6 +16,7 @@ public class VelocityProfileManager extends ProfileManager {
     private final Map<UUID, ProfileModel> cachedProfiles;
 
     public VelocityProfileManager() {
+        super();
         this.cachedProfiles = new HashMap<>();
     }
 
@@ -50,6 +51,6 @@ public class VelocityProfileManager extends ProfileManager {
     }
 
     public static VelocityProfileManager getInstance() {
-        return VelocityDreamMCAPI.getInstance().getProfileManager();
+        return (VelocityProfileManager) ProfileManager.getInstance();
     }
 }

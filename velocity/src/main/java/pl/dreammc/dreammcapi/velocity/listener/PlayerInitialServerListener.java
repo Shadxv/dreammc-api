@@ -24,23 +24,7 @@ public class PlayerInitialServerListener {
             return;
         }
 
-//        try {
-//            boolean result = VelocityDreamMCAPI.getInstance().getServer().getEventManager()
-//                    .fire(new TransferRequestEvent(event.getPlayer(), transferRequestModel))
-//                    .thenApply(TransferRequestEvent::isCanceled).get();
-//            if(result) {
-//                if(transferRequestModel.getStatus() != PlayerTransferStatus.DATA_SENT)
-//                    transferRequestModel.setStatus(PlayerTransferStatus.TRANSFER_CANCELED);
-//                event.getPlayer().disconnect(ProfileTransferKickMessage.PROFILE_NOT_TRANSFERED.getMessage());
-//                return;
-//            }
-//        } catch (InterruptedException | ExecutionException e) {
-//            transferRequestModel.setStatus(PlayerTransferStatus.DATA_SENT_TRANSFER_INTERRUPTED);
-//            event.getPlayer().disconnect(ProfileTransferKickMessage.PROFILE_NOT_TRANSFERED.getMessage());
-//            return;
-//        }
-
-        new TransferRequestListener().handleTransferRequest(new TransferRequestEvent(event.getPlayer(), transferRequestModel));
+        TransferRequestListener.handleTransferRequest(new TransferRequestEvent(event.getPlayer(), transferRequestModel));
 
 
         if(transferRequestModel.getStatus() != PlayerTransferStatus.DATA_SENT) {

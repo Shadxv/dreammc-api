@@ -11,6 +11,7 @@ import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
+import pl.dreammc.dreammcapi.paper.connection.TransferPlayerRequestPacketListener;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
@@ -30,7 +31,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     @Getter private ScoreboardManager scoreboardManager;
     @Getter private PacketHandlerManager packetHandlerManager;
     @Getter private RedisConnector redisConnector;
-    @Getter private PaperProfileManager profileManager;
+    @Getter private TransferManager transferManager;
 
     @Getter private Scoreboard serverMainScoreboard;
 
@@ -72,7 +73,8 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();
         this.scoreboardManager = new ScoreboardManager();
-        this.profileManager = new PaperProfileManager();
+        new PaperProfileManager();
+        this.transferManager = new TransferManager();
 
         this.commandManager.registerCommand(new ProfileTestCommand());
 
@@ -96,6 +98,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
 
     private void registerRedisListeners() {
         this.redisConnector.subscribe(new RequestAvailableServersListener());
+        this.redisConnector.subscribe(new TransferPlayerRequestPacketListener());
     }
 
     public void sendRegisterServerRequest(String proxyGroup, String proxyName, String proxyId) {

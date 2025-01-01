@@ -1,4 +1,4 @@
-package pl.dreammc.dreammcapi.api.communication.packet.proxy;
+package pl.dreammc.dreammcapi.api.communication.packet.shared;
 
 import lombok.Getter;
 import org.bson.Document;
