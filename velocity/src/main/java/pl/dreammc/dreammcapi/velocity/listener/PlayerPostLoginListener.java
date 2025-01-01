@@ -11,6 +11,7 @@ import pl.dreammc.dreammcapi.api.util.BaseColor;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI;
 import pl.dreammc.dreammcapi.velocity.connection.PostLoginTransferProfileConfirmationPacketListener;
+import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
 import pl.dreammc.dreammcapi.velocity.manager.VelocityProfileManager;
 
 import java.util.concurrent.CountDownLatch;
@@ -26,18 +27,12 @@ public class PlayerPostLoginListener {
             return;
         }
         try {
-            CountDownLatch latch = new CountDownLatch(1);
             String channel = Registry.service.getServiceGroup() + ":" + Registry.service.getServiceName() + ":" + Registry.service.getServiceId() + ":PROFILE_TRANSFER_CONFIRMATION:" + event.getPlayer().getUniqueId().toString();
             StatefulRedisPubSubConnection<String, Packet> connection = VelocityDreamMCAPI.getInstance().getRedisConnector().createPrivateConnection();
-            connection.addListener(new PostLoginTransferProfileConfirmationPacketListener(channel, event.getPlayer(), connection, latch));
+            var listener = new PostLoginTransferProfileConfirmationPacketListener(channel, event.getPlayer(), connection);
+            connection.addListener(listener);
             connection.async().subscribe(channel);
-
-            if(!latch.await(10, TimeUnit.SECONDS)) {
-                event.getPlayer().disconnect(Component.text("Timeout podczas ładowania profilu. Spróbuj ponownie później.")
-                        .color(TextColor.fromHexString(BaseColor.redPrimary)));
-                connection.async().unsubscribe(channel);
-                connection.close();
-            }
+            listener.setTransferRequestModel(ConnectionManager.getInstance().transferPlayer(event.getPlayer(), ConnectionManager.DEFAULT_SERVER));
         } catch (Exception e) {
             event.getPlayer().disconnect(Component.text("5Wystąpił problem z ładowaniem profilu. Spróbuj ponownie później.").color(TextColor.fromHexString(BaseColor.redPrimary)));
             e.printStackTrace();

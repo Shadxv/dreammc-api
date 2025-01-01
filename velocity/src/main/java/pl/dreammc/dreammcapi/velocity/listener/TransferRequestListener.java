@@ -15,6 +15,8 @@ import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
 import pl.dreammc.dreammcapi.velocity.manager.VelocityProfileManager;
 import pl.dreammc.dreammcapi.velocity.type.PlayerTransferStatus;
 
+import java.util.concurrent.CompletableFuture;
+
 public class TransferRequestListener {
 
     @Subscribe(priority = Short.MAX_VALUE)
@@ -41,6 +43,7 @@ public class TransferRequestListener {
             if (splitedName.length > 1)
                 targetId = splitedName[1];
             String channel = "dreammc:" + targetName + ":" + targetId + ":PROFILE_TRANSFER_REQUEST";
+            event.getRequest().setServerResponse(new CompletableFuture<>());
             VelocityDreamMCAPI.getInstance().getRedisConnector().publish(channel, new TransferPlayerProfilePacket(null, null, event.getPlayer().getUniqueId(), profileModel));
         } else {
             if(Registry.service == null) {
