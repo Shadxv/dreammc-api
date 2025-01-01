@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class PacketEvent<T extends Packet<?>> {
 
     @Getter private final Player player;
-    @Getter private final T packet;
+    @Getter @Setter private T packet;
     @Getter @Setter private boolean cancelled;
 
     public PacketEvent(final Player player, final T packet) {

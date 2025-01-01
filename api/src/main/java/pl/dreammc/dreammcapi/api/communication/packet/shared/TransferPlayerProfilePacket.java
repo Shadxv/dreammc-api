@@ -1,0 +1,32 @@
+package pl.dreammc.dreammcapi.api.communication.packet.shared;
+
+import lombok.Getter;
+import org.bson.Document;
+import org.jetbrains.annotations.Nullable;
+import pl.dreammc.dreammcapi.api.communication.packet.Packet;
+import pl.dreammc.dreammcapi.api.communication.packet.PacketType;
+import pl.dreammc.dreammcapi.api.model.ProfileModel;
+
+import java.util.UUID;
+
+@PacketType("PROFILE_TRANSFER_REQUEST")
+public class TransferPlayerProfilePacket extends Packet {
+
+    @Getter private final UUID playerUUID;
+    @Getter private final String playerProfileJson;
+
+    public TransferPlayerProfilePacket(UUID playerUUID, ProfileModel profileModel) {
+        this.playerUUID = playerUUID;
+        this.playerProfileJson = profileModel.toMongoDocument().toJson();
+    }
+
+    @Nullable
+    public ProfileModel getProfileFromJson() {
+        try {
+            return ProfileModel.fromMongoDocument(Document.parse(this.playerProfileJson));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+}
