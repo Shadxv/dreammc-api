@@ -3,6 +3,7 @@ package pl.dreammc.dreammcapi.velocity.connection;
 import com.velocitypowered.api.proxy.Player;
 import pl.dreammc.dreammcapi.api.communication.listener.RedisPacketListener;
 import pl.dreammc.dreammcapi.api.communication.packet.server.TransferPlayerPacket;
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.util.MessageSender;
 import pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI;
 import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
@@ -31,6 +32,7 @@ public class TransferPlayerPacketListener extends RedisPacketListener<TransferPl
             ConnectionManager.getInstance().removeTransferRequest(player.getUniqueId());
             return;
         }
+        Logger.sendWarning("Transfering player...");
         player.createConnectionRequest(transferRequestModel.getServerFound()).fireAndForget();
     }
 }

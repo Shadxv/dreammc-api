@@ -32,14 +32,18 @@ public class ConnectionManager {
         if(player.getCurrentServer().isPresent()) currentServer = player.getCurrentServer().get().getServer();
 
         TransferRequestModel transferRequestModel = new TransferRequestModel(player, targetServer, currentServer);
-        this.waitingForTranfer.put(player.getUniqueId(), transferRequestModel);
         Optional<RegisteredServer> searchResult = VelocityDreamMCAPI.getInstance().getServer().getServer(targetServer);
         if(searchResult.isEmpty()) {
             transferRequestModel.setStatus(PlayerTransferStatus.TARGET_NOT_FOUND);
             return transferRequestModel;
         }
-
+        if(searchResult.get().equals(currentServer)) {
+            MessageSender.sendErrorMessage(player, "Już znajdujesz się na tym serwerze");
+            return transferRequestModel;
+        }
         transferRequestModel.setServerFound(searchResult.get());
+        transferRequestModel.setStatus(PlayerTransferStatus.TARGET_FOUND);
+        this.waitingForTranfer.put(player.getUniqueId(), transferRequestModel);
         return transferRequestModel;
     }
 

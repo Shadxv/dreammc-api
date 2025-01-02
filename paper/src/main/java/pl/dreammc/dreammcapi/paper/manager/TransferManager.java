@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pl.dreammc.dreammcapi.api.communication.packet.shared.TransferPlayerProfilePacket;
 import pl.dreammc.dreammcapi.api.communication.packet.server.TransferPlayerPacket;
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.model.ProfileModel;
 import pl.dreammc.dreammcapi.api.util.MessageSender;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
@@ -27,15 +28,18 @@ public class TransferManager {
 
         this.transferCache.put(player, targetServer);
         Bukkit.getAsyncScheduler().runNow(PaperDreamMCAPI.getInstance(), scheduledTask -> {
-           PaperDreamMCAPI.getInstance().getRedisConnector().sendReactiveCommand(Registry.service.getServiceGroup() + ":profile:" + player.getUniqueId(), new TransferPlayerProfilePacket(player.getUniqueId(), profile), 60)
+            Logger.sendWarning("Transfering player: " + player.getUniqueId());
+            PaperDreamMCAPI.getInstance().getRedisConnector().sendReactiveCommand(Registry.service.getServiceGroup() + ":profile:" + player.getUniqueId(), new TransferPlayerProfilePacket(player.getUniqueId(), profile), 60)
                    .doFinally(signalType -> {
-                        if(!this.transferCache.containsKey(player)) return;
-                        PaperDreamMCAPI.getInstance().getRedisConnector().publish(Registry.service.getServiceGroup() + ":proxy:*:PLAYER_TRANSFER", new TransferPlayerPacket(player.getUniqueId(), targetServer));
+                       if(!this.transferCache.containsKey(player)) return;
+                       PaperDreamMCAPI.getInstance().getRedisConnector().publish(Registry.service.getServiceGroup() + ":proxy:*:PLAYER_TRANSFER", new TransferPlayerPacket(player.getUniqueId(), targetServer));
+                       Logger.sendWarning("Transfer player sent: " + Registry.service.getServiceGroup() + ":proxy:*:PLAYER_TRANSFER");
                    }).doOnError(throwable -> {
-                        if(!this.transferCache.containsKey(player) || !player.isOnline()) return;
-                        this.transferCache.remove(player);
-                        MessageSender.sendErrorMessage(player, "Wystąpił błąd podczas zmiany serwera. Spróbuj ponownie");
+                       if(!this.transferCache.containsKey(player) || !player.isOnline()) return;
+                       this.transferCache.remove(player);
+                       MessageSender.sendErrorMessage(player, "Wystąpił błąd podczas zmiany serwera. Spróbuj ponownie");
                    }).subscribe();
+            Logger.sendWarning("Transfer done");
         });
         MessageSender.sendInfoMessage(player, "Przenoszenie na serwer " + targetServer + "...");
     }

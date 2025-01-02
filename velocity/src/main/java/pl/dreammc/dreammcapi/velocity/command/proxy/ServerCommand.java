@@ -9,6 +9,7 @@ import pl.dreammc.dreammcapi.api.command.response.CommandResponse;
 import pl.dreammc.dreammcapi.api.command.response.ICommandResponse;
 import pl.dreammc.dreammcapi.api.communication.packet.server.TransferPlayerPacket;
 import pl.dreammc.dreammcapi.api.communication.packet.shared.TransferPlayerProfilePacket;
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.util.MessageSender;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI;
@@ -19,13 +20,14 @@ import pl.dreammc.dreammcapi.velocity.listener.TransferRequestListener;
 import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
 import pl.dreammc.dreammcapi.velocity.manager.VelocityProfileManager;
 import pl.dreammc.dreammcapi.velocity.model.TransferRequestModel;
+import pl.dreammc.dreammcapi.velocity.type.PlayerTransferStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ServerCommand extends VelocityCommand {
-    protected ServerCommand() {
+    public ServerCommand() {
         super("server",
                 "Transfers sender to other server",
                 "/server <name>",
@@ -43,8 +45,9 @@ public class ServerCommand extends VelocityCommand {
 
         VelocityDreamMCAPI.getInstance().getServer().getScheduler().buildTask(VelocityDreamMCAPI.getInstance(), scheduledTask -> {
             TransferRequestModel transferRequestModel = ConnectionManager.getInstance().transferPlayer(player, args[0]);
+            if(transferRequestModel.getStatus() != PlayerTransferStatus.TARGET_FOUND) return;
             TransferRequestListener.handleTransferRequest(new TransferRequestEvent(player, transferRequestModel));
-        });
+        }).schedule();
 
         return CommandResponse.ALLRIGHT;
     }

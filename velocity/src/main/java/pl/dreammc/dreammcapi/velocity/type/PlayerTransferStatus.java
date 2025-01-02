@@ -3,6 +3,7 @@ package pl.dreammc.dreammcapi.velocity.type;
 public enum PlayerTransferStatus {
     NOT_STARTED,
     TARGET_NOT_FOUND,
+    TARGET_FOUND,
     TRANSFER_CANCELED,
     DATA_SENT,
     DATA_SENT_TRANSFER_INTERRUPTED,

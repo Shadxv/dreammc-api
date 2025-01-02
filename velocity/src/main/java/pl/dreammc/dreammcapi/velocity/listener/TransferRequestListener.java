@@ -3,6 +3,7 @@ package pl.dreammc.dreammcapi.velocity.listener;
 import com.velocitypowered.api.event.Subscribe;
 import pl.dreammc.dreammcapi.api.communication.packet.proxy.TransferPlayerRequestPacket;
 import pl.dreammc.dreammcapi.api.communication.packet.shared.TransferPlayerProfilePacket;
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.model.ProfileModel;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI;
@@ -52,14 +53,14 @@ public class TransferRequestListener {
             return false;
         }
 
-        String[] splitedCurrentServerName = event.getRequest().getServerFound().getServerInfo().getName().split("-");
+        String[] splitedCurrentServerName = event.getRequest().getCurrentServer().getServerInfo().getName().split("-");
         String currentServerName = splitedCurrentServerName[0];
         String currentServerId = "*";
         if (splitedCurrentServerName.length > 1)
             currentServerId = splitedCurrentServerName[1];
         String channel = Registry.service.getServiceGroup() + ":" + currentServerName + ":" + currentServerId + ":TRANSFER_PLAYER_REQUEST";
         VelocityDreamMCAPI.getInstance().getRedisConnector().publish(channel, new TransferPlayerRequestPacket(event.getPlayer().getUniqueId(), event.getRequest().getTargetServer()));
-
+        Logger.sendWarning("Transfer request sent: " + channel);
         return true;
     }
 }
