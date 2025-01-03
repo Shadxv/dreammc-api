@@ -108,7 +108,11 @@ public class VelocityDreamMCAPI {
         this.server.getEventManager().register(this, new PlayerLoginListener());
         this.server.getEventManager().register(this, new PlayerPostLoginListener());
         this.server.getEventManager().register(this, new PlayerTransferListener());
-        this.server.getEventManager().register(this, new TransferRequestListener());
         this.server.getEventManager().register(this, new PlayerKickedListener());
+    }
+
+    private void sendRequestForAllAvailableServers() {
+        if(Registry.service == null) return;
+        this.redisConnector.publish(Registry.service.getServiceGroup() + ":*:*:REQUEST_AVAILABLE_SERVERS", new RequestAvailableServersPacket());
     }
 }

@@ -400,7 +400,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
             clone.material = this.material;
             clone.name = this.name;
             clone.amount = this.amount;
-            clone.lore = new Lore<>((T) clone, this.lore().getLoreLines());
+            clone.lore = new Lore<>((T) clone, new ArrayList<>(this.lore().getLoreLines()));
             clone.unbreakable = this.unbreakable;
             clone.attributes.putAll(this.attributes);
             clone.flags.addAll(this.flags);
