@@ -2,9 +2,11 @@ package pl.dreammc.dreammcapi.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import pl.dreammc.dreammcapi.api.util.BaseColor;
+import pl.dreammc.dreammcapi.velocity.VelocityDreamMCAPI;
 import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
 import pl.dreammc.dreammcapi.velocity.model.TransferRequestModel;
 import pl.dreammc.dreammcapi.velocity.type.ProfileTransferKickMessage;
@@ -18,6 +20,15 @@ public class PlayerKickedListener {
         TransferRequestModel transferRequestModel = ConnectionManager.getInstance().getTransferRequest(event.getPlayer().getUniqueId());
 
         if(transferRequestModel == null) {
+//            Optional<RegisteredServer> searchResult = VelocityDreamMCAPI.getInstance().getServer().getServer(ConnectionManager.DEFAULT_SERVER);
+//            if(searchResult.isEmpty()) {
+//                return;
+//            }
+//            event.getServerKickReason().ifPresentOrElse(reason -> {
+//                event.setResult(KickedFromServerEvent.RedirectPlayer.create(searchResult.get(), reason));
+//            }, () -> {
+//                event.setResult(KickedFromServerEvent.RedirectPlayer.create(searchResult.get()));
+//            });
             return;
         }
 

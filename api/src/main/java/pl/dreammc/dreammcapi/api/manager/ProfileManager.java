@@ -32,6 +32,14 @@ public class ProfileManager {
         return profile;
     }
 
+    @Nullable
+    public ProfileModel findUnloadedProfile(UUID uuid) {
+        Document document = MongoService.findOne(this.profileCollection, "uuid", uuid);
+        if(document == null) return null;
+
+        return ProfileModel.fromMongoDocument(document);
+    }
+
     // Default - can be overridden
     public void callChangeEvent(UUID playerUUID, ProfileModel profile, ProfileValueType type) {}
 

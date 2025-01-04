@@ -5,6 +5,7 @@ import org.bson.Document;
 import pl.dreammc.dreammcapi.api.manager.ProfileManager;
 import pl.dreammc.dreammcapi.api.type.PlayerRank;
 import pl.dreammc.dreammcapi.api.type.ProfileValueType;
+import pl.dreammc.dreammcapi.api.util.FormatUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,11 +85,11 @@ public class ProfileModel {
     }
 
     public void addToWallet(double delta) {
-        this.setWallet(this.wallet + delta);
+        this.setWallet(FormatUtil.roundToTwoDecimalPlaces(this.wallet + delta));
     }
 
     public void removeFromWallet(double delta) {
-        this.setWallet(this.wallet - delta);
+        this.setWallet(FormatUtil.roundToTwoDecimalPlaces(this.wallet - delta));
     }
 
     public void setCoins(int newValue) {

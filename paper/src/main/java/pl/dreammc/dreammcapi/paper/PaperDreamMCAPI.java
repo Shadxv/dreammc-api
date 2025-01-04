@@ -9,6 +9,7 @@ import pl.dreammc.dreammcapi.api.communication.packet.server.RegisterServerReque
 import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
+import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
 import pl.dreammc.dreammcapi.paper.connection.TransferPlayerRequestPacketListener;
@@ -73,6 +74,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();
         this.scoreboardManager = new ScoreboardManager();
+        new PlayerIdManager();
         new PaperProfileManager();
         this.transferManager = new TransferManager();
 

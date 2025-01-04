@@ -103,7 +103,7 @@ public class InteractInventoryListener implements Listener {
                     unlockedMenu.addItemToContnet(event.getSlot(), toReturn);
                 }
                 case PICKUP_ALL, DROP_ALL_SLOT, MOVE_TO_OTHER_INVENTORY -> {
-                    unlockedMenu.handleChange(new ChangeAction(event.getSlot(), event.getCurrentItem(), ChangeType.REMOVE_ITEM));
+                    unlockedMenu.handleChange(new ChangeAction(event.getSlot(), null, ChangeType.REMOVE_ITEM));
                     unlockedMenu.removeItemFromContent(event.getSlot());
                 }
                 case PICKUP_HALF -> {
@@ -120,7 +120,7 @@ public class InteractInventoryListener implements Listener {
                 case PICKUP_ONE, DROP_ONE_SLOT -> {
                     ItemStack inSlot = event.getCurrentItem();
                     if(inSlot.getAmount() == 1) {
-                        unlockedMenu.handleChange(new ChangeAction(event.getSlot(), inSlot, ChangeType.REMOVE_ITEM));
+                        unlockedMenu.handleChange(new ChangeAction(event.getSlot(), null, ChangeType.REMOVE_ITEM));
                         unlockedMenu.removeItemFromContent(event.getSlot());
                     }
                     else {
@@ -146,7 +146,7 @@ public class InteractInventoryListener implements Listener {
                         unlockedMenu.handleChange(new ChangeAction(event.getSlot(), hotbarItemStack, ChangeType.SET_ITEM));
                         unlockedMenu.addItemToContnet(event.getSlot(), hotbarItemStack);
                     } else {
-                        unlockedMenu.handleChange(new ChangeAction(event.getSlot(), event.getCurrentItem(), ChangeType.REMOVE_ITEM));
+                        unlockedMenu.handleChange(new ChangeAction(event.getSlot(), null, ChangeType.REMOVE_ITEM));
                         unlockedMenu.removeItemFromContent(event.getSlot());
                     }
                 }

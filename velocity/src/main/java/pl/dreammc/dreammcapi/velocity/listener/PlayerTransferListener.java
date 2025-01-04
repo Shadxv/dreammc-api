@@ -2,7 +2,10 @@ package pl.dreammc.dreammcapi.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.velocity.manager.ConnectionManager;
+
+import java.util.Optional;
 
 public class PlayerTransferListener {
 

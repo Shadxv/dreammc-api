@@ -1,5 +1,7 @@
 package pl.dreammc.dreammcapi.api.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class FormatUtil {
@@ -95,6 +97,11 @@ public class FormatUtil {
         }
 
         return timeLeft.toString();
+    }
+
+    public static double roundToTwoDecimalPlaces(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        return bd.setScale(2, RoundingMode.FLOOR).doubleValue();
     }
 
 }
