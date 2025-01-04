@@ -20,7 +20,7 @@ public class PlayerLoginListener implements Listener {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("Serwer nie akceptuje połączeń.").color(TextColor.fromHexString(BaseColor.redPrimary)));
             return;
         }
-        PaperDreamMCAPI.getInstance().getRedisConnector().getReactiveCommand(Registry.service.getServiceGroup() + ":profile:" + event.getPlayer().getUniqueId().toString()).subscribe(packet -> {
+        PaperDreamMCAPI.getInstance().getRedisConnector().getReactiveCommand(Registry.service.getServiceGroup() + ":profile:" + event.getPlayer().getUniqueId()).subscribe(packet -> {
             if(packet instanceof TransferPlayerProfilePacket playerProfilePacket) {
                 PaperProfileManager.getInstance().loadProfile(playerProfilePacket.getPlayerUUID(), playerProfilePacket.getProfileFromJson());
             }

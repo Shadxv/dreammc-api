@@ -31,7 +31,9 @@ public class PaperProfileManager extends ProfileManager {
 
     @Nullable
     public ProfileModel getProfile(UUID uuid) {
-        return this.playerProfiles.get(uuid);
+        ProfileModel model = this.playerProfiles.get(uuid);
+        if(model == null) model = this.findUnloadedProfile(uuid);
+        return model;
     }
 
     @Override

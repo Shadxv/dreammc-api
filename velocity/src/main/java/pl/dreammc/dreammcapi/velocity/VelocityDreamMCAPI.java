@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
 import pl.dreammc.dreammcapi.api.communication.packet.proxy.RequestAvailableServersPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
+import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.command.proxy.ServerCommand;
 import pl.dreammc.dreammcapi.velocity.connection.RegisterServerRequestListener;
@@ -70,6 +71,7 @@ public class VelocityDreamMCAPI {
 
         this.serverGroupManager = new ServerGroupManager();
         this.commandManager = new CommandManager(this.server.getCommandManager());
+        new PlayerIdManager();
         new VelocityProfileManager();
         this.connectionManager = new ConnectionManager();
 

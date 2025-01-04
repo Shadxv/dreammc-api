@@ -20,15 +20,15 @@ public class PlayerKickedListener {
         TransferRequestModel transferRequestModel = ConnectionManager.getInstance().getTransferRequest(event.getPlayer().getUniqueId());
 
         if(transferRequestModel == null) {
-            Optional<RegisteredServer> searchResult = VelocityDreamMCAPI.getInstance().getServer().getServer(ConnectionManager.DEFAULT_SERVER);
-            if(searchResult.isEmpty()) {
-                return;
-            }
-            event.getServerKickReason().ifPresentOrElse(reason -> {
-                event.setResult(KickedFromServerEvent.RedirectPlayer.create(searchResult.get(), reason));
-            }, () -> {
-                event.setResult(KickedFromServerEvent.RedirectPlayer.create(searchResult.get()));
-            });
+//            Optional<RegisteredServer> searchResult = VelocityDreamMCAPI.getInstance().getServer().getServer(ConnectionManager.DEFAULT_SERVER);
+//            if(searchResult.isEmpty()) {
+//                return;
+//            }
+//            event.getServerKickReason().ifPresentOrElse(reason -> {
+//                event.setResult(KickedFromServerEvent.RedirectPlayer.create(searchResult.get(), reason));
+//            }, () -> {
+//                event.setResult(KickedFromServerEvent.RedirectPlayer.create(searchResult.get()));
+//            });
             return;
         }
 
