@@ -90,6 +90,11 @@ public abstract class PagedMenu extends InventoryMenu {
         this.generatePageContent();
     }
 
+    public void openOnPage(int page){
+        this.currentPage = page;
+        this.generatePageContent();
+    }
+
     protected abstract InventoryItem getPreviousPageItem(int currentPage, int maxPage);
     protected abstract InventoryItem getNextPageItem(int currentPage, int maxPage);
     protected abstract @Nullable InventoryItem getArrowFillerIfNotExists();
