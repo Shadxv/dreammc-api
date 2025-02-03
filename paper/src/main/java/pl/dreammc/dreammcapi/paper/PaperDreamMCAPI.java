@@ -95,7 +95,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     private void setupAPI() {
         Registry.messageSender = new PaperMessageSenderImpl();
         Registry.logger = new PaperLoggerImpl();
-        new PaperService(this.getConfig());
+        new PaperService();
     }
 
     private void registerRedisListeners() {

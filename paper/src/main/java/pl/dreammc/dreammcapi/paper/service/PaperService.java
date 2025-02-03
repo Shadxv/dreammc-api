@@ -8,13 +8,9 @@ import java.util.NoSuchElementException;
 
 public class PaperService extends BaseService {
 
-    private final FileConfiguration config;
-
-    public PaperService(FileConfiguration config) {
+    public PaperService() {
         super();
-        this.config = config;
         try {
-            if(config == null) throw new NoSuchElementException();
             this.serviceGroup = this.readServiceGroup();
             this.serviceName = this.readServiceName();
             this.serviceId = this.readServiceId();
@@ -23,28 +19,25 @@ public class PaperService extends BaseService {
             if(Registry.logger == null) {
                 return;
             }
-            Registry.logger.sendError("Config file not found or service fields are not set");
+            Registry.logger.sendError("Service fields are not set");
         }
     }
 
     @Override
     public String readServiceGroup() throws NoSuchElementException {
-        String result = this.config.getString("service.group");
-        if(result == null) throw new NoSuchElementException();
-        return result;
+        if(!System.getenv().containsKey("GROUP_NAME")) throw new NoSuchElementException();
+        return System.getenv("GROUP_NAME");
     }
 
     @Override
     public String readServiceName() throws NoSuchElementException  {
-        String result = this.config.getString("service.name");
-        if(result == null) throw new NoSuchElementException();
-        return result;
+        if(!System.getenv().containsKey("SERVICE_NAME")) throw new NoSuchElementException();
+        return System.getenv("SERVICE_NAME");
     }
 
     @Override
     public String readServiceId() throws NoSuchElementException  {
-        String result = this.config.getString("service.id");
-        if(result == null) throw new NoSuchElementException();
-        return result;
+        if(!System.getenv().containsKey("SERVER_ID")) throw new NoSuchElementException();
+        return System.getenv("SERVER_ID");
     }
 }
