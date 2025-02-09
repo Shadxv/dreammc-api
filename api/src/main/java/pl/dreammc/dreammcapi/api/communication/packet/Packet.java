@@ -1,11 +1,13 @@
 package pl.dreammc.dreammcapi.api.communication.packet;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import pl.dreammc.dreammcapi.shared.Registry;
 
 import java.io.Serializable;
 
-@Getter
+@Getter @JsonIgnoreProperties(ignoreUnknown = true)
 public class Packet implements Serializable {
 
     private final String senderServiceGroup;

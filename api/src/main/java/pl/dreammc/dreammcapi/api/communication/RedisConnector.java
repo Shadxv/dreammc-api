@@ -75,6 +75,7 @@ public class RedisConnector {
                 Registry.service.getServiceGroup() + ":*:*:" + PacketHelper.getPacketType(listener.getPacketClass())
         );
         this.pubSubConnection.addListener(listener);
+        this.registerPacketType(listener.getPacketClass());
     }
 
     @Nullable
@@ -114,5 +115,20 @@ public class RedisConnector {
             return;
         }
         this.reactiveConnection.del(key);
+    }
+
+    public void registerPacketType(Class<? extends Packet> clazz) {
+        String type = PacketHelper.getPacketType(clazz);
+        if (type.isEmpty()) {
+            Logger.sendError(clazz.getName() + " class could not be registered as Packet. @PacketType not found.");
+            return;
+        }
+        this.codec.registerPacketType(type, clazz);
+    }
+
+    public static void registerPackets(RedisConnector connector, Class<? extends Packet>... packetClasses) {
+        for(Class<? extends Packet> packetClass : packetClasses) {
+            connector.registerPacketType(packetClass);
+        }
     }
 }

@@ -5,12 +5,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
+import pl.dreammc.dreammcapi.api.communication.packet.Packet;
 import pl.dreammc.dreammcapi.api.communication.packet.server.RegisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
+import pl.dreammc.dreammcapi.paper.connection.CacheIPPacketListener;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
 import pl.dreammc.dreammcapi.paper.connection.TransferPlayerRequestPacketListener;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
@@ -80,14 +82,14 @@ public class PaperDreamMCAPI extends JavaPlugin {
 
         this.commandManager.registerCommand(new ProfileTestCommand());
 
-        this.sendRegisterServerRequest("dreammc", "proxy", "*");
+        this.sendRegisterServerRequest();
         this.isRegistered = true;
     }
 
     @Override
     public void onDisable() {
         if(this.isRegistered)
-            this.sendUnegisterServerRequest("dreammc", "proxy", "*");
+            this.sendUnegisterServerRequest();
         if(this.hologramManager != null)
             this.hologramManager.despawnAll();
     }
@@ -95,35 +97,32 @@ public class PaperDreamMCAPI extends JavaPlugin {
     private void setupAPI() {
         Registry.messageSender = new PaperMessageSenderImpl();
         Registry.logger = new PaperLoggerImpl();
-        new PaperService();
+        new PaperService(this.getConfig());
+    }
+
+    public void registerRedisPackets(Class<? extends Packet>... packetClasses) {
+        RedisConnector.registerPackets(this.redisConnector, packetClasses);
     }
 
     private void registerRedisListeners() {
         this.redisConnector.subscribe(new RequestAvailableServersListener());
         this.redisConnector.subscribe(new TransferPlayerRequestPacketListener());
+        this.redisConnector.subscribe(new CacheIPPacketListener());
     }
 
-    public void sendRegisterServerRequest(String proxyGroup, String proxyName, String proxyId) {
-        String channelBuilder = proxyGroup + ":" + proxyName + ":" + proxyId + ":REGISTER_SERVER";
+    public void sendRegisterServerRequest() {
+        String channelBuilder = "netmanager:netmanager:*:REGISTER_SERVER_REQUEST";
 
-        String ip = this.getServer().getIp();
-        if(ip.isEmpty()) ip = "127.0.0.1";
-
-        int port = this.getServer().getPort();
-
-        PaperDreamMCAPI.getInstance().getRedisConnector().publish(channelBuilder, new RegisterServerRequestPacket(ip, port));
-        Logger.sendInfo("Send register request: " + channelBuilder + " | " + ip + ":" + port);
+        PaperDreamMCAPI.getInstance().getRedisConnector().publish(channelBuilder, new RegisterServerRequestPacket(Registry.service.getServiceGroup(), ((PaperService)Registry.service).getProxyServiceName()));
+        Logger.sendInfo("Send register request: " + channelBuilder);
     }
 
-    public void sendUnegisterServerRequest(String proxyGroup, String proxyName, String proxyId) {
-        String channelBuilder = proxyGroup + ":" + proxyName + ":" + proxyId + ":UNREGISTER_SERVER";
+    public void sendUnegisterServerRequest() {
+        PaperService paperService = (PaperService)Registry.service;
+        if (paperService.getAddressIP().isEmpty() || paperService.getPort() == null) return;
+        String channelBuilder = Registry.service.getServiceGroup() + ":" + ((PaperService)Registry.service).getProxyServiceName() + ":*:UNREGISTER_SERVER";
 
-        String ip = this.getServer().getIp();
-        if(ip.isEmpty()) ip = "127.0.0.1";
-
-        int port = this.getServer().getPort();
-
-        PaperDreamMCAPI.getInstance().getRedisConnector().publish(channelBuilder, new UnregisterServerRequestPacket(ip, port));
-        Logger.sendInfo("Send unregister request: " + channelBuilder + " | " + ip + ":" + port);
+        PaperDreamMCAPI.getInstance().getRedisConnector().publish(channelBuilder, new UnregisterServerRequestPacket(paperService.getAddressIP(), paperService.getPort()));
+        Logger.sendInfo("Send unregister request: " + channelBuilder);
     }
 }

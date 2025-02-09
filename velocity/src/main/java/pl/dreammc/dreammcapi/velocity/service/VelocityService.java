@@ -9,12 +9,6 @@ import java.util.NoSuchElementException;
 
 public class VelocityService extends BaseService {
 
-//    private final VelocityAPIConfig config;
-//
-//    public VelocityService(VelocityAPIConfig config) {
-//        this.config = config;
-//    }
-
     public VelocityService() {
         try {
             this.serviceGroup = this.readServiceGroup();
@@ -30,17 +24,20 @@ public class VelocityService extends BaseService {
     }
 
     @Override
-    protected String readServiceGroup() throws NoSuchElementException {
-        return "dreammc";
+    public String readServiceGroup() throws NoSuchElementException {
+        if(!System.getenv().containsKey("GROUP_NAME")) throw new NoSuchElementException();
+        return System.getenv("GROUP_NAME");
     }
 
     @Override
-    protected String readServiceName() throws NoSuchElementException {
-        return "proxy";
+    public String readServiceName() throws NoSuchElementException  {
+        if(!System.getenv().containsKey("SERVICE_NAME")) throw new NoSuchElementException();
+        return System.getenv("SERVICE_NAME");
     }
 
     @Override
-    protected String readServiceId() throws NoSuchElementException {
-        return "0";
+    public String readServiceId() throws NoSuchElementException  {
+        if(!System.getenv().containsKey("SERVER_ID")) throw new NoSuchElementException();
+        return System.getenv("SERVER_ID");
     }
 }

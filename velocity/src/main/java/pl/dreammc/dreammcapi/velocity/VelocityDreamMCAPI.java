@@ -10,12 +10,13 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import org.slf4j.Logger;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
+import pl.dreammc.dreammcapi.api.communication.packet.Packet;
 import pl.dreammc.dreammcapi.api.communication.packet.proxy.RequestAvailableServersPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.velocity.command.proxy.ServerCommand;
-import pl.dreammc.dreammcapi.velocity.connection.RegisterServerRequestListener;
+import pl.dreammc.dreammcapi.velocity.connection.RegisterServerDataListener;
 import pl.dreammc.dreammcapi.velocity.connection.TransferPlayerPacketListener;
 import pl.dreammc.dreammcapi.velocity.connection.UnregisterServerRequestListener;
 import pl.dreammc.dreammcapi.velocity.listener.*;
@@ -98,8 +99,12 @@ public class VelocityDreamMCAPI {
         new VelocityService();
     }
 
+    public void registerRedisPackets(Class<? extends Packet>... packetClasses) {
+        RedisConnector.registerPackets(this.redisConnector, packetClasses);
+    }
+
     private void registerRedisListeners() {
-        this.redisConnector.subscribe(new RegisterServerRequestListener());
+        this.redisConnector.subscribe(new RegisterServerDataListener());
         this.redisConnector.subscribe(new UnregisterServerRequestListener());
         this.redisConnector.subscribe(new TransferPlayerPacketListener());
     }

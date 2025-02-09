@@ -6,31 +6,28 @@ import lombok.Getter;
 import pl.dreammc.dreammcapi.api.communication.packet.Packet;
 import pl.dreammc.dreammcapi.api.communication.packet.PacketType;
 
-import java.util.UUID;
+@PacketType("CACHE_IP")
+public class CacheIPPacket extends Packet {
 
-@PacketType("PLAYER_TRANSFER")
-public class TransferPlayerPacket extends Packet {
+    @Getter private final String addressIP;
+    @Getter private final int port;
 
-    @Getter private final UUID playerUUID;
-    @Getter private final String targetServer;
+    public CacheIPPacket(String addressIP, int port) {
+        super();
+        this.addressIP = addressIP;
+        this.port = port;
+    }
 
     @JsonCreator
-    public TransferPlayerPacket(
+    public CacheIPPacket(
             @JsonProperty("senderServiceGroup") String senderServiceGroup,
             @JsonProperty("senderServiceName") String senderServiceName,
             @JsonProperty("senderServiceId") String senderServiceId,
-            @JsonProperty("playerUUID") UUID playerUUID,
-            @JsonProperty("targetServer") String targetServer
-    ) {
+            @JsonProperty("addressIP") String addressIP,
+            @JsonProperty("port") int port) {
         super(senderServiceGroup, senderServiceName, senderServiceId);
-        this.playerUUID = playerUUID;
-        this.targetServer = targetServer;
-    }
-
-    public TransferPlayerPacket(UUID playerUUID, String targetServer) {
-        super();
-        this.playerUUID = playerUUID;
-        this.targetServer = targetServer;
+        this.addressIP = addressIP;
+        this.port = port;
     }
 
 }

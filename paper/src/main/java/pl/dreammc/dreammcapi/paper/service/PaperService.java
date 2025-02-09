@@ -1,6 +1,9 @@
 package pl.dreammc.dreammcapi.paper.service;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.shared.Registry;
 import pl.dreammc.dreammcapi.shared.service.BaseService;
 
@@ -8,18 +11,22 @@ import java.util.NoSuchElementException;
 
 public class PaperService extends BaseService {
 
-    public PaperService() {
+    @Getter @Setter @Nullable private String addressIP;
+    @Getter @Setter @Nullable private Integer port;
+    @Getter @Nullable private String proxyServiceName;
+
+    public PaperService(FileConfiguration config) {
         super();
         try {
             this.serviceGroup = this.readServiceGroup();
             this.serviceName = this.readServiceName();
             this.serviceId = this.readServiceId();
+            this.proxyServiceName = config.getString("proxy-service");
             Registry.service = this;
         } catch (NoSuchElementException e) {
             if(Registry.logger == null) {
                 return;
-            }
-            Registry.logger.sendError("Service fields are not set");
+            }Registry.logger.sendError("Service fields are not set");
         }
     }
 

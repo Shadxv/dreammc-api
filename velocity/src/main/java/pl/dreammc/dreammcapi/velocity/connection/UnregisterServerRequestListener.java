@@ -17,7 +17,7 @@ public class UnregisterServerRequestListener extends RedisPacketListener<Unregis
     @Override
     public void handlePacket(UnregisterServerRequestPacket packet) {
         InetSocketAddress address = new InetSocketAddress(packet.getAddress(), packet.getPort());
-        String name = packet.getSenderServiceName() + "-" + packet.getSenderServiceId();
+        String name = packet.getSenderServiceId();
 
         VelocityDreamMCAPI.getInstance().getServer().unregisterServer(new ServerInfo(name, address));
         String channelBuilder = packet.getSenderServiceGroup() + ":" + packet.getSenderServiceName() + ":" + packet.getSenderServiceId() + ":UNREGISTER_SERVER";
