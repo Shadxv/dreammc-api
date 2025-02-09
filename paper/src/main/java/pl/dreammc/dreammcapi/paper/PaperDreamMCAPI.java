@@ -63,7 +63,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
 
         this.packetHandlerManager = new PacketHandlerManager();
         this.listenerManager = new PaperListenerManager(this);
-        this.listenerManager.registerListeners();
+        this.listenerManager.registerListeners(this.getClassLoader(), "pl.dreammc.dreammcapi.paper.listener");
 
         this.inventoryManager = new InventoryManager();
 

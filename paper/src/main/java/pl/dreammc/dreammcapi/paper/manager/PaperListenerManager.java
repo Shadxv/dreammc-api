@@ -23,8 +23,8 @@ public class PaperListenerManager {
         this.plugin.getServer().getPluginManager().registerEvents(listener, this.plugin);
     }
 
-    public void registerListeners() {
-        Set<Class<?>> listenerClasses = findAllListenersInPackage("pl.dreammc.dreammcapi.paper.listener", Listener.class);
+    public void registerListeners(ClassLoader classLoader, String packageName) {
+        Set<Class<?>> listenerClasses = findAllListenersInPackage(classLoader, packageName, Listener.class);
 
         for (Class<?> listenerClass : listenerClasses) {
             try {
@@ -36,9 +36,9 @@ public class PaperListenerManager {
         }
     }
 
-    public Set<Class<?>> findAllListenersInPackage(String packageName, Class<?> findClass) {
+    public Set<Class<?>> findAllListenersInPackage(ClassLoader classLoader, String packageName, Class<?> findClass) {
         try {
-            return ClassPath.from(this.plugin.getClass().getClassLoader())
+            return ClassPath.from(classLoader)
                     .getTopLevelClassesRecursive(packageName)
                     .stream()
                     .map(ClassPath.ClassInfo::load)
