@@ -45,6 +45,15 @@ public class TextUtil {
         charMap.put('x', 'х');
         charMap.put('y', 'ʏ');
         charMap.put('z', 'ᴢ');
+        charMap.put('ą', 'ᴀ');
+        charMap.put('ć', 'ᴄ');
+        charMap.put('ę', 'ᴇ');
+        charMap.put('ł', 'ʟ');
+        charMap.put('ń', 'ɴ');
+        charMap.put('ó', 'ᴏ');
+        charMap.put('ś', 'ѕ');
+        charMap.put('ź', 'ᴢ');
+        charMap.put('ż', 'ᴢ');
 
         // Character widths
         charWidthMap.put(' ', 4);
