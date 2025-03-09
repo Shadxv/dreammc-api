@@ -10,7 +10,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 public enum Symbol {
     CROSS("✗"),
     DOT("•"),
-    ARROW("➥");
+    ARROW("➥"),
+    LINE("|");
 
     final String symbolChar;
 
