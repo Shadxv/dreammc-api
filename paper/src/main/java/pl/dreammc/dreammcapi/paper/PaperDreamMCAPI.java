@@ -10,6 +10,7 @@ import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerReq
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
+import pl.dreammc.dreammcapi.paper.command.language.LangReloadCommand;
 import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
 import pl.dreammc.dreammcapi.paper.connection.TransferPlayerRequestPacketListener;
@@ -78,7 +79,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
         new PaperProfileManager();
         this.transferManager = new TransferManager();
 
-        this.commandManager.registerCommand(new ProfileTestCommand());
+        this.registerCommands();
 
         this.sendRegisterServerRequest("dreammc", "proxy", "*");
         this.isRegistered = true;
@@ -96,6 +97,11 @@ public class PaperDreamMCAPI extends JavaPlugin {
         Registry.messageSender = new PaperMessageSenderImpl();
         Registry.logger = new PaperLoggerImpl();
         new PaperService();
+    }
+
+    private void registerCommands() {
+        this.commandManager.registerCommand(new ProfileTestCommand());
+        this.commandManager.registerCommand(new LangReloadCommand());
     }
 
     private void registerRedisListeners() {

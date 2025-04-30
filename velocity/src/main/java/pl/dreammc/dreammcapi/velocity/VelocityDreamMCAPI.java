@@ -14,6 +14,8 @@ import pl.dreammc.dreammcapi.api.communication.packet.proxy.RequestAvailableServ
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.shared.Registry;
+import pl.dreammc.dreammcapi.velocity.command.VelocityCommand;
+import pl.dreammc.dreammcapi.velocity.command.proxy.LangReloadCommand;
 import pl.dreammc.dreammcapi.velocity.command.proxy.ServerCommand;
 import pl.dreammc.dreammcapi.velocity.connection.RegisterServerRequestListener;
 import pl.dreammc.dreammcapi.velocity.connection.TransferPlayerPacketListener;
@@ -76,14 +78,7 @@ public class VelocityDreamMCAPI {
         this.connectionManager = new ConnectionManager();
 
         this.registerListeners();
-
-        ServerCommand command = new ServerCommand();
-        CommandMeta.Builder builder = this.server.getCommandManager().metaBuilder(command.getName());
-        for (String alias : command.getAliases()) {
-            builder.aliases(alias);
-        }
-        builder.plugin(this);
-        this.server.getCommandManager().register(builder.build(), command);
+        this.registerCommands();
 
         this.redisConnector.publish("dreammc:*:*:REQUEST_AVAILABLE_SERVERS", new RequestAvailableServersPacket());
     }
@@ -111,6 +106,21 @@ public class VelocityDreamMCAPI {
         this.server.getEventManager().register(this, new PlayerPostLoginListener());
         this.server.getEventManager().register(this, new PlayerTransferListener());
         this.server.getEventManager().register(this, new PlayerKickedListener());
+    }
+
+    // TODO: remove this cause it is duplicate from CommandManager
+    private void registerCommand(VelocityCommand command) {
+        CommandMeta.Builder builder = this.server.getCommandManager().metaBuilder(command.getName());
+        for (String alias : command.getAliases()) {
+            builder.aliases(alias);
+        }
+        builder.plugin(this);
+        this.server.getCommandManager().register(builder.build(), command);
+    }
+
+    private void registerCommands() {
+        this.registerCommand(new ServerCommand());
+        this.registerCommand(new LangReloadCommand());
     }
 
     private void sendRequestForAllAvailableServers() {
