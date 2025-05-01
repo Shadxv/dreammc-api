@@ -140,7 +140,7 @@ public class VelocityDreamMCAPI {
             this.configData = yaml.load(stream);
             stream.close();
         } catch (Exception e) {
-            pl.dreammc.dreammcapi.api.logger.Logger.sendError("Language is not set in config file.");
+            pl.dreammc.dreammcapi.api.logger.Logger.sendError("Configuration file could not be loaded.");
             this.server.shutdown();
         }
     }
