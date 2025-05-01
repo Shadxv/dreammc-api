@@ -9,6 +9,7 @@ import pl.dreammc.dreammcapi.api.communication.packet.server.RegisterServerReque
 import pl.dreammc.dreammcapi.api.communication.packet.server.UnregisterServerRequestPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
 import pl.dreammc.dreammcapi.api.logger.Logger;
+import pl.dreammc.dreammcapi.api.manager.LanguageManager;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.paper.command.language.LangReloadCommand;
 import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
@@ -97,6 +98,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
         Registry.messageSender = new PaperMessageSenderImpl();
         Registry.logger = new PaperLoggerImpl();
         new PaperService();
+        this.initLanguageManager();
     }
 
     private void registerCommands() {
@@ -107,6 +109,16 @@ public class PaperDreamMCAPI extends JavaPlugin {
     private void registerRedisListeners() {
         this.redisConnector.subscribe(new RequestAvailableServersListener());
         this.redisConnector.subscribe(new TransferPlayerRequestPacketListener());
+    }
+
+    private void initLanguageManager() {
+        String lang = this.getConfig().getString("lang");
+        if (lang == null) {
+            Logger.sendError("Language is not set in config file.");
+            this.getServer().shutdown();
+            return;
+        }
+        Registry.languageManager = new LanguageManager(lang);
     }
 
     public void sendRegisterServerRequest(String proxyGroup, String proxyName, String proxyId) {
