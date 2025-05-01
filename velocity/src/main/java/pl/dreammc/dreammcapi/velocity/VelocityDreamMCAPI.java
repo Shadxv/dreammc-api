@@ -9,11 +9,15 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import org.slf4j.Logger;
+import org.yaml.snakeyaml.Yaml;
 import pl.dreammc.dreammcapi.api.communication.RedisConnector;
 import pl.dreammc.dreammcapi.api.communication.packet.proxy.RequestAvailableServersPacket;
 import pl.dreammc.dreammcapi.api.database.MongoService;
+import pl.dreammc.dreammcapi.api.manager.LanguageManager;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.shared.Registry;
+import pl.dreammc.dreammcapi.velocity.command.VelocityCommand;
+import pl.dreammc.dreammcapi.velocity.command.proxy.LangReloadCommand;
 import pl.dreammc.dreammcapi.velocity.command.proxy.ServerCommand;
 import pl.dreammc.dreammcapi.velocity.connection.RegisterServerRequestListener;
 import pl.dreammc.dreammcapi.velocity.connection.TransferPlayerPacketListener;
@@ -24,7 +28,11 @@ import pl.dreammc.dreammcapi.velocity.manager.*;
 import pl.dreammc.dreammcapi.velocity.player.VelocityMessageSenderImpl;
 import pl.dreammc.dreammcapi.velocity.service.VelocityService;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.Map;
 
 
 @Plugin(
@@ -41,6 +49,7 @@ public class VelocityDreamMCAPI {
 
     //@Getter private ConfigManager configManager;
     //@Getter private VelocityAPIConfig config;
+    @Getter private Map<String, Object> configData;
     @Getter private RedisConnector redisConnector;
     @Getter private ServerGroupManager serverGroupManager;
     @Getter private CommandManager commandManager;
@@ -56,6 +65,7 @@ public class VelocityDreamMCAPI {
 
     @Subscribe(priority = Short.MAX_VALUE)
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        this.loadConfigFile();
         this.setupAPI();
 
         if(!MongoService.init()) {
@@ -76,14 +86,7 @@ public class VelocityDreamMCAPI {
         this.connectionManager = new ConnectionManager();
 
         this.registerListeners();
-
-        ServerCommand command = new ServerCommand();
-        CommandMeta.Builder builder = this.server.getCommandManager().metaBuilder(command.getName());
-        for (String alias : command.getAliases()) {
-            builder.aliases(alias);
-        }
-        builder.plugin(this);
-        this.server.getCommandManager().register(builder.build(), command);
+        this.registerCommands();
 
         this.redisConnector.publish("dreammc:*:*:REQUEST_AVAILABLE_SERVERS", new RequestAvailableServersPacket());
     }
@@ -96,6 +99,7 @@ public class VelocityDreamMCAPI {
         //this.config = this.configManager.getOrLoadConfig(this.dataDirectory, VelocityAPIConfig.class);
 
         new VelocityService();
+        this.initLanguageManager();
     }
 
     private void registerRedisListeners() {
@@ -111,6 +115,44 @@ public class VelocityDreamMCAPI {
         this.server.getEventManager().register(this, new PlayerPostLoginListener());
         this.server.getEventManager().register(this, new PlayerTransferListener());
         this.server.getEventManager().register(this, new PlayerKickedListener());
+    }
+
+    // TODO: remove this cause it is duplicate from CommandManager
+    private void registerCommand(VelocityCommand command) {
+        CommandMeta.Builder builder = this.server.getCommandManager().metaBuilder(command.getName());
+        for (String alias : command.getAliases()) {
+            builder.aliases(alias);
+        }
+        builder.plugin(this);
+        this.server.getCommandManager().register(builder.build(), command);
+    }
+
+    private void registerCommands() {
+        this.registerCommand(new ServerCommand());
+        this.registerCommand(new LangReloadCommand());
+    }
+
+    private void loadConfigFile() {
+        try {
+            File configFile = new File(this.dataDirectory.toFile(), "config.yml");
+            Yaml yaml = new Yaml();
+            FileInputStream stream = new FileInputStream(configFile);
+            this.configData = yaml.load(stream);
+            stream.close();
+        } catch (Exception e) {
+            pl.dreammc.dreammcapi.api.logger.Logger.sendError("Configuration file could not be loaded.");
+            this.server.shutdown();
+        }
+    }
+
+    private void initLanguageManager() {
+        String lang = (String) this.configData.get("lang");
+        if (lang == null) {
+            pl.dreammc.dreammcapi.api.logger.Logger.sendError("Language is not set in config file.");
+            this.server.shutdown();
+            return;
+        }
+        Registry.languageManager = new LanguageManager(lang);
     }
 
     private void sendRequestForAllAvailableServers() {
