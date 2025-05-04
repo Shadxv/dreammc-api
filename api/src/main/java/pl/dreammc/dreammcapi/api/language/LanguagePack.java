@@ -58,7 +58,7 @@ public class LanguagePack {
             if (entry.getValue().isJsonObject()) processJsonObject(entry.getValue(), newPath);
             else if (entry.getValue().isJsonArray()) {
                 List<String> list = new ArrayList<>();
-                element.getAsJsonArray().forEach(e -> list.add(e.getAsString()));
+                entry.getValue().getAsJsonArray().forEach(e -> list.add(e.getAsString()));
                 this.cache.put(newPath, new LangList(list));
             } else this.cache.put(newPath, new LangText(entry.getValue().getAsString()));
         }

@@ -139,7 +139,6 @@ public abstract class LangObject<T, V> {
 
             while (matcher.find()) {
                 String text = matcher.group(0);
-                if (text.endsWith("%/g%")) text = text.substring(0, text.length() - 4);
                 if (text.startsWith("%g%")) text = text.substring(3);
                 StringBuilder output = new StringBuilder();
                 int gradientColorCount = 0;
@@ -175,14 +174,16 @@ public abstract class LangObject<T, V> {
 
         protected String formatText(String s) {
             StringBuilder result = new StringBuilder();
-            Matcher matcher = Pattern.compile("%/?[ce]|(gc)").matcher(s);
+            Matcher matcher = Pattern.compile("%(/?[ceg]|gc)%").matcher(s);
             while (matcher.find()) {
                 switch (matcher.group(0)) {
                     case "%/c%" -> {
                         this.colorStack.pop();
+                        matcher.appendReplacement(result, this.buildColor());
                     }
                     case "%/e%" -> {
                         this.effectStack.pop();
+                        matcher.appendReplacement(result, this.buildColor());
                     }
                     case "%gc%" -> {
                         matcher.appendReplacement(result, this.buildGradientColor());
