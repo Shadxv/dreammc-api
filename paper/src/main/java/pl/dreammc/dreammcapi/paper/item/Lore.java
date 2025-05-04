@@ -57,6 +57,13 @@ public class Lore<T extends BaseItem<?>>{
         return this;
     }
 
+    public Lore<T> addLines(List<Component> components) {
+        for(Component component : components) {
+            this.addLine(component);
+        }
+        return this;
+    }
+
     public Lore<T> insertLines(int index, Component... components) {
         if(index < 0) return this;
 
