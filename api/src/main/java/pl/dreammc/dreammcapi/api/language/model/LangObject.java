@@ -172,6 +172,7 @@ public abstract class LangObject<T, V> {
             return result.toString();
         }
 
+        // TODO: add small font
         protected String formatText(String s) {
             StringBuilder result = new StringBuilder();
             Matcher matcher = Pattern.compile("%(/?[ceg]|gc)%").matcher(s);
