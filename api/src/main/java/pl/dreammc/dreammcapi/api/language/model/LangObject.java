@@ -124,27 +124,27 @@ public abstract class LangObject<T, V> {
             Matcher matcher = Pattern.compile("%sm%((?:(?!%sm%|%/sm%).)*(?:%/sm%|$))", Pattern.DOTALL).matcher(s);
 
             while (matcher.find()) {
-                String text = matcher.group(0);
+                String text = matcher.group(0).toLowerCase();
                 if (text.startsWith("%sm%")) text = text.substring(4);
                 if (text.endsWith("%/sm%")) text = text.substring(0, text.length() - 5);
                 StringBuilder output = new StringBuilder();
 
                 for (int i = 0; i < text.length(); i++) {
-                    if (text.charAt(i) == '%') {
-                        int toSkip = 2;
-                        for (int j = i + toSkip + 1; j < text.length(); j++) {
-                            if (j > 5) {
-                                toSkip = 0;
-                                break;
-                            }
-                            toSkip++;
-                            if (text.charAt(j) == '%') {
-                                break;
-                            }
+                    char ch = text.charAt(i);
+
+                    if (ch == '%' && i + 2 < text.length()) {
+                        if (text.charAt(i + 2) == '%') {
+                            output.append(text, i, i + 3);
+                            i += 2;
+                            continue;
                         }
-                        i += toSkip;
-                        output.append(TextUtil.getSmallFontChar(text.charAt(i)));
+                        if (i + 3 < text.length() && text.charAt(i + 1) == '/' && text.charAt(i + 3) == '%') {
+                            output.append(text, i, i + 4);
+                            i += 3;
+                            continue;
+                        }
                     }
+                    output.append(TextUtil.getSmallFontChar(ch));
                 }
                 matcher.appendReplacement(result, output.toString());
             }
@@ -181,14 +181,14 @@ public abstract class LangObject<T, V> {
 
                 for (int i = 0; i < text.length(); i++) {
                     if (text.charAt(i) == '%') {
-                        if (i < text.length() - 4) {
+                        if (i < text.length() - 3) {
                             if (text.charAt(i+1) == '/' && text.charAt(i+3) == '%') {
                                 output.append(text, i, i+4);
                                 i += 3;
                                 continue;
                             }
                         }
-                        if (i < text.length() - 3) {
+                        if (i < text.length() - 2) {
                             if (text.charAt(i+2) == '%') {
                                 output.append(text, i, i+3);
                                 i += 2;
@@ -198,9 +198,8 @@ public abstract class LangObject<T, V> {
                     }
                     output.append("%gc%").append(text.charAt(i));
                     gradientColorCount++;
-                    matcher.appendReplacement(result, output.toString());
                 }
-
+                matcher.appendReplacement(result, output.toString());
                 this.gradientColors.addAll(GradientUtil.generateColorGradient(gradientColorCount, this.applyGradient()));
             }
             matcher.appendTail(result);
