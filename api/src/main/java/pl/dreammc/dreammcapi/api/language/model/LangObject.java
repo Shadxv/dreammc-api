@@ -224,6 +224,9 @@ public abstract class LangObject<T, V> {
                             this.effectStack.pop();
                         matcher.appendReplacement(result, this.buildColor());
                     }
+                    case "%/g%" -> {
+                        matcher.appendReplacement(result, this.buildColor());
+                    }
                     case "%gc%" -> {
                         matcher.appendReplacement(result, this.buildGradientColor());
                     }
