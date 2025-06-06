@@ -258,10 +258,14 @@ public class TextUtil {
                     skipMode = true;
                 }
             } else {
-                result.append(charMap.getOrDefault(c, c));
+                result.append(getSmallFontChar(c));
             }
         }
         return result.toString();
+    }
+
+    public static char getSmallFontChar(char c) {
+        return charMap.getOrDefault(c, c);
     }
 
     public static int countLines(Component textComponent, int maxWidth) {

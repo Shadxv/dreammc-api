@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class BaseItem<T extends BaseItem<?>> implements Cloneable{
@@ -281,6 +282,13 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
             return this.itemMeta.hasEnchant(enchantment) ? this.itemMeta.getEnchantLevel(enchantment) : 0;
         }
         return this.enchantments.containsKey(enchantment) ? this.enchantments.get(enchantment).getLevel() : 0;
+    }
+
+    public Map<Enchantment, Integer> getEnchants() {
+        if (this.isConverted) {
+            return this.itemMeta.getEnchants();
+        }
+        return this.enchantments.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue().getLevel()));
     }
 
     @Nullable

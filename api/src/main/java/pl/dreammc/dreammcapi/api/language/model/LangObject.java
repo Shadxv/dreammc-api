@@ -1,15 +1,15 @@
 package pl.dreammc.dreammcapi.api.language.model;
 
+import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.util.GradientUtil;
 import pl.dreammc.dreammcapi.api.util.Symbol;
+import pl.dreammc.dreammcapi.api.util.TextUtil;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class LangObject<T, V> {
-
-    // <c>Test color <g><c>gradient <c>bold<\c> <\c>no-bold<\g><\c>
 
     private final T value;
 
@@ -38,16 +38,16 @@ public abstract class LangObject<T, V> {
 
         protected Builder() {
             this.text = value;
-            this.colors = new PriorityQueue<>();
-            this.effects = new PriorityQueue<>();
-            this.gradients = new PriorityQueue<>();
-            this.values = new PriorityQueue<>();
-            this.symbols = new PriorityQueue<>();
+            this.colors = new LinkedList<>();
+            this.effects = new LinkedList<>();
+            this.gradients = new LinkedList<>();
+            this.values = new LinkedList<>();
+            this.symbols = new LinkedList<>();
             //this.shadows = new PriorityQueue<>();
 
             this.colorStack = new Stack<>();
             this.effectStack = new Stack<>();
-            this.gradientColors = new PriorityQueue<>();
+            this.gradientColors = new LinkedList<>();
             //this.shadowStack = new Stack<>();
         }
 
@@ -72,7 +72,7 @@ public abstract class LangObject<T, V> {
         }
 
         public Builder symbols(Symbol... symbols) {
-            this.values.addAll(Arrays.stream(symbols).map(Symbol::getSymbolChar).toList());
+            this.symbols.addAll(Arrays.stream(symbols).map(Symbol::getSymbolChar).toList());
             return this;
         }
 
@@ -93,6 +93,7 @@ public abstract class LangObject<T, V> {
         }
 
         private void applyColor() {
+            if (this.colors.isEmpty()) return;
             this.colorStack.push(this.colors.poll());
         }
 
@@ -101,6 +102,7 @@ public abstract class LangObject<T, V> {
         }
 
         private void applyEffect() {
+            if (this.effects.isEmpty()) return;
             this.effectStack.push(this.effects.poll());
         }
 
@@ -117,20 +119,54 @@ public abstract class LangObject<T, V> {
             return result.toString();
         }
 
+        protected String applySmallFont(String s) {
+            StringBuilder result = new StringBuilder();
+            Matcher matcher = Pattern.compile("%sm%((?:(?!%sm%|%/sm%).)*(?:%/sm%|$))", Pattern.DOTALL).matcher(s);
+
+            while (matcher.find()) {
+                String text = matcher.group(0).toLowerCase();
+                if (text.startsWith("%sm%")) text = text.substring(4);
+                if (text.endsWith("%/sm%")) text = text.substring(0, text.length() - 5);
+                StringBuilder output = new StringBuilder();
+
+                for (int i = 0; i < text.length(); i++) {
+                    char ch = text.charAt(i);
+
+                    if (ch == '%' && i + 2 < text.length()) {
+                        if (text.charAt(i + 2) == '%') {
+                            output.append(text, i, i + 3);
+                            i += 2;
+                            continue;
+                        }
+                        if (i + 3 < text.length() && text.charAt(i + 1) == '/' && text.charAt(i + 3) == '%') {
+                            output.append(text, i, i + 4);
+                            i += 3;
+                            continue;
+                        }
+                    }
+                    output.append(TextUtil.getSmallFontChar(ch));
+                }
+                matcher.appendReplacement(result, output.toString());
+            }
+
+            matcher.appendTail(result);
+            return result.toString();
+        }
+
         private String buildEffects() {
             StringBuilder builder = new StringBuilder();
             for (String effect : this.effectStack) {
                 builder.append(effect);
             }
-            return builder.toString();
+            return builder.isEmpty() ? "" : builder.toString();
         }
 
         private String buildColor() {
-            return (this.colorStack.isEmpty() ? "" : this.colorStack.getLast()) + this.buildEffects();
+            return (this.colorStack.isEmpty() ? "&r" : this.colorStack.peek()) + this.buildEffects();
         }
 
         private String buildGradientColor() {
-            return (this.gradientColors.isEmpty() ? "" : this.gradientColors.poll()) + this.buildEffects();
+            return (this.gradientColors.isEmpty() ? "&r" : this.gradientColors.poll()) + this.buildEffects();
         }
 
         protected String processGradients(String s) {
@@ -145,14 +181,14 @@ public abstract class LangObject<T, V> {
 
                 for (int i = 0; i < text.length(); i++) {
                     if (text.charAt(i) == '%') {
-                        if (i < text.length() - 4) {
+                        if (i < text.length() - 3) {
                             if (text.charAt(i+1) == '/' && text.charAt(i+3) == '%') {
                                 output.append(text, i, i+4);
                                 i += 3;
                                 continue;
                             }
                         }
-                        if (i < text.length() - 3) {
+                        if (i < text.length() - 2) {
                             if (text.charAt(i+2) == '%') {
                                 output.append(text, i, i+3);
                                 i += 2;
@@ -162,9 +198,8 @@ public abstract class LangObject<T, V> {
                     }
                     output.append("%gc%").append(text.charAt(i));
                     gradientColorCount++;
-                    matcher.appendReplacement(result, output.toString());
                 }
-
+                matcher.appendReplacement(result, output.toString());
                 this.gradientColors.addAll(GradientUtil.generateColorGradient(gradientColorCount, this.applyGradient()));
             }
             matcher.appendTail(result);
@@ -174,22 +209,33 @@ public abstract class LangObject<T, V> {
 
         // TODO: add small font
         protected String formatText(String s) {
-            StringBuilder result = new StringBuilder();
+            String lineColor = this.buildColor();
+            StringBuilder result = new StringBuilder().append(lineColor.equals("&r") ? "" : lineColor);
             Matcher matcher = Pattern.compile("%(/?[ceg]|gc)%").matcher(s);
             while (matcher.find()) {
                 switch (matcher.group(0)) {
                     case "%/c%" -> {
-                        this.colorStack.pop();
+                        if (!this.colorStack.isEmpty())
+                            this.colorStack.pop();
                         matcher.appendReplacement(result, this.buildColor());
                     }
                     case "%/e%" -> {
-                        this.effectStack.pop();
+                        if (!this.effectStack.isEmpty())
+                            this.effectStack.pop();
+                        matcher.appendReplacement(result, this.buildColor());
+                    }
+                    case "%/g%" -> {
                         matcher.appendReplacement(result, this.buildColor());
                     }
                     case "%gc%" -> {
                         matcher.appendReplacement(result, this.buildGradientColor());
                     }
-                    default -> {
+                    case "%c%" -> {
+                        this.applyColor();
+                        matcher.appendReplacement(result, this.buildColor());
+                    }
+                    case "%e%" -> {
+                        this.applyEffect();
                         matcher.appendReplacement(result, this.buildColor());
                     }
                 }
@@ -201,6 +247,7 @@ public abstract class LangObject<T, V> {
         protected String build(String s) {
             String result = s;
             result = this.applyValues(result);
+            result = this.applySmallFont(result);
             result = this.processGradients(result);
             return this.formatText(result);
         }
