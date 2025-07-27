@@ -9,6 +9,8 @@ import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.dreammc.dreammcapi.paper.hologram.line.ClientSideHologramLine;
@@ -16,6 +18,7 @@ import pl.dreammc.dreammcapi.paper.manager.HologramManager;
 import pl.dreammc.dreammcapi.paper.ulit.NMSUtil;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class ClientSideHologram extends BaseHologram<ClientSideHologram, ClientSideHologramLine<?>>{
@@ -45,7 +48,8 @@ public class ClientSideHologram extends BaseHologram<ClientSideHologram, ClientS
             ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.player);
 
             currentLine.teleportRelative(0, this.getLines().get(index).getYTranslation(),0);
-            var teleport = new ClientboundTeleportEntityPacket(currentLine);
+
+            var teleport = new ClientboundTeleportEntityPacket(currentLine.getId(), PositionMoveRotation.of(currentLine), EnumSet.of(Relative.Y), currentLine.onGround);
             connection.send(teleport);
 
             // TODO: this needs to be fixed - addPassenger teleports every line to

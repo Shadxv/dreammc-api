@@ -1,17 +1,20 @@
 plugins {
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.7.7"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.18"
 }
 
 repositories {
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
-
 }
 
 dependencies {
     implementation(project(":api"))
-    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
-    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.8-R0.1-SNAPSHOT")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(24))
 }
 
 tasks.processResources {

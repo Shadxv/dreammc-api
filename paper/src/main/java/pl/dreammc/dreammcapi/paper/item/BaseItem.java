@@ -4,10 +4,13 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import io.papermc.paper.datacomponent.DataComponentBuilder;
+import io.papermc.paper.datacomponent.DataComponentType;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -15,11 +18,11 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
 
@@ -43,6 +46,9 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
     private final Map<Enchantment, EnchantData> enchantments;
     @Nullable private Map<String, NBTTag<?>> tags;
     @Nullable private PlayerProfile skullProfile;
+    @Nullable private Color armorColor;
+    @Nullable private ArmorTrim armorTrim;
+    private final Map<DataComponentType.Valued<?>, Object> dataComponents;
     @Getter private final boolean isConverted;
 
     protected BaseItem() {
@@ -51,6 +57,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         this.flags = new HashSet<>();
         this.enchantments = new HashMap<>();
         this.tags = new HashMap<>();
+        this.dataComponents = new HashMap<>();
     }
 
     protected BaseItem(Material material) {
@@ -60,6 +67,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         this.flags = new HashSet<>();
         this.enchantments = new HashMap<>();
         this.tags = new HashMap<>();
+        this.dataComponents = new HashMap<>();
     }
 
     protected BaseItem(ItemStack itemStack) {
@@ -69,6 +77,7 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         this.attributes = null;
         this.flags = null;
         this.enchantments = null;
+        this.dataComponents = null;
 //        this.material = this.itemStack.getType();
 //        this.name = this.itemStack.displayName();
 //        this.amount = this.itemStack.getAmount();
@@ -358,6 +367,79 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
         return (T) this;
     }
 
+    public T setArmorColor(Color color) {
+        if(this.isConverted) {
+            if(this.itemMeta instanceof LeatherArmorMeta armorMeta) {
+                armorMeta.setColor(color);
+            }
+            return (T) this;
+        }
+        this.armorColor = color;
+        return (T) this;
+    }
+
+    public T addArmorTrim(@Nullable ArmorTrim armorTrim) {
+        if(this.isConverted) {
+            if (this.itemMeta instanceof ArmorMeta armorMeta) {
+                armorMeta.setTrim(armorTrim);
+            }
+            return (T) this;
+        }
+        this.armorTrim = armorTrim;
+        return (T) this;
+    }
+
+    public <V> T setData(@NotNull DataComponentType.Valued<V> type, @Nullable DataComponentBuilder<V> data) {
+        if(this.isConverted) {
+            if(data == null) this.itemStack.unsetData(type);
+            else this.itemStack.setData(type, data);
+            return (T) this;
+        }
+        if(data == null) this.dataComponents.remove(type);
+        else this.dataComponents.put(type, data.build());
+        return (T) this;
+    }
+
+    public <V> T setData(@NotNull DataComponentType.Valued<V> type, @Nullable V data) {
+        if(this.isConverted) {
+            if(data == null) this.itemStack.unsetData(type);
+            else this.itemStack.setData(type, data);
+            return (T) this;
+        }
+        if(data == null) this.dataComponents.remove(type);
+        else this.dataComponents.put(type, data);
+        return (T) this;
+    }
+
+    public T hasData(@NotNull DataComponentType.Valued<?> type) {
+        if(this.isConverted) {
+            this.itemStack.hasData(type);
+            return (T) this;
+        }
+        this.dataComponents.containsKey(type);
+        return (T) this;
+    }
+
+    public T resetData(@NotNull DataComponentType.Valued<?> type) {
+        if(this.isConverted) {
+            this.itemStack.resetData(type);
+            return (T) this;
+        }
+        this.dataComponents.remove(type);
+        return (T) this;
+    }
+
+    public <V> @Nullable V getData(@NotNull DataComponentType.Valued<V> type) {
+        if(this.isConverted) {
+            return this.itemStack.getData(type);
+        }
+        return (V) this.dataComponents.get(type);
+    }
+
+    private <V> void setDataPair(DataComponentType.Valued<V> type, Object value) {
+        this.itemStack.setData(type, (V) value);
+    }
+
     @Nullable
     public ItemStack build() {
         if(this.isConverted) {
@@ -396,6 +478,19 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
                 skullMeta.setPlayerProfile(profile);
             }
         });
+        Optional.ofNullable(this.armorColor).ifPresent(color -> {
+            if (this.itemMeta instanceof LeatherArmorMeta armorMeta) {
+                armorMeta.setColor(color);
+            }
+        });
+        if (this.itemMeta instanceof ArmorMeta armorMeta) {
+            armorMeta.setTrim(armorTrim);
+        }
+        Optional.ofNullable(this.dataComponents).ifPresent(dataComponents -> {
+            for (Map.Entry<DataComponentType.Valued<?>, Object> entry : this.dataComponents.entrySet()) {
+                this.setDataPair(entry.getKey(), entry.getValue());
+            }
+        });
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
     }
@@ -420,6 +515,9 @@ public class BaseItem<T extends BaseItem<?>> implements Cloneable{
             }
 
             clone.skullProfile = this.skullProfile;
+            clone.armorColor = this.armorColor;
+            clone.armorTrim = this.armorTrim;
+            clone.dataComponents.putAll(this.dataComponents);
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
