@@ -85,6 +85,8 @@ public abstract class HumanNPC<T extends HumanNPC<?>> extends NPC<T> {
                         0,
                         GameType.CREATIVE,
                         null,
+                        true,
+                        -1,
                         null
                 )
         );
