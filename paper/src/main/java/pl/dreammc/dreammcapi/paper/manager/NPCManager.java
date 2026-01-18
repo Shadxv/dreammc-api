@@ -4,6 +4,8 @@ import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.PaperDreamMCAPI;
+import pl.dreammc.dreammcapi.paper.entity.SmartEntity;
+import pl.dreammc.dreammcapi.paper.entity.SmartEntityManager;
 import pl.dreammc.dreammcapi.paper.listener.ClickNPCPacketListener;
 import pl.dreammc.dreammcapi.paper.npc.ClientSideHumanNPC;
 import pl.dreammc.dreammcapi.paper.npc.NPC;
@@ -51,6 +53,7 @@ public class NPCManager {
 
     public void unregisterNPC(NPC<?> npc) {
         this.registeredNPCs.remove(npc.getEntityId());
+        SmartEntityManager.getInstance().unregisterEntity(npc);
     }
 
     public void unregisterServerSideNPC(ServerSideHumanNPC npc) {

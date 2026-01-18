@@ -12,10 +12,12 @@ import pl.dreammc.dreammcapi.api.logger.Logger;
 import pl.dreammc.dreammcapi.api.manager.LanguageManager;
 import pl.dreammc.dreammcapi.api.manager.PlayerIdManager;
 import pl.dreammc.dreammcapi.paper.command.language.LangReloadCommand;
+import pl.dreammc.dreammcapi.paper.command.test.NPCTestCommand;
 import pl.dreammc.dreammcapi.paper.command.test.ProfileTestCommand;
 import pl.dreammc.dreammcapi.paper.connection.RequestAvailableServersListener;
 import pl.dreammc.dreammcapi.paper.connection.TransferPlayerRequestPacketListener;
 import pl.dreammc.dreammcapi.paper.database.ItemStackCodec;
+import pl.dreammc.dreammcapi.paper.entity.SmartEntityManager;
 import pl.dreammc.dreammcapi.paper.logger.PaperLoggerImpl;
 import pl.dreammc.dreammcapi.paper.manager.*;
 import pl.dreammc.dreammcapi.paper.player.PaperMessageSenderImpl;
@@ -28,6 +30,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     @Getter private PaperListenerManager listenerManager;
     @Getter private InventoryManager inventoryManager;
     @Getter private HologramManager hologramManager;
+    @Getter private SmartEntityManager smartEntityManager;
     @Getter private NPCManager npcManager;
     @Getter private CommandManager commandManager;
     @Getter private InputManager inputManager;
@@ -72,6 +75,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
         this.hologramManager = new HologramManager();
         this.hologramManager.killPreviousHolograms();
 
+        this.smartEntityManager = new SmartEntityManager();
         this.npcManager = new NPCManager();
         this.commandManager = new CommandManager();
         this.inputManager = new InputManager();
@@ -104,6 +108,7 @@ public class PaperDreamMCAPI extends JavaPlugin {
     private void registerCommands() {
         this.commandManager.registerCommand(new ProfileTestCommand());
         this.commandManager.registerCommand(new LangReloadCommand());
+        this.commandManager.registerCommand(new NPCTestCommand());
     }
 
     private void registerRedisListeners() {

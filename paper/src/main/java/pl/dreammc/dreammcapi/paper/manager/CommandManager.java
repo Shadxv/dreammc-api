@@ -28,7 +28,8 @@ public class CommandManager {
                     PaperCommand command = (PaperCommand) commandClass.getDeclaredConstructor().newInstance();
                     this.registerCommand(command);
                 } catch (Exception exception) {
-                    Logger.sendError(exception.getLocalizedMessage());
+                    //Logger.sendError(exception.getMessage());
+                    exception.printStackTrace();
                 }
             }
         }

@@ -2,6 +2,7 @@ package pl.dreammc.dreammcapi.paper.npc;
 
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.hologram.BaseHologram;
@@ -10,6 +11,7 @@ import pl.dreammc.dreammcapi.paper.manager.HologramManager;
 import pl.dreammc.dreammcapi.paper.manager.NPCManager;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,5 +105,42 @@ public class ServerSideHumanNPC extends HumanNPC<ServerSideHumanNPC>{
 
         this.isSpawned = false;
         return this;
+    }
+
+    @Override
+    public void move(double deltaX, double deltaY, double deltaZ) {
+        this.viewers.forEach(player -> {
+            this.move(player, deltaX, deltaY, deltaZ);
+        });
+    }
+
+    @Override
+    public void move(double deltaX, double deltaY, double deltaZ, float yaw, float pitch) {
+        this.viewers.forEach(player -> {
+            this.move(player, deltaX, deltaY, deltaZ, yaw, pitch);
+        });
+    }
+
+    @Override
+    public void rotate(float yaw, float pitch) {
+        this.viewers.forEach(player -> this.rotate(player, yaw, pitch));
+    }
+
+    @Override
+    public void playAnimation() {
+        this.viewers.forEach(this::playAnimation);
+    }
+
+    @Override
+    public void attack() {
+        this.viewers.forEach(this::attack);
+    }
+
+    @Override
+    public @Nullable Entity findClosestEntity(double radius) {
+        return this.currentLocation.getNearbyPlayers(radius)
+                .stream()
+                .min(Comparator.comparingDouble(p -> p.getLocation().distanceSquared(this.currentLocation)))
+                .orElse(null);
     }
 }

@@ -2,6 +2,7 @@ package pl.dreammc.dreammcapi.paper.npc;
 
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import pl.dreammc.dreammcapi.paper.hologram.BaseHologram;
@@ -67,5 +68,35 @@ public class ClientSideHumanNPC extends HumanNPC<ClientSideHumanNPC>{
         this.sendDespawnPackets(this.owner);
         Optional.ofNullable(this.hologram).ifPresent(BaseHologram::despawn);
         return this;
+    }
+
+    @Override
+    public void move(double deltaX, double deltaY, double deltaZ) {
+        this.move(this.owner, deltaX, deltaY, deltaZ);
+    }
+
+    @Override
+    public void move(double deltaX, double deltaY, double deltaZ, float yaw, float pitch) {
+        this.move(this.owner, deltaX, deltaY, deltaZ, yaw, pitch);
+    }
+
+    @Override
+    public void rotate(float yaw, float pitch) {
+        this.rotate(this.owner, yaw, pitch);
+    }
+
+    @Override
+    public void playAnimation() {
+        this.playAnimation(this.owner);
+    }
+
+    @Override
+    public void attack() {
+        this.attack(this.owner);
+    }
+
+    @Override
+    public @Nullable Entity findClosestEntity(double radius) {
+        return this.currentLocation.distance(this.owner.getLocation()) <= radius ? this.owner : null;
     }
 }

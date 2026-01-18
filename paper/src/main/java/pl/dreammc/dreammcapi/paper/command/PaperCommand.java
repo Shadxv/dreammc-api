@@ -34,6 +34,13 @@ public abstract class PaperCommand extends BukkitCommand implements ICommandBase
         }
     }
 
+    public void registerSubcommand(PaperSubcommand subcommand) {
+        this.subcommands.put(subcommand.name, subcommand);
+        for(String alias : subcommand.aliases) {
+            this.subcommands.put(alias, subcommand);
+        }
+    }
+
     private ICommandResponse canExecute(CommandSender commandSender) {
         if(commandSender instanceof Player) {
             if(this.permission != null && !commandSender.hasPermission(this.permission)) {

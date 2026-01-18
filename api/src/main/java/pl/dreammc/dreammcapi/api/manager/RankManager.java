@@ -15,7 +15,7 @@ public class RankManager {
         long currentTime = System.currentTimeMillis();
 
         for(TimeRankModel rankModel : timeRanks) {
-            if(currentTime <= rankModel.getExpireTime() | permanentRank.ordinal() >= rankModel.getRank().ordinal()) {
+            if(currentTime <= rankModel.getExpireTime() || permanentRank.ordinal() >= rankModel.getRank().ordinal()) {
                 removeTimeRank(owner, rankModel.getRank());
                 continue;
             }
