@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class MongoConnectionManager {
 
@@ -37,6 +38,11 @@ public class MongoConnectionManager {
         this.mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyConnectionString(new ConnectionString(uri))
+                        .applyToConnectionPoolSettings(builder -> {
+                            builder.minSize(5)
+                                    .maxSize(20)
+                                    .maxConnectionIdleTime(1, TimeUnit.MINUTES);
+                        })
                         .uuidRepresentation(UuidRepresentation.STANDARD)
                         .codecRegistry(this.codecRegistry)
                         .build());
