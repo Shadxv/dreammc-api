@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
+import net.minecraft.network.protocol.game.ClientboundEntityPositionSyncPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -44,17 +45,17 @@ public class ClientSideHologram extends BaseHologram<ClientSideHologram, ClientS
     public void spawnLine(ClientSideHologramLine<?> line, int index) {
         Entity currentLine = line.spawn();
         if(index != 0) {
-            Entity previousLine = this.getLines().get(index - 1).getEntity();
+            // Entity previousLine = this.getLines().get(index - 1).getEntity();
             ServerGamePacketListenerImpl connection = NMSUtil.getConnection(this.player);
 
             currentLine.teleportRelative(0, this.getLines().get(index).getYTranslation(),0);
 
-            var teleport = new ClientboundTeleportEntityPacket(currentLine.getId(), PositionMoveRotation.of(currentLine), EnumSet.of(Relative.Y), currentLine.onGround);
+            var teleport = new ClientboundEntityPositionSyncPacket(currentLine.getId(), PositionMoveRotation.of(currentLine), currentLine.onGround);
             connection.send(teleport);
 
             // TODO: this needs to be fixed - addPassenger teleports every line to
-            currentLine.startRiding(previousLine);
-            var addPassenger = new ClientboundSetPassengersPacket(previousLine);
+//            currentLine.startRiding(previousLine);
+//            var addPassenger = new ClientboundSetPassengersPacket(previousLine);
             //connection.send(addPassenger);
         }
     }
