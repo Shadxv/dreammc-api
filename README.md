@@ -117,7 +117,7 @@ Wildcard subscriptions (`*`) allow broadcasting to all servers within a group or
 
 The `dev-netmanager` branch targets a prototype **network management application** currently in the proof-of-concept phase. The application provides an external interface for monitoring and controlling the DreamMC server network.
 
-> **Application repository:** <!-- link to be added -->
+> **Application repository:** [NetManager-Panel](https://github.com/Shadxv/NetManager-Panel)
 
 ---
 
